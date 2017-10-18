@@ -18,14 +18,12 @@
                     $("#districtfield").css("display","none");
                 }
             }else if($("#addusercate").val()=='1011001'){
-                alert($("#roleIds").val());
                 //管理人员
                 if($("#roleIds").val()!='1'&&$("#roleIds").val()!=null){
                     //添加管理员
                     $("#iqbtId").find("option[value='0']").attr("selected",true);
                     //如果当前用户是超级管理员
                     var admintype=$("#admintype").val();
-                    alert(admintype);
                     if(admintype=='1'){
                         $("#iqbtfield").css("display","block");
                     }else{

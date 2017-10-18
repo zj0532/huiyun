@@ -4,8 +4,6 @@ use think\Db;
 use app\common\controller\Base;
 class Index extends Common{
 
-//注释//注释
-//注释
     //阿里云发送短信接口
     function test(){
         $base = new Base();
@@ -783,10 +781,13 @@ class Index extends Common{
     function etprsIqbtIndex()
     {
         $data=array();
+        //1011004 区域用户
         if(strpos(','.session("user.roleIds").',',',1,')!==false||session("user.userCate")=='1011004'){
             //超级管理员
+            //1011001 管理人员
             if(session("user.userCate")=='1011001') {
                 $etprsIqbtIds=getFieldArrry("incubator",array("etprsIqbtId"=>session("etprsIqbtId")),"id");
+                //1011004 区域用户
             }else if(session("user.userCate")=='1011004'){
                 $etprsIqbtIds=getFieldArrry("incubator",array("districtId"=>array('like','%'.session("user.districtId").'%')),"id");
             }

@@ -16,6 +16,7 @@
       var tt;
       $(function () {
 
+
          //回车自动提交
          $('#cfmpassword').keyup(function(event){
             if(event.keyCode===13){
@@ -50,6 +51,7 @@
                      settime();
                   },1000)
                }else {
+
                   toastr.error(data.msg);
                }
             })

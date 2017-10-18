@@ -285,7 +285,6 @@
                                                <label class="col-sm-2 control-label">需求办公方式：</label>
                                                <div class="col-sm-10">
                                                    <div class="radio radio-success radio-inline">
-
                                                        <input type="radio" id="type1" value="1021001" name="workstyle" {if condition=" empty($data.workstyle) || $data.workstyle eq 1021001"}checked {/if} >
                                                        <label for="type1" class="text-success"><b>办公室</b></label>
                                                    </div>
@@ -297,7 +296,6 @@
                                                        <input type="radio" id="type3" value="1021003" name="workstyle" {if condition="isset($data.workstyle)&&($data.workstyle=='1021003')"}checked{/if} >
                                                        <label for="type3" class="text-success"><b>虚拟入驻</b></label>
                                                    </div>
-
                                                </div>
                                            </div>
                                            <div class="form-group">
@@ -354,7 +352,7 @@
                                            </script>
                                            <div class="form-group">
                                                <label class="col-sm-2 control-label">是否高新企业：</label>
-                                               <div class="col-sm-10">
+                                               <div class="col-sm-4">
                                                    <div class="radio radio-success radio-inline">
                                                        <input type="radio" id="highetprs1" value="1" checked name="highetprs" onchange="senfe_id('');"  {if condition="!isset($data.highetprs)||!empty($data.highetprs)"}checked{/if}>
                                                        <label for="highetprs1" class="text-success"><b>是</b></label>
@@ -364,6 +362,10 @@
                                                        <label for="highetprs2" class="text-success"><b>否</b></label>
                                                    </div>
                                                </div>
+                                               <!--<label class="col-sm-2 control-label">项目需求：</label>-->
+                                               <!--<div class="col-sm-4">-->
+                                                   <!--{:widget("user/HtmlWidget/initDictCheckbox",['iptname'=>'iqbttype[]','con'=>['level'=>'2','code'=>['like','3001%']],'default'=>isset($data['iqbttype'])?$data['iqbttype']:''])}-->
+                                               <!--</div>-->
                                            </div>
                                            <div class="form-group hc" id=id_body style="display:{if condition="isset($data.highetprs)&&empty($data.highetprs)"}none {/if}">
                                                <div class="col-sm-6">

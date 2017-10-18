@@ -681,7 +681,12 @@ class Base  extends Controller
             $num13 = 0;
         }
         //资源管理
-        $con14 = array('a.status'=>1,'a.iqbtId'=>session('iqbtId'));
+//        $con14 = array('a.status'=>1,'a.iqbtId'=>session('iqbtId'));
+//        //(deadline >".time()." or deadline=0)
+//
+//        $con14['a.deadline']=[['>',time()],[0]];
+
+        $con14="a.iqbtId =".session('iqbtId')." and (a.deadline >".time()." or a.deadline=0) and a.status =1";
         $resos = getDataList('resosResource',$con14,'a.id');
         if($resos['code']==1 && (!empty($resos['data']))){
             $num14 = count($resos['data']);

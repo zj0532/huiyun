@@ -1008,6 +1008,8 @@ function sendEmail($userId,$data,$optId=''){
         //重命名表
         // $objPHPExcel->getActiveSheet()->setTitle('test');
         //设置活动单指数到第一个表,所以Excel打开这是第一个表
+        ob_end_clean();
+        ob_start();
         $objPHPExcel->setActiveSheetIndex(0);
         header('Pragma: public');
         header('Expires: 0');

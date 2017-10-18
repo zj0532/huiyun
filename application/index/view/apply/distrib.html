@@ -413,18 +413,20 @@
                             <input type="text" name="endTime" id="endtime" class="datepicker opt-require form-control" value="{$time|default=time()+31536000-86400|date='Y-m-d',###}">
                         </div>
                     </div>
+                    {if condition='!empty($items)'}
                     {volist name="items" id="item"}
                     <div class="form-group col-sm-12 " id="feeitem{$i}">
                         <label class="col-sm-4 control-label" style="text-align:right;">{$item.itemName}</label>
                         <div class="col-sm-8">
                             <!--<input type="text" name="item-{$item.itemId}" value="0"  class="form-control number">-->
                             <select data-placeholder="{$item.itemName}" class="chosen-select form-control " tabindex="2" name="optId[]" id="optId{$item.id}">
-                                <option value="">请选择缴费标准</option>
+                                <!--<option value="">请选择缴费标准</option>-->
                                 {:widget("user/HtmlWidget/initCommonSelect",['table'=>'FeeItemOpt','con'=>array('iqbtId'=>session('iqbtId'),'itemId'=>$item['itemId']),'default'=>$item['optId'],'field'=>'id,name'])}
                             </select>
                         </div>
                     </div>
                     {/volist}
+                    {/if}
                     <div class="form-group col-sm-12">
                         <input type="hidden" value="{$id}" id="etprsId" name="etprsId">
                         <input type="hidden" value="" id="roomId" name="roomId">

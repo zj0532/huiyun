@@ -4,6 +4,7 @@ use think\Controller;
 use app\index\controller\Common;
 use think\Db;
 use think\Exception;
+use think\Log;
 
 class Resos extends Common{
 
@@ -38,6 +39,9 @@ class Resos extends Common{
         //$con=array('iqbtId'=>session("user.iqbtId"),'type'=>$type,'deadline'=>array('gt',time()),'status'=>array('in','1,2,4'));//已申请，通过，完成/结束
         $con="iqbtId =".session("user.iqbtId")." and type =".$type." and (deadline >".time()." or deadline=0) and status in(1,2,4)";
         $table="ResosResource";
+        if($type=='1'){
+            Log::notice(json_encode($con));
+        }
         $sequence="status asc";//排序
         $msg=getDataList($table,$con,"*",$sequence);
         $tmplist=self::getDictStr("*",$table);

@@ -6,6 +6,7 @@ use think\Db;
 use think\Exception;
 use app\user\library\Pinyin;
 use org\weixin\Jssdk;
+use think\Log;
 
 class User extends Common{
     function user()
@@ -370,7 +371,14 @@ class User extends Common{
     function saveUserInfo(){
         $postData=input("request.");
         $table="user";
+        //Log::notice(json_encode($postData));
         $msg= saveData($table,$postData,"添加/修改");
+        $map['a.id']=$postData["id"];
+        $join = [['incubator b','a.iqbtId=b.id AND b.isDelete = 0','left']];
+        $msg2 = findById("user",$map,"a.*,b.id as iqbtabId,b.logo,b.exptime",$join);
+        if(!empty($msg2['data'])){
+            session('user', $msg2['data']);
+        }
         return $msg;
     }
 

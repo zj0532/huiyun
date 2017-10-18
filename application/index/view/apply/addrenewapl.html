@@ -21,11 +21,13 @@
         initfile(chars);
 
         $("#btnsave").click(function () {
+            var roomlen=$("input[name='roomNo[]']:checkbox").length;
             var len = $("input[name='roomNo[]']:checkbox:checked").length;
-            if(len==0){
+            if(roomlen!=0&&len==0){
                 toastr.error("至少选择一个续约房间");
                 return;
             }
+
             var err=custom_validate("renewForm");
             if(err==0){
                 return;
@@ -194,7 +196,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">吸纳见习人数：</label>
                                 <div class="col-sm-7">
-                                    <input id="trainee" type="text" class="form-control require" name="trainee" value="{$data.trainee|default=''}">
+                                    <input id="trainee" type="text" class="form-control require num" name="trainee" value="{$data.trainee|default=''}">
                                 </div>
                             </div>
                             <div class="form-group">

@@ -1481,7 +1481,6 @@ class Baseapply extends Base
      * @return \think\response\View
      */
     function gradeInfo($id=''){
-
         //复审所有专家的备注信息
         $retrials=array();
         $join2 = [['user c','a.adduserId=c.id',"left"]];
@@ -1492,7 +1491,7 @@ class Baseapply extends Base
         if(empty($retrials)){
             $score = array();
             $total = array();
-            return view("",array("retrials"=>$retrials,'score'=>$score,'total'=>$total));
+            return array("retrials"=>$retrials,'score'=>$score,'total'=>$total);
         }
         $backjoin = [['enterprise b','a.etprsId=b.id',"left"]];
         $msg=findById("etprsApl",array("a.id"=>$id),"b.batch,a.etprsId",$backjoin);
@@ -1533,7 +1532,7 @@ class Baseapply extends Base
         }else{
             $score = array();
             $total = array();
-            return view("",array("retrials"=>$retrials,'score'=>$score,'total'=>$total));
+            return array("retrials"=>$retrials,'score'=>$score,'total'=>$total);
         }
         //按照指标查询导师评分
         foreach($score as $key=>$value1){

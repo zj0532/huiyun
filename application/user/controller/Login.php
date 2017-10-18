@@ -157,10 +157,11 @@ class Login extends Controller{
 
                     session('sysName',$name);
                     session('logo',$logo);
-                  //  print_r($user);exit();
                     session('user', $user);
                     session('userId', $user["id"]);
+                    //1011002  企业用户
                     if($user["userCate"]=="1011002"){
+                        //etprsId 企业id
                         session('etprsId', $user["etprsId"]);
                     }
                     session('iqbtId', $user["iqbtId"]);
@@ -172,13 +173,18 @@ class Login extends Controller{
                     saveData("user",$suclogin);
 
                     self::loginlog($user,$loginResult);//登录日志
+                    //1011002 企业用户
+                    //1012003 访客
+                    //userCate 用户类型： 字典表：孵化器管理人员 -企业人员 -系统管理员 -外部人员
                     if($user["userCate"]=="1011002"&&$user["status"]=="1012003"){
                         //企业用户，注册后没有提交申请
                         $this->redirect(url("/index/Apply/checkApl",array("iqbtId"=>$iqbtId,"etprsIqbtId"=>$etprsIqbtId)));
                     }
+                    //1012004 访客 此状态选择孵化器后，正在审批中
                     if($user["userCate"]=="1011002"&&$user["status"]=="1012004"){
                         //企业用户，没有完善申请信息
                         $etprsId=session("etprsId");
+                        //apltype 申请类型 0-企业 1-团队
                         $aplMsg=findById("etprsApl",array("etprsId"=>$etprsId),"apltype");
                         if(!empty($aplMsg["data"])){
                             $aplType=$aplMsg["data"]["apltype"];
@@ -191,12 +197,15 @@ class Login extends Controller{
                             $this->redirect(url("/index/Apply/checkApl"));
                         }
                     }
+                    //1011004 区域用户
                     if(strpos(','.$user["roleIds"].',',',1,')!==false||session("user.userCate")=='1011004'){
                         //超级管理员
                         $this->redirect(url("/index/Index/etprsIqbtIndex"));
                     }
+                    //1011002 企业用户
                     if($user["userCate"] == 1011002){
                         $this->redirect(url("/index/Apply/etprsAplInfo"));
+                        //1011005 导师用户
                     }elseif($user["userCate"] ==1011005){
                         $this->redirect(url("/index/Apply/retrialapl"));
                     }else{

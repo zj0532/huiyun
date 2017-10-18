@@ -787,6 +787,8 @@ class Apply extends Common{
         }
         $base = new Baseapply();
         $res = $base->gradeInfo($id);
+        //var_dump($res);
+
         return view("",$res);
     }
 
@@ -1514,6 +1516,7 @@ class Apply extends Common{
     //完善申请信息
     function etprsapl(){
         $data = array();
+        //获取入孵申请信息
         $aplmsg=findById("EtprsApl",array("etprsId"=>session("etprsId")),"*",array(),"0","id desc");
         if(!empty($aplmsg["data"])){
              if($aplmsg["data"]["apltype"]=="1"){
