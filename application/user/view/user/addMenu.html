@@ -1,0 +1,135 @@
+{include file="user@login/addheader" /}
+<script type="text/javascript">
+    $(function(){
+        $("#parent1").change(function(){
+            var id=$(this).find("option:selected").val();
+            initPid(id,"");
+            if(id!=''){
+                $("#rootId").val(id);
+                $("#level").val(2);
+                $("#parentId").val(id);
+            }else{
+                $("#rootId").val(0);
+                $("#level").val(1);
+                $("#parentId").val(0);
+            }
+
+        });
+        $("#parent2").change(function(){
+            var id=$(this).find("option:selected").val();
+            var pid=$("#parent1").find("option:selected").val();
+            if(id!=''){
+                $("#level").val(3);
+                $("#parentId").val(id);
+                $("#rootId").val(pid);
+                $("#tagdiv").css("display","block");
+            }else{
+                $("#tagdiv").css("display","none");
+                $("#tag").val("");
+                if(pid==""){
+                    $("#level").val(1);
+                    $("#parentId").val(0);
+                    $("#rootId").val(0);
+                }else{
+                    $("#level").val(2);
+                    $("#parentId").val(pid);
+                    $("#rootId").val(pid);
+                }
+            }
+
+        });
+
+        var pid=$("#parent1").find("option:selected").val();
+        initPid(pid,$("#hidepid").val());
+        var a=document.querySelector(".js-switch");new Switchery(a,{size:"small"})
+    });
+    function initPid(id,selid){
+        var url="{:url('/user/User/initMenu')}";
+        if(id!=0&&id!=''){
+            $.post(url,{parentId:id}, function(data) {
+                var options='<option value="">--请选择--</option>';
+                for(var key in data){
+                    if(key==selid){
+                        options+='<option selected value="'+key+'">'+data[key]+'</option>';
+                    }else{
+                        options+='<option value="'+key+'">'+data[key]+'</option>';
+                    }
+
+                }
+                $("#parent2").html(options);
+            });
+        }
+
+    }
+</script>
+<form id="userform" action="{:url('/user/User/saveMenu')}" method="post" tableId="menutable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="name">菜单名称</label>
+            <div class="col-sm-6">
+                <input class="form-control require" table="user" name="name" id="name" placeholder="菜单名称" value="{$data.name|default=''}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="parent1">上级菜单</label>
+            <div class="col-sm-3">
+                <select data-placeholder="上级菜单..." class="form-control" tabindex="2" id="parent1">
+                    <option value="">选择上级菜单</option>
+                    {:widget("HtmlWidget/initCommonSelect",['table'=>'UserMenu','con'=>array('level'=>'1'),'default'=>isset($data['rootId'])?$data['rootId']:'0','field'=>'id,name'])}
+                </select>
+            </div></span>
+            <span><div class="col-sm-3">
+                <select data-placeholder="上级菜单..." class="form-control" tabindex="2" id="parent2">
+                    <option value="">--请选择--</option>
+                </select>
+                <input type="hidden" id="hidepid" value="{$data.parentId|default=''}">
+            </div></span>
+        </div>
+        <div class="form-group" {if condition="$data.level neq 3"}style="display:none;"{/if} id="tagdiv">
+            <span><label class="col-sm-4 control-label" for="sort">TAG</label>
+            <div class="col-sm-6">
+                <input class="form-control" name="tag" id="tag" placeholder="TAG" value="{$data.tag|default=''}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="sort">URL</label>
+            <div class="col-sm-6">
+                <textarea class="form-control" name="url" id="url" placeholder="URL地址">{$data.url|default=''}</textarea>
+            </div></span>
+        </div>
+        <div class="form-group">
+                <span><label class="col-sm-4 control-label" for="sort">关联URL</label>
+                <div class="col-sm-6">
+                    <textarea class="form-control" name="ourl" id="ourl" placeholder="关联URL地址">{$data.ourl|default=''}</textarea>
+                </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="sort">排序</label>
+            <div class="col-sm-6">
+                <input class="form-control require number" name="sort" id="sort" placeholder="排序" value="{$data.sort|default='0'}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="desc">说明</label>
+            <div class="col-sm-6">
+                <textarea class="form-control" name="desc" id="desc">{$data.desc|default=''}</textarea>
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="isRole">系统维护员权限</label>
+            <div class="col-sm-6">
+                <input type="checkbox" class="js-switch" id="isadmin" name="isadmin" value="1"  {if condition="isset($data.isadmin) AND $data.isadmin eq '1'"}checked{/if} />
+            </div></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="rootId" name="rootId" value="{$data.rootId|default='0'}">
+        <input type="hidden" id="level" name="level" value="{$data.level|default='1'}">
+        <input type="hidden" id="parentId" name="parentId" value="{$data.parentId|default='0'}">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

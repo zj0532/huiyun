@@ -1,0 +1,467 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__JS__/echarts.min.js"></script>
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet'/>
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datetimepicker({
+            minView: "month",
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: true,//今日按钮
+            forceParse : true,
+            format: "yyyy-mm-dd"
+        });
+        $("input[name='idx[]']").attr("checked",true);
+        initChartData();
+        /*$("#btnchart").click(function () {
+            if($("input[name='idx[]']:checked").length==0){
+                toastr.warning("统计指标必须选择一个");
+                return;
+            }
+            initChartData();
+        });*/
+        $("#province").change(function(){
+            $("#city").html("<option value=''>--市--</option>");
+            $("#district").html("<option value=''>--区（县）--</option>");
+            var id=$(this).val();
+            if(id!='') {
+                initRegion(id, "city", $("#hc").val(), '', '');
+            }else{
+                emptyRegion('','');
+            }
+        });
+        $("#city").change(function(){
+            $("#district").html("<option value=''>--区（县）--</option>");
+            var id=$(this).val();
+            if(id!='') {
+                initRegion(id, "district", $("#hd").val(), 'province', '');
+            }else{
+                emptyRegion('province','');
+            }
+        });
+        $("#district").change(function(){
+            var id=$(this).val();
+            if(id!=''){
+                initRegion(id,"",'','city','province');
+            }else{
+                emptyRegion('city','province');
+            }
+        });
+        if($("#province").val()!=''){
+            $("#province").change();
+        }
+
+        $("input[name='showtype'],input[name='starttime'],input[name='endtime'],input[name='idx[]'],input[name='statistype']").change(function () {
+            initChartData();
+        });
+        $("#btnexport").click(function () {
+            var ths=$("#statistab thead tr th");
+            var len=ths.length;
+            var titles=[];
+            var rlt=[];
+            for (var i = 0; i < len; i++) {
+                titles[i]=$("#statistab thead tr th:eq("+i+")").html();
+            }
+            rlt[0]=titles;
+            var trs=$("#statistab tbody tr");
+            for (var i = 0; i < trs.length; i++) {
+                var tr = trs[i];
+                var contants=[];
+                for (var j = 0; j < len; j++) {
+                    contants[j]=$("#statistab tbody tr:eq("+i+") td:eq("+j+")").html();
+                }
+                rlt[i+1]=contants;
+            }
+            if(rlt.length>1){
+                var url="{:url('/statis/Statis/exportdata')}?data="+JSON.stringify(rlt)+"&filename=企业成长性分析";;
+                location.href=url;
+            }else{
+                toastr.warning("没有数据需要导出");
+            }
+        });
+    });
+    function initRegion(id,htmlid,val,phtmlid,pphtmlid){
+        if(val!=''){
+            $("#hdistrictId").val(val);
+        }else{
+            if(id!=''){
+                $("#hdistrictId").val(id);
+                initChartData();
+            }
+        }
+        if(id!=''){
+            if(htmlid!=''){
+                var url="{:url('/user/User/initRegion/id/"+id+"')}";
+                var text=$("#"+htmlid).attr("data-placeholder");
+                $("#"+htmlid).html("<option value=''>--"+text+"--</option>");
+                $.post(url, function(data) {
+                    for(var i=0;i<data.length;i++){
+                        var ischk='';
+                        if(data[i]["id"]==val){
+                            ischk="selected";
+                        }
+                        $("#"+htmlid).append("<option "+ischk+" value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>")
+                    }
+                    if(val!=""){
+                        $("#"+htmlid).change();
+                    }
+                });
+            }
+        }else{
+            if($("#"+phtmlid).val()!=""){
+                $("#hdistrictId").val($("#"+phtmlid).val());
+            }
+            else{
+                if($("#"+pphtmlid).val()!=""){
+                    $("#hdistrictId").val($("#"+pphtmlid).val());
+                }else{
+                    $("#hdistrictId").val("");
+                }
+            }
+            $("#"+htmlid).find("option[value='']").attr("selected",true);
+            $("#"+htmlid).change();
+        }
+    }
+    function emptyRegion(phtmlid,pphtmlid){
+        $("#hdistrictId").val("");
+        if($("#"+phtmlid).val()!=""){
+            $("#hdistrictId").val($("#"+phtmlid).val());
+        }
+        else{
+            if($("#"+pphtmlid).val()!=""){
+                $("#hdistrictId").val($("#"+pphtmlid).val());
+            }else{
+                $("#hdistrictId").val("");
+            }
+        }
+        initChartData();
+    }
+    function initChartData(){
+        if($("input[name='idx[]']:checked").length==0){
+            toastr.warning("统计指标必须选择一个");
+            return;
+        }
+        var start=$("#starttime").val();
+        var end=$("#endtime").val();
+        //入驻情况统计
+        var enterurl="{:url('/statis/Statis/getIqbtDataStatis')}";
+        var params=$('#search').serialize();
+        var statusobj=new Object();
+        var statusarr=new Array();
+        $.each($("input[name='idx[]']:checked"),function(){
+            statusobj[$(this).val()]=$(this).attr("txt");
+            statusarr.push($(this).val());
+        });
+        $.post(enterurl,params, function (data) {
+            if(data['code']==0){
+                toastr.warning(data['msg']);
+            }else {
+                initChart('enterchart', "成长性分析", data.color, data.legend, data.xaxis, data.yaxis);
+                var xtitle = data.xaxis;
+                $("#enterBody").html("");
+
+                var legend = data.legend;
+                var hdhtm = "<th>时间</th>";
+                for (var j = 0; j < legend.length; j++) {
+                    hdhtm = hdhtm + "<th>" + legend[j] + "</th>";
+                }
+                $("#hdtr").html(hdhtm);
+                var htm = "";
+                for (var k = 0; k < xtitle.length; k++) {
+                    for (var j = 0; j < data.yaxis.length; j++) {
+                        if (j == 0) {
+                            htm = htm + "<tr><td>" + xtitle[k] + "</td>";
+                        }
+                        htm = htm + "<td>" + data.yaxis[j].data[k] + "</td>";
+                        if (j == data.yaxis.length - 1) {
+                            htm = htm + "</tr>";
+                        }
+                    }
+                }
+                htm += "</tr>";
+                $("#enterBody").append(htm);
+            }
+        });
+    }
+    function arrayIndex(arr,value){
+        for(var i=0;i<arr.length;i++){
+            if(arr[i]==value){
+                return i;
+            }
+        }
+    }
+    //id,title,color,legend,xaxis,data
+    function initChart(id,title,color,legend,xaxis,data){
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById(id));
+
+        var colors = color;
+
+        option = {
+            color: colors,
+
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                }
+            },
+            grid: {
+                right: '250px'
+            },
+            /*toolbox: {
+                feature: {
+                    saveAsImage: {show: true}
+                }
+            },*/
+            legend: {
+                right: 'right',
+                data:legend,
+                align:'left',
+                orient:'vertical'
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    /*axisPointer: {
+                        label: {
+                            formatter: function (params) {
+                                return '降水量  ' + params.value + '：' + params.seriesData[0].data;
+                            }
+                        }
+                    },*/
+                    data: xaxis
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '金额(元)',
+                    min: 0,
+                    position: 'left',
+                    axisLine: {
+                        lineStyle: {
+                            color: colors[2]
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '￥{value}'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '带动就业（人）',
+                    min: 0,
+                    position: 'right',
+                    axisLine: {
+                        lineStyle: {
+                            color: colors[2]
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '{value}人'
+                    }
+                }
+            ],
+            series:data /*[
+                {
+                    name:'研发投入',
+                    type:'bar',
+                    data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 65.6, 42.2, 32.6, 20.0, 6.4, 3.3]
+                },
+                {
+                    name:'营业额',
+                    type:'bar',
+                    data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 55.6, 62.2, 48.7, 18.8, 6.0, 2.3]
+                },
+                {
+                    name:'税收',
+                    type:'bar',
+                    data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+                },
+                {
+                    name:'技术合同成交额',
+                    type:'bar',
+                    data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+                },
+                {
+                    name:'带动就业',
+                    type:'line',
+                    yAxisIndex: 1,
+                    data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+                }
+            ]*/
+        };
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option,true);
+    }
+
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+
+                <div class="row">
+                    <div class="panel-body">
+                        <form class="form-horizontal" id="search">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="control-label">展示方式：</label>
+                                    <div class="radio radio-success radio-inline">
+                                        <input type="radio" id="line" value="line" name="showtype">
+                                        <label for="line" class="text-success"><b>折线图</b></label>
+                                    </div>
+                                    <div class="radio radio-success radio-inline">
+                                        <input type="radio" id="bar" value="bar" name="showtype" checked>
+                                        <label for="bar" class="text-success"><b>柱形图(推荐)</b></label>
+                                    </div>
+                                    <div class="radio radio-success radio-inline">
+                                        <a data-toggle="collapse" data-parent="#version" href="#v4" id="btnasch"><!--高级搜索点击展开按钮-->
+                                            <button type="button" class="btn btn-info btn-sm">&nbsp;&nbsp;<i class="fa fa-search"></i>&nbsp;&nbsp;高级搜索&nbsp;&nbsp;</button>
+                                        </a>
+                                        <!--<button type="button" class="btn btn-warning btn-sm" id="btnchart">&nbsp;&nbsp;<i class="fa fa-bar-chart"></i>&nbsp;&nbsp;统计</button>-->
+                                        <button type="button" class="btn btn-warning ml10 btn-sm" id="btnexport">&nbsp;&nbsp;<i class="fa fa-share-square-o"></i>&nbsp;&nbsp;导出</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="ibox float-e-margins" style="margin-bottom:0;">
+                                       <div id="v4" class="panel-collapse collapse ibox-content" style="border: none;">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">选择时间：</label>
+                                                <div class="col-sm-10">
+                                                    <div class="col-sm-4">
+                                                        <input type="text"  placeholder="开始时间" class="form-control datepicker"  name="starttime">
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <input type="text" placeholder="结束时间" class="form-control datepicker" name="endtime" >
+                                                    </div>
+                                                    <div class="col-sm-4"></div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">统计指标：</label>
+                                                <div class="col-sm-10">
+                                                    <div class="col-sm-8">
+                                                        <div class="checkbox checkbox-success checkbox-inline">
+                                                            <input type="checkbox" value="rdinput" id="apl" name="idx[]" txt="研发投入">
+                                                            <label for="apl" title=""> 研发投入 </label>
+                                                        </div>
+                                                        <div class="checkbox checkbox-success checkbox-inline">
+                                                            <input type="checkbox" value="income" id="ing" name="idx[]" txt="营业额">
+                                                            <label for="ing" title=""> 营业额 </label>
+                                                        </div>
+                                                        <div class="checkbox checkbox-success checkbox-inline">
+                                                            <input type="checkbox" value="tax" id="tax" name="idx[]" txt="税收">
+                                                            <label for="tax" title=""> 税收 </label>
+                                                        </div>
+                                                        <div class="checkbox checkbox-success checkbox-inline">
+                                                            <input type="checkbox" value="tct" id="tct" name="idx[]" txt="技术合同成交额">
+                                                            <label for="tct" title=""> 技术合同成交额 </label>
+                                                        </div>
+                                                        <div class="checkbox checkbox-success checkbox-inline">
+                                                            <input type="checkbox" value="total" id="tota" name="idx[]" txt="带动就业">
+                                                            <label for="tota" title=""> 带动就业 </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4"></div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                           <div class="form-group">
+                                               <label class="col-sm-2 control-label">统计方式：</label>
+                                               <div class="col-sm-10">
+                                                   <div class="col-sm-4">
+                                                       <div class="radio radio-success radio-inline">
+                                                           <input type="radio" id="total" value="total" name="statistype">
+                                                           <label for="total" class="text-success"><b>总数</b></label>
+                                                       </div>
+                                                       <div class="radio radio-success radio-inline">
+                                                           <input type="radio" id="months" value="months" name="statistype" checked>
+                                                           <label for="months" class="text-success"><b>按月</b></label>
+                                                       </div>
+                                                       <div class="radio radio-success radio-inline">
+                                                           <input type="radio" id="day" value="day" name="statistype">
+                                                           <label for="day" class="text-success"><b>按天</b></label>
+                                                       </div>
+                                                   </div>
+                                                   <div class="col-sm-4"></div>
+                                                   <div class="col-sm-4"></div>
+                                                   <div class="clearfix"></div>
+                                               </div>
+                                           </div>
+                                           <div class="form-group">
+                                               <label class="col-sm-2 control-label">选择区域</label>
+                                               <div class="col-sm-10">
+                                                   <div class="col-sm-4" {if condition="isset($data['level']) && $data['level'] eq 1"}  style="display: none;" {/if}>
+                                                       <select data-placeholder="省" class="form-control" tabindex="2" id="province">
+                                                           <option value="">--省--</option>
+                                                           {:widget("user/HtmlWidget/initCommonSelect",['table'=>'region','con'=>array('level'=>1),'default'=>isset($data['provinceid'])?$data['provinceid']:'','field'=>'id,name'])}
+                                                       </select>
+                                                   </div>
+                                                   <div class="col-sm-4" {if condition="isset($data['level']) && $data['level'] eq 2"}  style="display: none;" {/if}>
+                                                       <select data-placeholder="市" class="form-control" tabindex="2" id="city">
+                                                           <option value="">--市--</option>
+                                                       </select>
+                                                   </div>
+                                                   <div class="col-sm-4" {if condition="isset($data['level']) && $data['level'] eq 3"}  style="display: none;" {/if}>
+                                                       <select data-placeholder="区（县）" class="form-control" tabindex="2" id="district">
+                                                           <option value="">--区（县）--</option>
+                                                       </select>
+                                                   </div>
+                                                   <input type="hidden" id="hp" value="{$data.provinceid|default=''}">
+                                                   <input type="hidden" id="admintype" value="{$admintype|default='0'}">
+                                                   <input type="hidden" id="hc" value="{$data.cityid|default=''}">
+                                                   <input type="hidden" id="hd" value="{$data.district|default=''}">
+                                                   <input type="hidden" name="districtId" id="hdistrictId" value="{$data.id|default=''}">
+                                               </div>
+                                           </div>
+
+                                        </div>
+                                </div>
+                            </div>
+                            <!--图表-->
+                            <div class="col-sm-12">
+                                <div id="enterchart"  style="height:600px;"></div>
+                            </div>
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-content" style="border:none;">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover"  id="statistab">
+                                            <thead>
+                                            <tr id="hdtr">
+                                            </tr>
+                                            </thead>
+                                            <tbody id="enterBody">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

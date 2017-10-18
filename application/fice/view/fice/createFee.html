@@ -1,0 +1,91 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script type="text/javascript">
+    $(function(){
+        $("#cfeestyle").change(function () {
+            var feestyle=$("#cfeestyle").val();
+            $("#coptId").html('<option value="">--收费标准--</option>');
+            if(feestyle!=''){
+                var url="{:url('/fice/Fice/getFeeItems')}";
+                var html='<option value="">--缴费项目--</option>';
+                $.post(url,{feestyle:feestyle},function(data) {
+                    for (var i = 0; i < data.length; i++) {
+                        var obj = data[i];
+                        html=html+'<option value="'+obj.id+'">'+obj.name+'</option>'
+                    }
+                    $("#citem").html(html);
+                });
+            }else{
+                $("#citem").html('<option value="">--缴费项目--</option>');
+            }
+        });
+        $("#citem").change(function () {
+            var item=$("#citem").val();
+            if(item!=''){
+                var url="{:url('/fice/Fice/getFeeItemsOpt')}";
+                var html='<option value="">--收费标准--</option>';
+                $.post(url,{item:item},function(data) {
+                    for (var i = 0; i < data.length; i++) {
+                        var obj = data[i];
+                        html=html+'<option value="'+obj.id+'">'+obj.name+'</option>'
+                    }
+                    $("#coptId").html(html);
+                });
+            }else{
+                $("#coptId").html('<option value="">--收费标准--</option>');
+            }
+        });
+        $("#btncreate").click(function () {
+            var thisobj = $(this);
+            thisobj.attr("disabled","true");
+            var feestyle=$("#cfeestyle").val();
+            var item=$("#citem").val();
+            var opt=$("#coptId").val();
+            var etprsId=$("#etprsId").val();
+            var url="{:url('/fice/Fice/createRcd')}";
+            $.post(url,{feestyle:feestyle,item:item,opt:opt,etprsId:etprsId},function(data) {
+                thisobj.removeAttr("disabled");
+                toastr.info("操作成功，共生成："+data+"条缴费记录");
+                initOther();
+                $('#myModal').modal('hide');
+            });
+
+        });
+
+    });
+</script>
+
+<form action="" method="post" tableId="feeItemTable" class="form-horizontal m-t" id="feeItemForm">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">收费项目：</label>
+        <div class="col-sm-8">
+            <select class="inline form-controol" id="cfeestyle">
+                <option value="">--收费方式--</option>
+                {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1029%'),'level'=>'2'),'default'=>''])}
+            </select>
+            <select class="inline" id="citem" name="itemId">
+                <option value="">--缴费项目--</option>
+            </select>
+            <select class="inline" id="coptId" name="optId">
+                <option value="">--收费标准--</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">企业：</label>
+        <div class="col-sm-8">
+            <select data-placeholder="企业..." class="form-control chosen-select col-sm-12" tabindex="2" name="etprsId" id="etprsId">
+                <option value="">请选择企业</option>
+                {:widget("user/HtmlWidget/initCommonSelect",['table'=>'enterprise','con'=>array('iqbtId'=>session('iqbtId'),'status'=>'1001016'),'default'=>isset($data['etprsId'])?$data['etprsId']:'0','field'=>'id,name'])}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-3">
+            <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+            <input type="hidden" id="itemId" name="itemId" value="{$data.itemId|default='0'}">
+            <button type="button" class="btn btn-primary btn-sm" id="btncreate">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;生成费用明细单&nbsp;&nbsp;</button>
+        </div>
+    </div>
+</form>

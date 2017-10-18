@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>慧云数字化园区管理云平台选择入驻模式</title>
+<script src="__PUBLIC__/login/js/jquery.min.js"></script>
+<link href="__CSS__/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+<link href="__CSS__/style.min.css?v=3.0.0" rel="stylesheet">
+<script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+<script src="__JS__/base.js"></script>
+<script>
+    if(window.top !== window.self){ window.top.location = window.location;}
+    $(function(){
+        var data='<div class="modal-header" style="background:#FFF;"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">用户注册成功，请选择填写申请信息。</div>' +
+                '<div class="modal-body" style="text-align:center;"><a href="{:url(\'/user/Login/etprsapl\')}" class="button btn btn-w-m btn-primary" style="display:inline;margin:10px auto;">企业申请</a> <a href="{:url(\'/user/Login/teamapl\')}" class="button btn btn-w-m btn-warning" style="display:inline;margin:10px auto;">团队申请</a> </div>' +
+                '<div class="modal-footer"></div>';
+        show_modal("提示",data,"modal-sm");
+    });
+</script>
+<body style="background:#a2c1f0;">
+</body>
+</html>

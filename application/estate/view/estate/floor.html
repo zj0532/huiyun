@@ -1,0 +1,95 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btnadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加写字楼信息","");
+        });
+
+        $("#btnedit").click(function(){
+            var url=$(this).attr("data-url");
+            baseedit("datatable",url,"编辑写字楼信息","");
+        });
+
+        $("#btndelete").click(function(){
+            var url=$(this).attr("data-url");
+            id = mulitecheck("datatable");
+            if (id != null) {
+                basedelete("datatable", url, id);
+            }
+        });
+    });
+
+    function actFmt(value, row, index) {
+        var html='<a class="edit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>' +
+                '<a class="remove ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>' +
+                '<a class="room ml10" href="javascript:void(0)" title="房间管理"><i class="fa fa-home"></i>&nbsp;房间管理</a>';
+        return html;
+    }
+
+    window.actEnt = {
+        'click .edit': function (e, value, row, index) {
+            var url="{:url('/estate/Estate/addBuilding/id/"+row.id+"')}";
+            $.post(url, function(data) {
+                show_modal("编辑写字楼信息",data,"");
+            });
+        },
+        'click .remove': function (e, value, row, index) {
+            var url="{:url('/estate/Estate/deleteBuilding')}";
+            basedelete("datatable", url, row.id);
+        },
+        'click .room': function (e, value, row, index) {
+            var url="{:url('/estate/Estate/room/buildid/"+row.id+"')}";
+            location.href=url;
+        }
+    };
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div id="toolbar" class="col-sm-12 m-b-xs">
+                                    <button type="button" class="btn btn-success btn-sm" id="btnadd" data-url="{:url('/estate/Estate/addBuilding')}">
+                                        <i class="glyphicon glyphicon-plus"></i>&nbsp;新增
+                                    </button>
+                                    <button type="button" class="btn btn-info btn-sm" id="btnedit" data-url="{:url('/estate/Estate/addBuilding')}">
+                                        <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" id="btndelete" data-url="{:url('/estate/Estate/deleteBuilding')}">
+                                        <i class="glyphicon glyphicon-trash"></i>&nbsp;删除
+                                    </button>
+                                </div>
+                                <table id="datatable" class="resettable" data-search="true" data-toggle="table"
+                                   data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true" data-url="{:url('/estate/Estate/getBuilding')}"
+                                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                <thead>
+                                <tr>
+                                    <th data-field="state" data-checkbox="true"></th>
+                                    <th data-field="name">名称</th>
+                                    <th data-field="floor">楼层数</th>
+                                    <th data-field="action"  data-formatter="actFmt" data-events="actEnt">操作
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </th>
+                                </tr>
+                                </thead>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

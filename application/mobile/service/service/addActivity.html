@@ -1,0 +1,45 @@
+{include file="user@login/addheader" /}
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function(){var a="{:url('/index/Index/smntUpload',array('dir'=>'smnt'))}";$(".datepicker").datetimepicker({autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd hh:ii"})});
+</script>
+<form id="resosform" action="{:url('/service/Service/saveActivity')}" method="post" tableId="activitytable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label" for="name">活动名称</label>
+            <div class="col-sm-4">
+                <input class="form-control require"  name="name" id="name" placeholder="活动名称" value="{$data.name|default=''}">
+            </div></span>
+
+            <span><label class="col-sm-2 control-label" for="budget">预算(元)</label>
+            <div class="col-sm-4">
+                <input class="form-control decimal"  name="budget" id="budget" placeholder="经费预算" value="{$data.budget|default=''}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label" for="startTime">开始时间</label>
+            <div class="col-sm-4">
+                <input class="form-control datepicker opt-require"  name="startTime" id="startTime" placeholder="开始时间" value="{$data.startTime|default=time()|date='Y-m-d H:i',###}">
+            </div></span>
+            <span><label class="col-sm-2 control-label" for="endTime">结束时间</label>
+            <div class="col-sm-4">
+                <input class="form-control datepicker opt-require"  name="endTime" id="endTime" placeholder="结束时间" value="{$data.endTime|default=time()|date='Y-m-d H:i',###}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">活动内容2：</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" id="desc" name="desc">{$data.desc|default=''}</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

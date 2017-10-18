@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="renderer" content="webkit">
+<title>慧云孵化器</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link href="css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+<link href="css/font-awesome.min.css?v=4.3.0" rel="stylesheet">
+<link href="css/animate.min.css" rel="stylesheet">
+<link href="css/style.min.css?v=3.0.0" rel="stylesheet">
+<!--[if lt IE 8]>
+<script>
+    alert('H+已不支持IE6-8，请使用谷歌、火狐等浏览器\n或360、QQ等国产浏览器的极速模式浏览本页面！');
+</script>
+<![endif]-->
+<link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+<!-- 全局js -->
+<script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/bootstrap.min.js?v=3.4.0"></script>
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="js/plugins/layer/layer.min.js"></script>
+<!-- 自定义js -->
+<script src="js/hplus.min.js?v=3.0.0"></script>
+<script src="js/contabs.min.js"></script>
+<!-- 第三方插件 -->
+<script src="js/plugins/pace/pace.min.js"></script>
+</head>
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="nav-close"><i class="fa fa-times-circle"></i></div>
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element" style="text-align:center;margin-right:4px;line-height:20px;"> 
+                            <span><img alt="image" class="img-circle" src="img/111.jpg" /></span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear"> 
+                                   <span class="block m-t-xs"><strong class="font-bold">慧云孵化器</strong></span>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="logo-element">HY</div>
+                    </li>
+                    <li>
+                        <a href="index.html">
+                            <i class="fa fa-th-large"></i>
+                            <span class="nav-label">首页</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-desktop"></i>
+                            <span class="nav-label">系统管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li><a class="" href="register.html">注册</a></li><!--加class="J_menuItem"无法跳转到新页面-->
+                            <li><a href="enterapply.html">入驻申请</a></li>
+                            <li><a href="addroomapply.html">新增房间</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-edit"></i>
+                            <span class="nav-label">入孵管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="enterlist.html">入孵申请名单</a></li>
+                            <li><a href="rechecklist.html">复审名单</a></li>
+                            <li><a href="entercheck.html">入孵审核</a></li>
+                            <li><a href="decideenterlist.html">决定入驻</a></li>
+                            <li><a href="">房间分配</a></li>
+                            <li><a href="hatchenter.html">孵化入驻</a></li>
+                            <li><a href="company.html">企业主页面</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-bank"></i>
+                            <span class="nav-label">物业管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="">楼宇管理</a></li>
+                            <li><a href="">物业资料管理</a></li>
+                            <li><a href="">车位管理</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-users"></i>
+                            <span class="nav-label">导师团队</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="tutorinformation.html">信息维护（导师）</a></li>
+                            <li><a href="hatchplan.html">孵化规则</a></li>
+                            <li><a href="tutorinformation1.html">信息维护（管理员）</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-briefcase"></i>
+                            <span class="nav-label">孵化服务</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="">园企互动平台+FAQ</a></li>
+                            <li><a href="question.html">问卷调查</a></li>
+                            <li><a href="exit.html">企业退出管理</a></li>
+                            <li><a href="">企业续约管理</a></li>
+                            <li><a href="customer.html">客户关系管理</a></li>
+                            <li><a href="customerinformation.html">客户信息维护</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="companyinformation.html">
+                            <i class="fa fa-files-o"></i> 
+                            <span class="nav-label">企业信息维护</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="#">
+                            <i class="fa fa-money"></i>
+                            <span class="nav-label">缴费管理系统</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li class="active"><a href="sfkind.html">缴费项目设置</a></li>
+                            <li><a href="sfgl.html">收费管理</a></li>
+                            <li><a href="">缴费</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row">
+                <nav class="navbar navbar-static-top" role="navigation" style="border-bottom:solid 2px #2f4050;background:#FFF;">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary" href="#"><i class="fa fa-bars"></i></a>
+                    </div>
+                    <h2 style="float:left;margin:16px 0 0 30px;font-weight:bold;">中联慧云孵化器管理系统</h2>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                            <span class="m-r-sm text-muted welcome-message"><a href="" title="返回首页"><i class="fa fa-home"></i></a>欢迎您,系统管理员</span>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                                <i class="fa fa-table"></i> <span class="label label-warning">16</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-messages">
+                               <li class="m-t-xs">
+                                    <div class="dropdown-messages-box">
+                                        <a href="" class="pull-left">
+                                            <img alt="image" class="img-circle" src="img/a7.jpg">
+                                        </a>
+                                        <div class="media-body">
+                                            <small class="pull-right">46小时前</small>
+                                            <strong>小四</strong> 这个在日本投降书上签字的军官，建国后一定是个不小的干部吧？
+                                            <br>
+                                            <small class="text-muted">3天前 2014.11.8</small>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <div class="text-center link-block">
+                                        <a href="">
+                                            <i class="fa fa-envelope"></i> <strong> 查看所有消息</strong>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                                <i class="fa fa-bell"></i> <span class="label label-primary">8</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-alerts">
+                                <li>
+                                    <a href="">
+                                        <div>
+                                            <i class="fa fa-envelope fa-fw"></i> 您有16条未读消息
+                                            <span class="pull-right text-muted small">4分钟前</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <div class="text-center link-block">
+                                        <a href=""><strong>查看所有 </strong></a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li style="margin-right:25px;">
+                            <a href=""><i class="fa fa-sign-out"></i> 退出</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="row">
+                 <div class="col-sm-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title" style="text-align:center;"><h5>收费项目设置</h5></div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-9">
+                                        <form class="form-horizontal m-t" id="commentForm">
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">收费项目：</label>
+                                                <div class="col-sm-8">
+                                                    <input id="cname" name="name" minlength="2" type="text" class="form-control" required aria-required="true">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">收费类型：</label>
+                                                <div class="col-sm-8">
+                                                    <label class="radio-inline"><input type="radio" checked="" value="option1" id="optionsRadios1" name="optionsRadios">周期性收费</label>
+                                                    <label class="radio-inline"><input type="radio" value="option2" id="optionsRadios2" name="optionsRadios">临时性收费</label>
+                                                    <label class="radio-inline"><input type="radio" value="option2" id="optionsRadios2" name="optionsRadios">押金收费</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">周期性收费：</label>
+                                                <div class="col-sm-8">
+                                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal5">&nbsp;&nbsp;</i><i class="fa fa-gear"></i>&nbsp;&nbsp;设置收费标准&nbsp;&nbsp;</button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-4 col-sm-offset-3">
+                                                    <button type="button" class="btn btn-primary btn-sm">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="col-sm-2"></div>
+                                 </div>
+                                 <!--弹出层-->
+                                 <div class="modal inmodal fade" id="myModal5" tabindex="-1" role="dialog"  aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <!--弹出层-->
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                    <h4 class="modal-title">设置收费标准</h4>
+                                                    <!--<small class="font-bold">这里可以显示副标题。</small>-->
+                                                </div>
+                                                <div class="modal-body">
+                                                    
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <form class="form-horizontal m-t" id="commentForm">
+                                                                <div class="form-group">
+                                                                    <label class="col-sm-3 control-label">收费项目：</label>
+                                                                    <div class="col-sm-8"><p>物业费</p></div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="col-sm-3 control-label">性别：</label>
+                                                                    <div class="col-sm-8">
+                                                                        <label class="radio-inline"><input type="radio" checked="" value="option1" id="optionsRadios1" name="optionsRadios">单价×数量</label><br>
+                                                                        <label class="radio-inline"><input type="radio" value="option2" id="optionsRadios2" name="optionsRadios">每户单独输入</label><br>
+                                                                        <label class="radio-inline"><input type="radio" checked="" value="option1" id="optionsRadios1" name="optionsRadios" style="display:inline;">指定金额</label>
+                                                                        <input id="curl" type="url" class="form-control" name="url" style="width:100px;display:inline;"><br>
+                                                                        <label class="radio-inline"><input type="radio" value="option2" id="optionsRadios2" name="optionsRadios">自定义公式</label><br>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="col-sm-3 control-label">单价：</label>
+                                                                    <div class="col-sm-8">
+                                                                        <input id="curl" type="url" class="form-control" name="url">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="col-sm-3 control-label">计量方式：</label>
+                                                                    <div class="col-sm-8">
+                                                                        <select class="form-control inline">
+                                                                            <option>按户收取</option>
+                                                                            <option>人口数</option>
+                                                                            <option>建筑面积</option>
+                                                                            <option>套内面积</option>
+                                                                            <option>公摊面积</option>
+                                                                            <option>用水量</option>
+                                                                            <option>用电量</option>
+                                                                            <option>用气量</option>
+                                                                            <option>按天</option>
+                                                                            <option>数据A</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="col-sm-3 control-label">收费周期：</label>
+                                                                    <div class="col-sm-8">
+                                                                        每隔
+                                                                        <select class="form-control inline" style="display:inline;width:60px;">
+                                                                            <option>1</option>
+                                                                            <option>2</option>
+                                                                        </select>
+                                                                        月收一次
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                     </div>
+    
+                                                </div>                                 
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-white" data-dismiss="modal" style="margin-top:5px;">&nbsp;&nbsp;<i class="fa fa-remove"></i>&nbsp;&nbsp;关闭</button>
+                                                    <button type="button" class="btn btn-primary">&nbsp;&nbsp;<i class="fa fa-save"></i>&nbsp;&nbsp;保存</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                 </div>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+    </div>
+    
+</body>
+</html>

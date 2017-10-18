@@ -1,0 +1,126 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+function actFmt(value, row, index) {
+
+    return '<a href="javascript:void(0)" class="detail ml10" title="详情"><i class="fa fa-file-text text-blue"></i>&nbsp;详情</a>&nbsp;&nbsp;' ;
+}
+
+
+function add0(m){return m<10?'0'+m:m }
+function format(time,type)
+{
+//shijianchuo是整数，否则要parseInt转换
+    var time = new Date(time*1000);
+    var y = time.getFullYear();
+    var m = time.getMonth()+1;
+    var d = time.getDate();
+    // var h = time.getHours();
+    //  var mm = time.getMinutes();
+    //  var s = time.getSeconds();
+    // return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+    if(type==1){
+        return y+'-'+add0(m);
+    }
+    return y+'-'+add0(m)+'-'+add0(d);
+}
+function timeFmt(value,row,index){
+    if(value!=null){
+        return format(parseInt(value),0);
+    }
+}
+function monthFmt(value,row,index){
+    if(value!=null){
+        return format(parseInt(value),1);
+    }
+}
+
+</script>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">月报详情</div>
+</div>
+<div class="user_com">
+
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h3 style="text-align:center;">{$data.etprsname|default=''}月报表</h3></div>
+            <div class="ibox-content">
+                <div class="form-group">
+                    <table class="table table-bordered table-hover">
+                        <tbody>
+                        <tr>
+                            <th>报表月份</th>
+                            <td>{$data.month}</td>
+                            <th>填报人</th>
+                            <td>{$data.person|default=''}</td>
+                        </tr>
+                        <tr>
+                            <th>联系电话</th>
+                            <td>{$data.mobile|default=''}</td>
+                            <th>主营业务</th>
+                            <td>{$data.mainbus|default=''}</td>
+                        </tr>
+                        <tr>
+                            <th>月总营业额（万元）</th>
+                            <td>{$data.income|default='0'}</td>
+                            <th>月总税收（万元）</th>
+                            <td>{$data.tax|default='0'}</td>
+                        </tr>
+                        <tr>
+                            <th>企业职工总数（人）</th>
+                            <td>{$data.total|default='0'}</td>
+                            <th>博士（人）</th>
+                            <td>{$data.doctor|default='0'}</td>
+                        </tr>
+                        <tr>
+                            <th>千人计划（人）</th>
+                            <td>{$data.thousand|default='0'}</td>
+                            <th>应届大学生人数（人）</th>
+                            <td>{$data.student|default='0'}</td>
+                        </tr>
+                        <tr>
+                            <th>申请专利数（含软件著作权）（件）</th>
+                            <td>{$data.invent|default=''}</td>
+                            <th>专利名称</th>
+                            <td>{$data.inventname|default=''}</td>
+                        </tr>
+                        <tr>
+                            <th>研发经费投入强度（RD投入）（万元）</th>
+                            <td>{$data.rdinput|default='0.00'}</td>
+                            <th>获天使或风险投资额（万元）</th>
+                            <td>{$data.investment|default='0.00'}</td>
+                        </tr>
+                        <tr>
+                            <th>是否高企</th>
+                            <td>{$data.highetprs?'是':'否'}</td>
+                            <th>高新企业认定时间</th>
+                            <td>{if condition="$data.highetprs eq 1"}{$data.hightime|date="Y-m-d",###}{else/}------{/if}</td>
+                        </tr>
+                        <tr>
+                            <th>获得奖励或荣誉</th>
+                            <td colspan="3">{$data.honor}</td>
+
+                        </tr>
+                    <!--    <tr>
+                            <th>企业盖章</th>
+                            <td></td>
+                            <th></th>
+                            <td></td>
+                        </tr>  -->
+                        </tbody>
+                    </table>
+                    <button class="btn btn-primary" type="button" onclick="window.history.go(-1);">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;返回</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

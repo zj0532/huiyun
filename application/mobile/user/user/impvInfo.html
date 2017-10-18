@@ -1,0 +1,118 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<title>个人资料</title>
+<meta name="Keywords" content="" />
+<meta name="Description" content="" />
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/css/public.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/font-awesome/css/font-awesome.min.css" media="all">
+<script src="__PUBLIC__/mobile/js/jquery_1_11_2_min.js"></script>
+	<script src="__PUBLIC__/mobile/js/jquery-2.1.1.min.js"></script>
+	<script src="__PUBLIC__/mobile/js/bootstrap.min.js?v=3.4.0"></script>
+	<script src="__JS__/base.js"></script>
+	<script src="__JS__/bootstrap_validate.js"></script>
+	<!-- toastr CSS -->
+	<link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+	<!-- toastr Theme JavaScript -->
+	<script src="__PLUG__/toastr/toastr.js"></script>
+<body>
+<style>
+/*性别选择弹出层*/
+.am-share { font-size:18px; border-radius: 0; bottom: 0; left: 0; position: fixed; text-align: center; -webkit-transform: translateY(100%); -ms-transform: translateY(100%); transform: translateY(100%); -webkit-transition: -webkit-transform 300ms; transition: transform 300ms ; width:90%; z-index: 1110;margin-left:5%;}
+.am-modal-active { transform: translateY(0px);  -webkit-transform: translateY(0); -ms-transform: translateY(0); transform: translateY(0) }
+.am-modal-out { z-index: 1109; -webkit-transform: translateY(100%); -ms-transform: translateY(100%); transform: translateY(100%) }
+.am-share-footer .share_btn { margin-bottom:0.6em;color: #2269D4;height:3em;line-height:3em;display: block; width: 100%; background: #e6e6e6;border-radius: 12px; cursor: pointer;  font-size: 16px; font-weight: 400;text-align: center; transition: background-color 300ms ease-out 0s, border-color 300ms ease-out 0s; vertical-align: middle; white-space: nowrap;font-family:"微软雅黑";  }
+.am-share-sns { background: #f8f8f8;height:auto; zoom:1; overflow:auto; border-radius: 12px;margin-bottom:0.6em;}
+.am-share-sns li {display: block;height:3em;line-height:3em;  width:100%; }
+.am-share-sns a { color: #2269D4; display: block; text-decoration:none; }
+.am-share-sns span { display: block; }
+.am-share-sns li i { background-position: center 50%; background-repeat: no-repeat; background-size: 36px 36px; background-color: #ccc; color: #fff; display: inline-block; font-size: 18px; height: 36px; line-height: 36px; margin-bottom: 5px; width: 36px; }
+.am-share-sns .share-icon-weibo { background-image: url(); }
+.sharebg { background-color: rgba(0, 0, 0, 0.6); bottom: 0; height: 100%; left: 0; opacity: 0; position: fixed; right: 0; top: 0; width: 100%; z-index: 1100; display:none; }
+.sharebg-active { opacity: 1; display:block; }
+</style>	
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+       <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">个人资料</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com" style="margin-top:15px;">
+    <div class="Wallet">
+        <dl style="height:80px;">
+        	<a href="javascript:void(0)">
+        		<dt style="line-height:80px;">头像</dt>
+        		<dd>
+        			<img src="__PUBLIC__{$data.savePath|default=''}" style="width:60px;height:60px;margin-top:10px;border-radius:50%;">
+        		</dd>
+        	</a>
+        </dl>
+        <dl><a href="{:url('/user/User/change',array('uid'=>$data.id))}"><dt>登录名</dt><dd>{$data.name|default=''}</dd></a></dl>
+        <dl><a href="{:url('/user/User/change',array('uid'=>$data.id))}"><dt>真实姓名</dt><dd>{$data.realname|default=''}</dd></a></dl>
+        <dl onClick="toshare()"><a href="javascript:void(0)"><dt>性别</dt><dd>{if condition="$data.sex eq 2001001"}男{else/} 女{/if}</dd></a></dl>
+        <dl><a href="{:url('/user/User/change',array('uid'=>$data.id))}"><dt>电话</dt><dd>{$data.mobile|default=''}</dd></a></dl>
+        <dl><a href="{:url('/user/User/change',array('uid'=>$data.id))}"><dt>电子邮件</dt><dd>{$data.email|default=''}</dd></a></dl>
+        <dl><a href="{:url('/user/User/resetpasswd')}"><dt>修改密码</dt><dd>&nbsp;</dd></a></dl>
+        <dl><a href="{:url('/user/User/code/',array('uid'=>$data.id))}"><dt>我的二维码</dt><dd><i class="fa fa-qrcode" aria-hidden="true" style="font-size:24px;display:inline;line-height:45px;"></i></dd></a></dl>
+    </div>
+</div>
+<div class="am-share">
+  <ul class="am-share-sns">
+    <li style="border-bottom: 1px solid #f0f0f0;" data-sex="2001001"><a href="#"><span>男</span> </a> </li>
+    <li data-sex="2001002"><a href="#"><span>女</span> </a> </li>
+  </ul>
+  <div class="am-share-footer"><button class="share_btn">取消</button></div>
+</div>
+<script>
+	function toshare(){
+		$(".am-share").addClass("am-modal-active");	
+		if($(".sharebg").length>0){
+			$(".sharebg").addClass("sharebg-active");
+		}else{
+			$("body").append('<div class="sharebg"></div>');
+			$(".sharebg").addClass("sharebg-active");
+		}
+	}
+	$(function(){
+		$(".sharebg-active,.share_btn").click(function(){
+			$(".am-share").removeClass("am-modal-active");
+			setTimeout(function(){
+				$(".sharebg-active").removeClass("sharebg-active");
+				$(".sharebg").remove();
+			},300);
+		});
+		$(".am-share-sns li").click(function(){
+			var id = "{$data.id}";
+			var sex = $(this).attr('data-sex');
+			var url = "{:url('user/User/changeSex')}";
+			$.post(url,{'id':id,'sex':sex},function(data){
+				if(data.code ==1){
+					toastr.success('修改成功');
+					$(".am-share").removeClass("am-modal-active");
+					setTimeout(function(){
+						$(".sharebg-active").removeClass("sharebg-active");
+						$(".sharebg").remove();
+						location.reload();
+					},300);
+
+				}else{
+					toastr.error('修改失败');
+					$(".am-share").removeClass("am-modal-active");
+					setTimeout(function(){
+						$(".sharebg-active").removeClass("sharebg-active");
+						$(".sharebg").remove();
+					},300);
+				}
+
+			});
+
+		})
+	})
+</script>
+</body>
+</html>

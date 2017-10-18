@@ -1,0 +1,175 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsearch").click(function () {
+            var status = $("#status").val();
+            var name = $("#name").val();
+            var floor = $("#floor").val();
+            var type = $("#type").val();
+            var param = new Object();
+            if (name != "") {
+                param.name = name;
+            }
+            if(floor !=""){
+                param.floor = floor;
+            }
+            if (status != "") {
+                param.status = status;
+            }
+            if (type != "") {
+                param.type = type;
+            }
+            $('#roomTable').bootstrapTable('refresh', {query: param});
+        });
+    })
+    function typeFmt(value, row, index) {
+        if (value == '1') {
+            return "办公室";
+        } else if (value == "0") {
+            return "工位";
+        }
+    }
+    function statusFmt(value, row, index) {
+        if (value == '1') {
+            return "已分配未入驻";
+        } else if (value == "0") {
+            return "空闲";
+        }else if(value=="2"){
+            return "正常使用";
+        }else if(value=="3"){
+            return "待续费";
+        }
+    }
+    function add0(m){return m<10?'0'+m:m }
+function format(time)
+{
+//shijianchuo是整数，否则要parseInt转换
+    var time = new Date(time*1000);
+    var y = time.getFullYear();
+    var m = time.getMonth()+1;
+    var d = time.getDate();
+    // var h = time.getHours();
+    //  var mm = time.getMinutes();
+    //  var s = time.getSeconds();
+    // return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+    return y+'-'+add0(m)+'-'+add0(d);
+}
+function timeFmt(value,row,index){
+    if(value!=null){
+        return format(parseInt(value));
+    }
+}
+
+function actFmt(value, row, index) {
+    if(row.status == 0){
+        return '<a href="javascript:void(0)" class="edit ml10" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;' +
+            '<a class="del ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;';
+    }
+    
+}
+
+window.actEvt = {
+    'click .edit': function (e, value, row, index) {
+        var buildId  = "{$buildid}";
+        var url="{:url('/estate/Estate/addRoom/id/"+ row.id +"/buildId/"+buildId+"/floor/"+row.floor+"')}";
+        baseadd(url,"编辑","");
+    },
+    'click .del': function (e, value, row, index) {
+        var url = "{:url('/estate/Estate/delRoom/id/"+ row.id+"')}";
+        basedelete("roomTable", url, row.id);
+    },
+}
+
+
+
+
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content" style="border:none;">
+                                            <div class="row">
+                                                
+                                                <div class="col-sm-12 m-b-xs">
+                                                <span style="margin-right:50px;"><strong>{$name}</strong></span>
+                                                    <span>房间号：</span>
+                                                        <input type="text" placeholder="请输入房间号"
+                                                           class="input-sm form-control" id="name">
+                                                   <span>楼层：</span>
+                                                    <select class="form-control inline" id="floor">
+                                                        <option value="">所有</option>
+                                                        {for start="1"  end="$floorNum"  name="num"}
+                                                        <option value="{$num}">{$num}层</option>
+                                                       {/for}
+                                                    </select>
+                                                    <span>房间类型：</span>
+                                                    <select class="form-control inline" id="type">
+                                                     <option value="">所有</option>
+                                                        <option value="1">办公室</option>
+                                                        <option value="0">工位</option>
+                                                    </select>
+                                                    <span>房间状态：</span>
+                                                    <select class="form-control inline" id="status">
+                                                        <option value="">所有</option>
+                                                        <option value="1">已分配未入驻</option>
+                                                        <option value="0">空闲</option>
+                                                        <option value="2">正在使用</option>
+                                                    
+                                                        
+                                                    </select>
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btnsearch">
+                                                       <i class="fa fa-search"></i>
+                                                        查询
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table id="roomTable" class="resettable" tableId="roomTable" data-toggle="table"
+                                                       data-url="{:url('/estate/Estate/getRoomForm',array('id'=>$buildid))}" data-search="false"
+                                                       data-show-refresh="false" data-pagination="true"
+                                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true"
+                                                       data-detail-view="false">
+                                                    <thead>
+                                                    <tr>
+                                                        <th data-field="floor" data-sortable="true"> 楼层</th>
+                                                        <th data-field="roomNo" data-sortable="true">房间号</th>
+                                                        <th data-field="totalarea" data-sortable="true">房间面积</th>
+                                                        <th data-field="type"  data-formatter="typeFmt">房间类型</th>
+                                                        <th data-field="etprsName">入驻企业</th>
+                                                        <th data-field="startTime" data-sortable="true" data-formatter="timeFmt">开始时间</th>
+                                                        <th data-field="endTime" data-sortable="true" data-formatter="timeFmt">结束时间</th>
+                                                        <th data-field="status" data-formatter="statusFmt">房间状态</th>
+                                                        <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                    </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

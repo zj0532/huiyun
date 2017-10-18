@@ -1,0 +1,24 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+
+<script type="text/javascript">
+
+</script>
+
+<form id="batchform" action="{:url('/index/Apply/saveEtprsTutor')}" method="post" tableId="aplTable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">选择导师：</label>
+            <div class="col-sm-8">
+                {:widget("user/HtmlWidget/initCommonCheckbox",['tutorIds','table'=>'tutor','con'=>array(),'default'=>isset($tutorIds)?$tutorIds:'','field'=>'id,name'])}
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="etprsId" name="etprsId" value="{$etprsId|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btn-save"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

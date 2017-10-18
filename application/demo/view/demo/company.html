@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="renderer" content="webkit">
+<title>慧云孵化器</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link href="css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+<link href="css/font-awesome.min.css?v=4.3.0" rel="stylesheet">
+<link href="css/animate.min.css" rel="stylesheet">
+<link href="css/style.min.css?v=3.0.0" rel="stylesheet">
+<!--[if lt IE 8]>
+<script>
+    alert('H+已不支持IE6-8，请使用谷歌、火狐等浏览器\n或360、QQ等国产浏览器的极速模式浏览本页面！');
+</script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="daan.css">
+<link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+<!-- 全局js -->
+<script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/bootstrap.min.js?v=3.4.0"></script>
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="js/plugins/layer/layer.min.js"></script>
+<!-- 自定义js -->
+<script src="js/hplus.min.js?v=3.0.0"></script>
+<script src="js/contabs.min.js"></script>
+<!-- 第三方插件 -->
+<script src="js/plugins/pace/pace.min.js"></script>
+
+<!-- 自定义js -->
+<script src="js/content.min.js?v=1.0.0"></script>
+<script>
+	$(document).ready(function(){$("#lightVersion").click(function(a){a.preventDefault();$("#ibox-content").removeClass("ibox-content");$("#vertical-timeline").removeClass("dark-timeline");$("#vertical-timeline").addClass("light-timeline")});$("#darkVersion").click(function(a){a.preventDefault();$("#ibox-content").addClass("ibox-content");$("#vertical-timeline").removeClass("light-timeline");$("#vertical-timeline").addClass("dark-timeline")});$("#leftVersion").click(function(a){a.preventDefault();$("#vertical-timeline").toggleClass("center-orientation")})});
+</script>
+
+
+<!-- Peity -->
+<script src="js/plugins/peity/jquery.peity.min.js"></script>
+<!-- iCheck -->
+<script src="js/plugins/iCheck/icheck.min.js"></script>
+<!-- Peity -->
+<script src="js/demo/peity-demo.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$('.i-checks').iCheck({
+			checkboxClass: 'icheckbox_square-green',
+			radioClass: 'iradio_square-green',
+		});
+	});
+</script>
+</head>
+<body class="fixed-sidebar full-height-layout gray-bg">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="nav-close"><i class="fa fa-times-circle"></i></div>
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element" style="text-align:center;margin-right:4px;line-height:20px;"> 
+                            <span><img alt="image" class="img-circle" src="img/111.jpg"  style="margin:auto;" /></span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear"> 
+                                   <span class="block m-t-xs"><strong class="font-bold">慧云孵化器</strong></span>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="logo-element">HY</div>
+                    </li>
+                    <li>
+                        <a href="index.html">
+                            <i class="fa fa-th-large"></i>
+                            <span class="nav-label">首页</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-desktop"></i>
+                            <span class="nav-label">系统管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li><a class="" href="register.html">注册</a></li><!--加class="J_menuItem"无法跳转到新页面-->
+                            <li><a href="enterapply.html">入驻申请</a></li>
+                            <li><a href="addroomapply.html">新增房间</a></li>
+                        </ul>
+                    </li>
+                    <li class="active">
+                        <a href="#">
+                            <i class="fa fa-edit"></i>
+                            <span class="nav-label">入孵管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="enterlist.html">入孵申请名单</a></li>
+                            <li><a href="rechecklist.html">复审名单</a></li>
+                            <li><a href="entercheck.html">入孵审核</a></li>
+                            <li><a href="decideenterlist.html">决定入驻</a></li>
+                            <li><a href="">房间分配</a></li>
+                            <li><a href="hatchenter.html">孵化入驻</a></li>
+                            <li class="active"><a href="company.html">企业主页面</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-bank"></i>
+                            <span class="nav-label">物业管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="">楼宇管理</a></li>
+                            <li><a href="">物业资料管理</a></li>
+                            <li><a href="">车位管理</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-users"></i>
+                            <span class="nav-label">导师团队</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="tutorinformation.html">信息维护（导师）</a></li>
+                            <li><a href="hatchplan.html">孵化规则</a></li>
+                            <li><a href="tutorinformation1.html">信息维护（管理员）</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-briefcase"></i>
+                            <span class="nav-label">孵化服务</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="">园企互动平台+FAQ</a></li>
+                            <li><a href="question.html">问卷调查</a></li>
+                            <li><a href="exit.html">企业退出管理</a></li>
+                            <li><a href="">企业续约管理</a></li>
+                            <li><a href="customer.html">客户关系管理</a></li>
+                            <li><a href="customerinformation.html">客户信息维护</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="companyinformation.html">
+                            <i class="fa fa-files-o"></i> 
+                            <span class="nav-label">企业信息维护</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-money"></i>
+                            <span class="nav-label">缴费管理系统</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="sfkind.html">缴费项目设置</a></li>
+                            <li><a href="sfgl.html">收费管理</a></li>
+                            <li><a href="">缴费</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row">
+                <nav class="navbar navbar-static-top" role="navigation" style="border-bottom:solid 2px #2f4050;background:#FFF;">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary" href="#"><i class="fa fa-bars"></i></a>
+                    </div>
+                    <h2 style="float:left;margin:16px 0 0 30px;font-weight:bold;">中联慧云孵化器管理系统</h2>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                            <span class="m-r-sm text-muted welcome-message"><a href="" title="返回首页"><i class="fa fa-home"></i></a>欢迎您,系统管理员</span>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                                <i class="fa fa-table"></i> <span class="label label-warning">16</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-messages">
+                               <li class="m-t-xs">
+                                    <div class="dropdown-messages-box">
+                                        <a href="" class="pull-left">
+                                            <img alt="image" class="img-circle" src="img/a7.jpg">
+                                        </a>
+                                        <div class="media-body">
+                                            <small class="pull-right">46小时前</small>
+                                            <strong>小四</strong> 这个在日本投降书上签字的军官，建国后一定是个不小的干部吧？
+                                            <br>
+                                            <small class="text-muted">3天前 2014.11.8</small>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <div class="text-center link-block">
+                                        <a href="">
+                                            <i class="fa fa-envelope"></i> <strong> 查看所有消息</strong>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                                <i class="fa fa-bell"></i> <span class="label label-primary">8</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-alerts">
+                                <li>
+                                    <a href="">
+                                        <div>
+                                            <i class="fa fa-envelope fa-fw"></i> 您有16条未读消息
+                                            <span class="pull-right text-muted small">4分钟前</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <div class="text-center link-block">
+                                        <a href=""><strong>查看所有 </strong></a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li style="margin-right:25px;">
+                            <a href=""><i class="fa fa-sign-out"></i> 退出</a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="row wrapper border-bottom white-bg page-heading">
+                    <div class="col-lg-10">
+                        <h2><strong>上海荣泰健康科技股份有限公司</strong></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="ibox float-e-margins">
+                           <div class="ibox-content">
+                                     <div class="tabs-container">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">时间安排</a></li>
+                                            <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">申请信息</a></li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div id="tab-1" class="tab-pane active">
+                                                <div class="panel-body">
+                                                   <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="wrapper wrapper-content">
+                                                                <div class="row animated fadeInRight">
+                                                                    <div class="col-sm-12">
+                                                                        <div class="ibox float-e-margins">
+                                                                            <div class="text-center float-e-margins p-md">
+                                                                                <span>显示切换：</span>
+                                                                                <a href="#" class="btn btn-xs btn-primary" id="lightVersion">浅色</a>
+                                                                                <a href="#" class="btn btn-xs btn-primary" id="darkVersion">深色</a>
+                                                                                <a href="#" class="btn btn-xs btn-primary" id="leftVersion">布局切换</a>
+                                                                            </div>
+                                                                            <div class="" id="ibox-content">
+                                                
+                                                                                <div id="vertical-timeline" class="vertical-container light-timeline">
+                                                                                    <div class="vertical-timeline-block">
+                                                                                        <div class="vertical-timeline-icon navy-bg">
+                                                                                            <i class="fa fa-briefcase"></i>
+                                                                                        </div>
+                                                
+                                                                                        <div class="vertical-timeline-content">
+                                                                                            <h2>会议</h2>
+                                                                                            <p>上一年的销售业绩发布会。总结产品营销和销售趋势及销售的现状。
+                                                                                            </p>
+                                                                                            <a href="#" class="btn btn-sm btn-primary"> 更多信息</a>
+                                                                                            <span class="vertical-date">
+                                                                                        今天 <br>
+                                                                                        <small>2月3日</small>
+                                                                                    </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                
+                                                                                    <div class="vertical-timeline-block">
+                                                                                        <div class="vertical-timeline-icon blue-bg">
+                                                                                            <i class="fa fa-file-text"></i>
+                                                                                        </div>
+                                                
+                                                                                        <div class="vertical-timeline-content">
+                                                                                            <h2>给张三发送文档</h2>
+                                                                                            <p>发送上年度《销售业绩报告》</p>
+                                                                                            <a href="#" class="btn btn-sm btn-success"> 下载文档 </a>
+                                                                                            <span class="vertical-date">
+                                                                                        今天 <br>
+                                                                                        <small>2月3日</small>
+                                                                                    </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                
+                                                                                    <div class="vertical-timeline-block">
+                                                                                        <div class="vertical-timeline-icon lazur-bg">
+                                                                                            <i class="fa fa-coffee"></i>
+                                                                                        </div>
+                                                
+                                                                                        <div class="vertical-timeline-content">
+                                                                                            <h2>喝咖啡休息</h2>
+                                                                                            <p>喝咖啡啦，啦啦啦~~</p>
+                                                                                            <a href="#" class="btn btn-sm btn-info">更多</a>
+                                                                                            <span class="vertical-date"> 昨天 <br><small>2月2日</small></span>
+                                                                                        </div>
+                                                                                    </div>
+                                                
+                                                                                    <div class="vertical-timeline-block">
+                                                                                        <div class="vertical-timeline-icon yellow-bg">
+                                                                                            <i class="fa fa-phone"></i>
+                                                                                        </div>
+                                                
+                                                                                        <div class="vertical-timeline-content">
+                                                                                            <h2>给李四打电话</h2>
+                                                                                            <p>给李四打电话分配本月工作任务</p>
+                                                                                            <span class="vertical-date">昨天 <br><small>2月2日</small></span>
+                                                                                        </div>
+                                                                                    </div>
+                                                
+                                                                                    <div class="vertical-timeline-block">
+                                                                                        <div class="vertical-timeline-icon lazur-bg">
+                                                                                            <i class="fa fa-user-md"></i>
+                                                                                        </div>
+                                                
+                                                                                        <div class="vertical-timeline-content">
+                                                                                            <h2>公司年会</h2>
+                                                                                            <p>发年终奖啦，啦啦啦~~</p>
+                                                                                            <span class="vertical-date">前天 <br><small>2月1日</small></span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="tab-2" class="tab-pane">
+                                                <div class="panel-body">
+                                                    <div class="apptable">
+                                                        <div class="companyTable">
+                                                            <div class="line">
+                                                                <div class="publine" style="height:35px;">
+                                                                    <p>申请企业名称</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                                <div class="publine pubr" style="height:35px;">
+                                                                    <p>希望入驻时间</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                            </div>
+                                                            <div class="line">
+                                                                <div class="publine" style="height:35px;">
+                                                                    <p>入驻期限</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                                <div class="publine pubr" style="height:35px;">
+                                                                    <p>需求面积</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                            </div>
+                                                            <table cellpadding="0" cellspacing="0" class="checktable">
+                                                                <tbody>
+                                                                  <tr>
+                                                                    <td class="name">需求办公方式</td>
+                                                                    <td>
+                                                                        <label>
+                                                                            <input type="checkbox" value="租赁">
+                                                                            <p>租赁</p>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="checkbox" value="集中办公">
+                                                                            <p>集中办公</p>
+                                                                        </label>
+                                                                    </td>
+                                                                </tr>
+                                                              </tbody>
+                                                            </table>
+                                                            <div class="line">
+                                                                <div class="publine" style="height:35px;">
+                                                                    <p>法人代表</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                                <div class="publine pubr" style="height:35px;">
+                                                                    <p>成立时间</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                            </div>
+                                                            <div class="line">
+                                                                <div class="publine" style="height:35px;">
+                                                                    <p>注册资本</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                                <div class="publine pubr" style="height:35px;">
+                                                                    <p>纳税人类型</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                            </div>
+                                                            <div class="line">
+                                                                <div class="publine">
+                                                                    <p>上传营业执照</p>
+                                                                    <input type="file" style="opacity:0;">
+                                                                </div>
+                                                                <div class="publine pubr">
+                                                                    <p>上一年度财务报表</p>
+                                                                    <input type="file" style="opacity:0;">
+                                                                </div>
+                                                            </div>
+                                                            <table cellpadding="0" cellspacing="0" class="checktable">
+                                                                <tbody>
+                                                                  <tr>
+                                                                    <td class="name">是否高新企业</td>
+                                                                    <td>
+                                                                        <label>
+                                                                            <input type="checkbox" value="是">
+                                                                            <p>是</p>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="checkbox" value="否">
+                                                                            <p>否</p>
+                                                                        </label>
+                                                                    </td>
+                                                                </tr>
+                                                              </tbody>
+                                                            </table>
+                                                            <div class="line">
+                                                                <div class="publine" style="height:35px;">
+                                                                    <p>高新企业认定时间</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                                <div class="publine pubr" style="height:35px;">
+                                                                    <p>高新企业认定证书</p>
+                                                                    <input type="file" style="opacity:0;">
+                                                                </div>
+                                                            </div>
+                                                            <div class="line">
+                                                                <div class="publine" style="height:35px;">
+                                                                    <p>行业类型</p>
+                                                                    <select>
+                                                                       <option style="text-align:center;">科技服务业</option>
+                                                                       <option>新能源</option>
+                                                                       <option>软件信息</option>
+                                                                       <option>生物医药</option>
+                                                                       <option>海工装备研发</option>
+                                                                       <option>高端装备制造</option>
+                                                                       <option>文化创业产业</option>
+                                                                       <option>其他</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="publine pubr" style="height:35px;">
+                                                                    <p>技术领域</p>
+                                                                    <select>
+                                                                       <option>电子信息</option>
+                                                                       <option>先进制造</option>
+                                                                       <option>航空航天</option>
+                                                                       <option>现代交通</option>
+                                                                       <option>生物医药与医疗器械</option>
+                                                                       <option>新材料</option>
+                                                                       <option>新能源节能</option>
+                                                                       <option>环境保护</option>
+                                                                       <option>地球空间与海洋</option>
+                                                                       <option>核应用技术</option>
+                                                                       <option>现代农业</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="line rule">
+                                                                <div class="publine" style="height:35px;">
+                                                                    <p>负责人</p>
+                                                                    <input type="text">
+                                                                    
+                                                                </div>
+                                                                <div class="publine" style="height:35px;">
+                                                                    <p>性别</p>
+                                                                    <input type="text">
+                                                                    
+                                                                </div>
+                                                                <div class="publine pubr" style="height:35px;">
+                                                                    <p>联系方式</p>
+                                                                    <input type="text">
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                            <div class="line rule">
+                                                                <div class="publine" style="height:35px;">
+                                                                    <p>邮箱</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                                <div class="publine" style="height:35px;">
+                                                                    <p>身份证号</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                                <div class="publine pubr" style="height:35px;">
+                                                                    <p>最高学历</p>
+                                                                    <input type="text">
+                                                                </div>
+                                                            </div>
+                                                            <div class="line">
+                                                                <div class="publine" style="height:35px;">
+                                                                    <p>上传身份证</p>
+                                                                    <input type="file" style="opacity:0;">
+                                                                </div>
+                                                                <div class="publine pubr" style="height:35px;">
+                                                                    <p>上传学历证</p>
+                                                                    <input type="file" style="opacity:0;">
+                                                                </div>
+                                                            </div>
+                                                            <table cellpadding="0" cellspacing="0" class="checktable">
+                                                                <tbody>
+                                                                  <tr>
+                                                                    <td class="name">主要负责人创业特征</td>
+                                                                    <td>
+                                                                        <label>
+                                                                            <input type="checkbox" value="大学生创业">
+                                                                            <p>大学生创业</p>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="checkbox" value="留学归国人员">
+                                                                            <p>留学归国人员</p>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="checkbox" value="高层次人才">
+                                                                            <p>高层次人才</p>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="checkbox" value="高校科研院所人员">
+                                                                            <p>高校科研院所人员</p>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="checkbox" value="大企业离职人员">
+                                                                            <p>大企业离职人员</p>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="checkbox" value="机关事业单位人员">
+                                                                            <p>机关事业单位人员</p>
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="checkbox" value="其他">
+                                                                            <p>其他</p>
+                                                                        </label>
+                                                                    </td>
+                                                                </tr>
+                                                              </tbody>
+                                                            </table>
+                                                            <table cellpadding="0" cellspacing="0" class="basic">
+                                                                <tbody><tr>
+                                                                    <td>人员数量</td>
+                                                                    <td>博士</td>
+                                                                    <td>大专以上</td>
+                                                                    <td>千人计划</td>
+                                                                    <td>吸纳应届大学生</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                </tr>
+                                                            </tbody></table>
+                                                            <p>主要产品及服务</p>
+                                                            <table cellpadding="0" cellspacing="0" class="producttable">
+                                                                <tbody><tr>
+                                                                    <td class="snumber">序号</td>
+                                                                    <td>名称</td>
+                                                                    <td>说明</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                    <td><input type="text"></td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <div class="line">
+                                                                <div class="publine">
+                                                                    <p>项目计划书</p>
+                                                                    <input type="file" style="opacity:0;">
+                                                                </div>
+                                                                <div class="publine pubr">
+                                                                    <p>知识产权情况</p>
+                                                                    <input type="file" style="opacity:0;">
+                                                                </div>
+                                                            </div>
+                                                            <div class="other">
+                                                                <p>其它未尽事项说明</p>
+                                                                <textarea style="width:100%;"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                 </div>
+                                            </div>
+                                        </div>
+                                     </div>
+                            </div>
+                </div>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+    </div>
+</body>
+</html>

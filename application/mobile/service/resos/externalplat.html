@@ -1,0 +1,48 @@
+{include file="index/header" /}
+<link href="__PLUG__/jBootPage/jBootsrapPage.css" rel="stylesheet">
+<script src="__PLUG__/jBootPage/jBootstrapPage.js"></script>
+<script type="text/javascript">
+    function createPage(a,b,c){$(".pagination").jBootstrapPage({pageSize:a,total:c,maxPageButton:b,onPageClicked:function(a,b){initResult(b+1)}})}function initResult(a){var b=$("#search").val(),c="{:url('/Resos/getPlatExternal')}",d=new Date;$.post(c,{search:b,page:a},function(c){var e,f,g,h,i,j,k,l;if($("#result_view").html(""),"0"==c.code&&($("#title").html("检索不到资源"),e=new Date,$("#spend").html((e-d)/1e3),$("#datasize").html("0")),"1"==c.code)if($("#datasize").html(),1==a&&createPage(c.pageSize,7,c.total),0==c.total)$("#title").html("检索不到资源"),e=new Date,$("#spend").html((e-d)/1e3);else{for(""==b?$("#title").html('为您找到 <span class="text-navy">'+c.total+"</span> 个资源"):$("#title").html('为您找到相关结果 <span class="text-navy">'+c.total+'</span> 个： “<span class="text-navy">'+b+"</span>”"),f="",g=c.data,h=0;h<g.length;h++)i=g[h].id,j="{:url('/Resos/externaldetail')}?id="+i,k=g[h].name.replace(b,"<span style='color:red;'>"+b+"</span>"),l=g[h].desc.replace(b,"<span style='color:red;'>"+b+"</span>"),f=f+'<div class="search-result"> <h3><a href="javascript:void(0)">'+k+'</a> <a class="pull-right btn btn-default" href="javascript:void(0)" onclick="viewContact(\''+g[h].id+'\')" title="查看联系方式"><i class="glyphicon glyphicon-eye-open">联系</i></a> </h3> <a href="#" class="search-link">截至时间：'+g[h].deadlinetime+"</a> <p>"+l+'<a target="_blank" href="'+j+'">【详情】</a></p></div>';e=new Date,$("#spend").html((e-d)/1e3),$("#result_view").html(f)}})}function viewContact(a){$("#type").val();var d="{:url('/Resos/getExterContact')}";$.post(d,{resosId:a},function(a){if("1"==a.code){var b='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body"><p>联系人：'+a.data.contact+"</p><p>联系电话："+a.data.mobile+"</p><p>电子邮件："+a.data.email+"</p></div>"+'<div class="modal-footer">'+'<button class="btn btn-glyph" data-dismiss="modal" onclick="return false;">关闭</span></button></div>';show_modal("联系方式",b,"modal-sm")}})}$(function(){initResult(1),$("#btnSearch").click(function(){$("#search").val(),initResult("1")})});
+</script>
+
+</head>
+
+<body class="gray-bg">
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <h2 id="title">
+
+                    </h2>
+                    <small>搜索用时  (<span class="text-navy" id="spend"></span>秒)</small>
+
+                    <div class="search-form">
+                        <form action="#" method="get">
+                            <div class="input-group">
+                                <input type="text" placeholder="检索资源" name="search" id="search" class="form-control input-lg">
+                                <div class="input-group-btn">
+                                    <input type="button"class="btn btn-lg btn-primary" id="btnSearch" value="搜索">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <span id="result_view">
+
+                    </span>
+
+                    <div class="text-center">
+                        <ul class="pagination"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<!--  /search_results.html -->
+</html>

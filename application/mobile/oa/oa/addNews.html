@@ -1,0 +1,40 @@
+{include file="user@login/addheader" /}
+<form id="suggestform" action="{:url('/oa/Oa/saveNews')}" method="post" tableId="newsTable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label">分类</label></span>
+             <div class="col-sm-8">
+                 <select class="form-control" name="type">
+                     <option value="0" {if condition="!empty($data.id) && $data.type eq 0 "}selected {/if} >新闻资讯</option>
+                     <option value="1" {if condition="!empty($data.id) && $data.type eq 1 "}selected {/if} >通知公告</option>
+                 </select>
+
+             </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">标题：</label>
+            <div class="col-sm-8">
+                <input  type="text" class="form-control require" name="title" value="{$data.title|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">内容简介：</label>
+            <div class="col-sm-8">
+                <textarea style="width:100%;" rows="5" class="form-control"  name="des">{$data.des|default=''}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">排序：</label>
+            <div class="col-sm-8">
+                <input  type="text" class="form-control" name="sort" value="{$data.sort|default='0'}">
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

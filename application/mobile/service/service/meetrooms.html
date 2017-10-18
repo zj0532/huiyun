@@ -1,0 +1,175 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btnadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加会议室信息","");
+        });
+
+        $("#btnedit").click(function(){
+            var url=$(this).attr("data-url");
+            baseedit("roomtable",url,"编辑会议室信息","");
+        });
+
+        $("#btndelete").click(function(){
+            var url=$(this).attr("data-url");
+            id = mulitecheck("roomtable");
+            if (id != null) {
+                basedelete("roomtable", url, id);
+            }
+        });
+
+        $("#btnsearch").click(function () {
+            var key=$("#key").val();
+            var url="{:url('/service/Service/meetrooms/key/"+key+"')}";
+            location.href=url;
+        });
+    });
+
+    function actFmt(value, row, index) {
+        var html='<a class="edit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;<a class="remove ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>';
+        return html;
+    }
+
+    window.actEnt = {
+        'click .edit': function (e, value, row, index) {
+            var url="{:url('/service/Service/addMeetroom/id/"+row.id+"')}";
+            $.post(url, function(data) {
+                show_modal("编辑会议室信息",data,"modal-lg");
+            });
+        },
+        'click .remove': function (e, value, row, index) {
+            var url="{:url('/service/Service/deleteMeetroom')}";
+            basedelete("roomtable", url, row.id);
+
+        }
+    };
+    function detailView(index, row){
+        var tb1="detail"+row.id;
+        var tb2="apl"+row.id;
+        var tb3="pass"+row.id;
+        var tb4="history"+row.id;
+
+        var apls="";
+        var pass="";
+        var history="";
+        var aplsdata = row.apl.apls;
+        if(aplsdata.length>0){
+            $('#recordtable').bootstrapTable('destroy');
+            $('#recordtable').bootstrapTable({
+                data: aplsdata
+            });
+            apls=$("#view_record").html();
+        }
+
+        var passdata = row.apl.pass;
+        if(passdata.length>0){
+            $('#recordtable').bootstrapTable('destroy');
+            $('#recordtable').bootstrapTable({
+                data: passdata
+            });
+            pass=$("#view_record").html();
+        }
+
+        var historydata = row.apl.history;
+        if(historydata.length>0){
+            $('#recordtable').bootstrapTable('destroy');
+            $('#recordtable').bootstrapTable({
+                data: historydata
+            });
+            history=$("#view_record").html();
+        }
+        //console.log(apls);
+
+        var html='<div class="tabs-container"> <ul class="nav nav-tabs"> ' +
+                '<li class="active"><a data-toggle="tab" href="#tab1"> 设备详情</a> </li> ' +
+                '<li class=""><a data-toggle="tab" href="#tab2"> 申请记录</a> </li>' +
+                '<li class=""><a data-toggle="tab" href="#'+tb3+'"> 已审批记录</a> </li>' +
+                '<li class=""><a data-toggle="tab" href="#'+tb4+'"> 历史记录</a> </li>' +
+                ' </ul>' +
+                ' <div class="tab-content "> ' +
+                '<div id="tab1" class="tab-pane active"><div class="panel-body"> '+row.deviceDesc+' </div> </div>' +
+                '<div id="tab2" class="tab-pane"> <div class="panel-body" id="act-desc"> '+apls+' </div></div>' +
+                '<div id="'+tb3+'" class="tab-pane"> <div class="panel-body" id="act-desc"> '+pass+' </div></div>' +
+                '<div id="'+tb4+'" class="tab-pane"> <div class="panel-body" id="act-desc"> '+history+' </div></div>' +
+                '</div></div>';
+        return html;
+    }
+
+
+    function aplFmt(value, row, index) {
+        var nw=Date.parse(new Date());
+        if(row.status=='0'&&parseInt(nw/1000)<parseInt(row.startTime)){
+            var html='<a class="apl ml10" onclick="statCfm(\''+row.id+'\',\'1\')" href="javascript:void(0)" title="通过"><i class="fa fa-check text-navy"></i>&nbsp;通过</a><a class="apl ml10" onclick="statCfm(\''+row.id+'\',\'2\')" href="javascript:void(0)" title="拒绝"><i class="fa fa-times text-danger"></i>&nbsp;拒绝</a>';
+        }
+        return html;
+    }
+    function statCfm(id,status){
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要进行该操作？</div><div class="modal-footer"><button class="btn btn-primary" onclick="setStat(\''+id+'\',\''+status+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",data,"modal-sm");
+    }
+    function setStat(id,status){
+        var url="{:url('/service/Service/roomAplStat')}";
+        $.post(url,{status:status,id:id}, function(data) {
+            if(data.code==1){
+                toastr.success("操作成功");
+                $('#resostable').bootstrapTable('refresh');
+                $('#myModal').modal('hide');
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+
+
+</script>
+
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:96%;margin:20px auto;padding:0;}
+    .user_com .row .col-xs-6{padding-left:10px;padding-right:10px;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">会议室管理</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="form-group" style="width:96%;margin:0 auto 15px auto;">
+            <div class="input-group">
+                <input type="text" class="form-control" id="key">
+		        <span class="input-group-btn">
+		            <button type="button" class="btn btn-primary" id="btnsearch">搜索</button>
+		        </span>
+            </div>
+        </div>
+        {volist name="rooms" id="room"}
+            <div class="col-xs-6 col-sm-3">
+                <a href="{:url('/service/Service/meetroom',array('id'=>$room['id']))}">
+                    <div class="widget navy-bg p-lg text-center">
+                        <div class="m-b-xs">
+                            <h3 class="m-xs">{$room.name}</h3>
+                            <br>
+                            <h4 class="no-margins">容纳人数：{$room.acmodate}</h4>
+                        </div>
+                    </div>
+                    {if condition="!empty($room.c)"}
+                    <span class="label label-warning" style="position:absolute;top:0;right:0;padding:4px 10px;font-size:14px;">{$room.c}</span>
+                    {/if}
+                </a>
+            </div>
+        {/volist}
+
+
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,664 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        //时间初始化
+        $(".datepicker").datetimepicker({minView:"month",autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd"});
+        $("#btnsearch").click(function () {
+            var status = $("#status").val();
+            var name = $("#name").val();
+            var feestyle = $("#feestyle").val();
+            var settletype = $('#settletype').val();
+            var time_start = $('#time_start').val();
+            var time_end = $('#time_end').val();
+            var param = new Object();
+            if (name != "") {
+                param.name = name;
+            }
+            if (feestyle != "") {
+                param.feestyle = feestyle;
+            }
+            if(time_start !=""){
+                param.time_start = time_start;
+            }
+            if(time_end !=""){
+                param.time_end = time_end;
+            }
+            if(settletype !=''){
+                param.settletype = settletype;
+            }
+            param.status=1;
+            $('#feeRcdTable').bootstrapTable('refresh', {query: param});
+        });
+        $("#btnexport").click(function(){
+            var ids=[];
+            var type = 2; //表示这是未交费记录
+            var tablename = $(this).attr('table');
+            var table = $('#'+tablename);
+            var url = $(this).attr('data-url');
+            var selections=table.bootstrapTable('getSelections');
+            $.each(selections, function(index, value, array) {
+                ids.push(value.id);
+            });
+            if(ids.length==0){
+                toastr.warning("至少选择一条记录");
+                return null;
+            }else{
+                ids=ids.join(",");
+
+                if(ids != null){
+                    var query = 'id='+ids+'&type='+type;
+                    if( url.indexOf('?')>0 ){
+                        url += '&' + query;
+                    }else{
+                        url += '?' + query;
+                    }
+                    location.href = url ;
+                }
+            }
+
+        });
+
+        $("#btnqsearch").click(function () {
+            var name = $("#qname").val();
+            var feestyle = $("#qfeestyle").val();
+            var param = new Object();
+            if (name != "") {
+                param.name = name;
+            }
+            if (feestyle != ""){
+                param.feestyle = feestyle;
+            }
+            param.status=0;
+            $('#qfeeRcdTable').bootstrapTable('refresh', {query: param});
+        });
+        $("#btnqexport").click(function(){
+            var ids=[];
+            var type = 1; //表示这是已交费记录
+            var tablename = $(this).attr('table');
+            var table = $('#'+tablename);
+            var url = $(this).attr('data-url');
+            var selections=table.bootstrapTable('getSelections');
+            $.each(selections, function(index, value, array) {
+                ids.push(value.id);
+            });
+            if(ids.length==0){
+                toastr.warning("至少选择一条记录");
+                return null;
+            }else{
+                ids=ids.join(",");
+
+                if(ids != null){
+                    var query = 'id='+ids+'&type='+type;
+                    if( url.indexOf('?')>0 ){
+                        url += '&' + query;
+                    }else{
+                        url += '?' + query;
+                    }
+                    location.href = url ;
+                }
+            }
+
+        });
+        $("#btnrsearch").click(function () {
+            var name = $("#rname").val();
+            var feestyle = $("#rfeestyle").val();
+            var param = new Object();
+            if (name != "") {
+                param.name = name;
+            }
+            if (feestyle != ""){
+                param.feestyle = feestyle;
+            }
+            param.status=0;
+            $('#rfeeRcdTable').bootstrapTable('refresh', {query: param});
+        });
+        $("#btnrexport").click(function(){
+            var ids=[];
+            var type = 3; //表示这是移除交费记录
+            var tablename = $(this).attr('table');
+            var table = $('#'+tablename);
+            var url = $(this).attr('data-url');
+            var selections=table.bootstrapTable('getSelections');
+            $.each(selections, function(index, value, array) {
+                ids.push(value.id);
+            });
+            if(ids.length==0){
+                toastr.warning("至少选择一条记录");
+                return null;
+            }else{
+                ids=ids.join(",");
+
+                if(ids != null){
+                    var query = 'id='+ids+'&type='+type;
+                    if( url.indexOf('?')>0 ){
+                        url += '&' + query;
+                    }else{
+                        url += '?' + query;
+                    }
+                    location.href = url ;
+                }
+            }
+
+        });
+        /*$("#btnadd").click(function () {
+            var url = "{:url('/fice/Fice/addFeeItem')}";
+            $.post(url, function (data) {
+                show_modal("新增缴费项目", data, "");
+            });
+        });*/
+
+        $("#btncmplt").click(function () {
+            var $table = $("#qfeeRcdTable");
+            var selections=$table.bootstrapTable('getSelections');
+            var ids =[];
+            var total=0;
+            var optflag=true;
+            var cateflag=true;
+            var tmpopt='';
+            if(selections.length==0){
+                toastr.warning("至少选择一条记录");
+                return null;
+            }else{
+                tmpopt=selections[0]["optId"];
+
+                $.each(selections, function(index, value, array) {
+                    if(value.cate!="2"){
+                        cateflag=false;
+                    }
+                    if(value.optId!=tmpopt){
+                        optflag=false;
+                    }
+                    ids.push(value.id);
+                    total=total+parseFloat(value.total);
+                });
+                if(!optflag||!cateflag){
+                    toastr.warning("请选择且只能选择统一缴费标准的待完善缴费记录");
+                }else{
+                    if(ids.length>0){
+                        ids=ids.join(",");
+                        var url="{:url('/fice/Fice/cmpltPayfee')}";
+                        $.post(url,{"optId":tmpopt,"ids":ids},function(data) {
+                            show_modal("待缴费",data,"");
+                        });
+                    }
+                }
+            }
+        });
+        $("#btnremove").click(function () {
+            var $table = $("#qfeeRcdTable");
+            var selections=$table.bootstrapTable('getSelections');
+            var ids =[];
+            var total=0;
+            if(selections.length==0){
+                toastr.warning("至少选择一条记录");
+                return null;
+            }else{
+                tmpopt=selections[0]["optId"];
+                $.each(selections, function(index, value, array) {
+                    ids.push(value.id);
+                });
+                if(ids.length>0){
+                    ids=ids.join(",");
+
+                    var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要移除选中缴费记录么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="removepayfee(\''+ids+'\',2)">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+                    show_modal("提示",data,"modal-sm");
+
+                }
+            }
+
+        });
+
+        $("#btnblance").click(function (){
+            var $table = $("#qfeeRcdTable");
+            var selections=$table.bootstrapTable('getSelections');
+            var ids =[];
+            var total=0;
+            var isgo=true;
+            var feedata=new Array();
+            $.each(selections, function(index, value, array) {
+                var obj=[];
+                obj["itemName"]=value["itemName"];
+                obj["startTime"]=value.startTime;
+                obj["endTime"]=value.endTime;
+                obj["total"]=value.total;
+                feedata.push(obj);
+                if(value.cate=="2"){
+                    isgo=false;
+                }
+                ids.push(value.id);
+                total=total+parseFloat(value.total);
+            });
+            if(!isgo){
+                toastr.warning("有待完善记录，请完善后再结算");
+            }else{
+                if(ids.length==0){
+                    toastr.warning("至少选择一条记录");
+                    return null;
+                }else{
+                    ids=ids.join(",");
+                    var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>' +
+                            '<div class="modal-body"><table style="text-align:center;margin:0 auto;"><thead><th class="col-sm-3">缴费项目</th><th class="col-sm-3">起始时间</th><th class="col-sm-3">结束时间</th><th class="col-sm-3">缴费金额</th></thead><tbody>';
+
+                    for (var i = 0; i < feedata.length; i++){
+                        var obj = feedata[i];
+                        data=data+'<tr style="line-height: 2em;"><td class="col-sm-3">'+obj["itemName"]+'</td><td class="col-sm-3">'+obj["startTime"]+'</td><td class="col-sm-3">'+obj["endTime"]+'</td><td class="col-sm-3">'+obj["total"]+'</td></tr>';
+                    }
+
+                    data=data+ '</tbody></table><div style="text-align:center;"><br/>共&nbsp;<span style="color:green;">'+total+'</span>&nbsp;元，确定要结算么？</div></div>' +
+                            '<div class="modal-footer"><span style="font-weight: bold;">结算方式：</span>'+
+                            '<input type="radio" id="type1" value="1" name="types" checked>&nbsp;&nbsp;<label for="type1" class="text-success"><b>现金</b></label>&nbsp;&nbsp;&nbsp;&nbsp;'+
+                            '<input type="radio" id="type2" value="2" name="types" >&nbsp;&nbsp;<label for="type2" class="text-success"><b>刷卡</b></label>&nbsp;&nbsp;&nbsp;&nbsp;'+
+                        ' <input type="radio" id="type3" value="3" name="types" >&nbsp;&nbsp;<label for="type3" class="text-success"><b>网络转账</b></label> '+
+                            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-primary" id="payfee"  onclick="payfee(\''+ids+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+                    show_modal("提示",data,"");
+                }
+            }
+        });
+
+        $("#btnadd").click(function () {
+            var url="{:url('/fice/Fice/addPayfee')}";
+            $.post(url,{},function(data) {
+                show_modal("新增缴费项目",data,"");
+            });
+          /*  var etprsId = $("#etprsId").val();
+            if (etprsId == "") {
+                toastr.warning("请选择企业");
+            }else{
+                var url="{:url('/fice/Fice/addPayfee')}";
+                $.post(url,{"etprsId":etprsId},function(data) {
+                    show_modal("待缴费",data,"");
+                });
+            }*/
+        });
+        $("#btnfee").click(function () {
+            var url = "{:url('/fice/Fice/createFee')}";
+            $.post(url, function (data) {
+                show_modal("生成缴费记录", data, "");
+            });
+        });
+
+        $("#btnsend").click(function(){
+
+            var ids=[];
+            var tablename = $(this).attr('table');
+            var table = $('#'+tablename);
+            var selections=table.bootstrapTable('getSelections');
+            $.each(selections, function(index, value, array) {
+                ids.push(value.id);
+            });
+            if(ids.length==0){
+                toastr.warning("至少选择一条记录");
+                return null;
+            }else{
+                ids=ids.join(",");
+                var url = "{:url('/fice/Fice/addMsg/ids/"+ids+"')}";
+                baseadd(url,"发送消息通知","");
+            }
+
+        });
+
+
+    });
+    function payfee(ids){
+        $("#payfee").attr("disabled","true");
+        var url = "{:url('/fice/Fice/setpayfee')}";
+        var types = $('input[name="types"]:checked').val();
+        $.post(url,{"ids":ids,"types":types},function(data) {
+            $('#myModal').modal('hide');
+            if(data.code==1){
+                $("#payfee").attr("disabled","false");
+                toastr.success("设置成功");
+                initOther();
+            }else{
+                $("#payfee").attr("disabled","false");
+                toastr.error(data.msg);
+            }
+        });
+    }
+    function removepayfee(ids,status){
+        var url="{:url('/fice/Fice/removePayfee')}";
+        $.post(url,{"ids":ids,"status":status},function(data) {
+            if(data.code==1){
+                toastr.success("操作成功");
+                initOther();
+                $('#myModal').modal('hide');
+            }else{
+                toastr.error("移除失败");
+            }
+        });
+    }
+    function feeFmt(value, row, index) {
+        if (value == 'num_price') {
+            return "单价×数量";
+        } else if (value == "input") {
+            return "每户单独输入";
+        } else if (value == "numration") {
+            return "指定金额";
+        }else{
+            return "";
+        }
+    }
+    function settleFmt(value, row, index) {
+        if (value == '1') {
+            return "现金";
+        } else if (value == "2") {
+            return "刷卡";
+        } else if (value == "3") {
+            return "网络转账";
+        }else{
+            return "";
+        }
+    }
+    function rowStyle( row, index){
+        var classes = ['active', 'success', 'info', 'warning', 'danger'];
+        if (row.cate == 2) {
+            return { classes: 'warning' };
+        }
+        if (row.cate == 1) {
+            return { classes: 'success' };
+        }
+        if (row.cate == 0) {
+            return { classes: 'info' };
+        }
+        return {};
+    }
+    function initOther(){
+        $('#qfeeRcdTable').bootstrapTable('refresh');
+        $('#feeRcdTable').bootstrapTable('refresh');
+        $('#rfeeRcdTable').bootstrapTable('refresh');
+    }
+    function removeFmt(value, row, index) {
+        var html='<a class="repay ml10" href="javascript:void(0)" title="撤销"><i class="fa fa-reply text-navy"></i>&nbsp;撤销</a>&nbsp;';
+        return html;
+    }
+
+    function recordFmt(value, row, index){
+
+        var url="{:url('/service/Service/etprsInfo/etprsId/" + row.etprsId + "')}";
+        return '<a href="'+url+'"  style="padding:8px;margin-left:-1em;" >&nbsp;'+value+'</a>&nbsp;&nbsp;';
+
+    }
+
+    window.removeEnt = {
+        'click .repay': function (e, value, row, index) {
+            var id=row.id;
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要撤销选中缴费记录么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="removepayfee(\''+id+'\',0)">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        }
+    };
+    function actFmt(value, row, index){
+        if(row.cate=='0'){
+            //手动添加的可以删除
+            var html='<a href="javascript:void(0)" class="ml10 delt" href="javascript:void(0)" onclick="deltFeeRcd(' + row.id + ')"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;';
+        }else{
+            var html='<a href="javascript:void(0)" class="ml10 edit" href="javascript:void(0)" onclick="editFeeRcd(' + row.id + ')"><i class="fa fa-edit text-info"></i>&nbsp;改价</a>&nbsp;&nbsp;';
+        }
+        return html;
+    }
+
+    function deltFeeRcd(id) {
+        var url = "{:url('/fice/Fice/deltFeeRcd')}";
+        basedelete("qfeeRcdTable", url, id);
+    }
+    //修改价格
+    function editFeeRcd(id){
+        var url = "{:url('/fice/Fice/editFeeRcd')}";
+        $.post(url,{"id":id},function(data) {
+            show_modal("修改费用",data,"");
+        });
+    }
+</script>
+<style type="text/css">
+    .m-b-cstxs input[type="text"]{width:280px;float:left;margin-right:20px;}
+</style>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="false">未缴费记录</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="true">已缴费记录</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">移除缴费记录</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="row">
+                                                    <div class="col-sm-12 m-b-cstxs">
+                                                        <input type="text" placeholder="企业名称/项目名称/缴费标准"
+                                                               class="form-control" id="qname">
+                                                        <!--<span>缴费类型：</span>-->
+                                                        <!--<select class="form-control inline" id="qfeestyle">
+                                                            <option value="">--请选择--</option>
+                                                            <option value="num_price">单价×数量</option>
+                                                            <option value="input">每户单独输入</option>
+                                                            <option value="numration">指定金额</option>
+                                                        </select>-->
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnqsearch">
+                                                            <i class="fa fa-search"></i>
+                                                            查询
+                                                        </button>
+                                                        <button type="button" class="btn btn-warning btn-sm" id="btncmplt">
+                                                            <i class="fa fa-list-alt"></i>
+                                                            完善
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger btn-sm" id="btnremove">
+                                                            <i class="fa fa-close"></i>
+                                                            移除
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnadd">
+                                                           <i class="fa fa-plus"></i>
+                                                            新增
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnblance">
+                                                            <i class="fa fa-plus"></i>
+                                                            结算
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnfee">
+                                                            <i class="fa fa-search"></i>
+                                                            生成费用明细单
+                                                        </button>
+                                                        <button type="button" class="btn btn-warning btn-sm " id="btnqexport" data-url="{:url('/fice/Fice/export')}" table="qfeeRcdTable">
+                                                            <i class="fa fa-share-square-o"></i>&nbsp;导出
+                                                        </button>
+                                                        <button type="button" class="btn btn-info btn-sm ml10" id="btnsend" data-url="{:url('/fice/Fice/addMsg')}" table="qfeeRcdTable">
+                                                            <i class="glyphicon glyphicon-edit"></i>&nbsp;发消息通知
+                                                        </button>&nbsp;
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="table-responsive">
+                                                    <table id="qfeeRcdTable" class="resettable" data-toggle="table"
+                                                           data-url="{:url('/fice/Fice/getRcdlist',array('status'=>0))}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true"
+                                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true"
+                                                           data-detail-view="false" data-row-style="rowStyle">
+                                                        <thead>
+                                                        <tr>
+                                                            <th data-field="state" data-checkbox="true"></th>
+                                                            <th data-field="itemName" data-sortable="true"> 项目名称</th>
+                                                            <th data-field="etprsname" data-sortable="true" data-formatter="recordFmt">缴费企业</th>
+
+                                                            <th data-field="optName" data-sortable="true">缴费标准</th>
+                                                            <th data-field="feestyle" data-sortable="true" data-formatter="feeFmt">收费方式</th>
+                                                            <th data-field="roomId" data-sortable="true">房间号</th>
+                                                            <th data-field="startTime" data-sortable="true">开始时间</th>
+                                                            <th data-field="endTime" data-sortable="true">结束时间</th>
+                                                            <th data-field="fee" data-sortable="true">固定金额</th>
+                                                            <th data-field="price" data-sortable="true">单价</th>
+                                                            <th data-field="num" data-sortable="true">数量</th>
+                                                            <th data-field="total" data-sortable="true">缴费金额</th>
+                                                            <th data-field="action" data-formatter="actFmt"
+                                                                data-events="actEvt">操作
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content" style="border:none;">
+                                            <div class="row">
+                                                <div class="col-sm-12 m-b-xs"><span>项目名称：</span>
+                                                    <input type="text" placeholder="项目名称/缴费标准/企业名称"
+                                                           class="form-control" id="name">
+                                                    <span>缴费类型：</span>
+                                                    <select class="form-control inline" id="feestyle">
+                                                        <option value="">--请选择--</option>
+                                                        <option value="num_price">单价×数量</option>
+                                                        <option value="input">每户单独输入</option>
+                                                        <option value="numration">指定金额</option>
+                                                    </select>
+
+                                                    <span>缴费方式：</span>
+                                                    <select class="form-control inline" id="settletype">
+                                                        <option value="">--请选择--</option>
+                                                        <option value="1">现金</option>
+                                                        <option value="2">刷卡</option>
+                                                        <option value="3">网络转账</option>
+                                                    </select>
+                                                    <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    <span>缴费时间：</span>
+                                                    <input type="text"  placeholder="开始时间" class="form-control datepicker"  name="time_start" id="time_start">
+                                                    <input type="text" placeholder="结束时间" class="form-control datepicker " name="time_end" id="time_end">
+
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btnsearch">
+                                                        <i class="fa fa-search"></i>
+                                                        查询
+                                                    </button>
+                                                    <button type="button" class="btn btn-warning btn-sm ml10" id="btnexport" data-url="{:url('/fice/Fice/export')}" table="feeRcdTable">
+                                                        <i class="fa fa-share-square-o"></i>&nbsp;导出
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table id="feeRcdTable" class="resettable" data-toggle="table"
+                                                       data-url="{:url('/fice/Fice/getRcdlist',array('status'=>1))}" data-search="false"
+                                                       data-show-refresh="false" data-pagination="true"
+                                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true"
+                                                       data-detail-view="false" data-row-style="rowStyle">
+                                                    <thead>
+                                                    <tr>
+                                                        <th data-field="state" data-checkbox="true"></th>
+                                                        <th data-field="itemName" data-sortable="true"> 项目名称</th>
+                                                        <th data-field="etprsname" data-sortable="true">缴费企业</th>
+                                                        <th data-field="optName" data-sortable="true">缴费标准</th>
+                                                        <th data-field="feestyle" data-sortable="true" data-formatter="feeFmt">收费方式</th>
+                                                        <th data-field="roomId" data-sortable="true">房间号</th>
+                                                        <th data-field="startTime" data-sortable="true">开始时间</th>
+                                                        <th data-field="endTime" data-sortable="true">结束时间</th>
+                                                        <th data-field="fee" data-sortable="true">固定金额</th>
+                                                        <th data-field="price" data-sortable="true">单价</th>
+                                                        <th data-field="num" data-sortable="true">数量</th>
+                                                        <th data-field="total" data-sortable="true">缴费金额</th>
+                                                        <th data-field="settletype" data-sortable="true" data-formatter="settleFmt">缴费方式</th>
+                                                        <th data-field="settletime" data-sortable="true" >缴费时间</th>
+                                                        <th data-field="settleuserId" data-sortable="true">操作人</th>
+
+                                                    </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+
+                        <div id="tab-3" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="row">
+                                                    <div class="col-sm-12 m-b-xs"><span>项目名称：</span>
+                                                        <input type="text" placeholder="项目名称/缴费标准/企业名称"
+                                                               class="form-control" id="rname">
+                                                        <span>缴费类型：</span>
+                                                        <select class="form-control inline" id="rfeestyle">
+                                                            <option value="">--请选择--</option>
+                                                            <option value="num_price">单价×数量</option>
+                                                            <option value="input">每户单独输入</option>
+                                                            <option value="numration">指定金额</option>
+                                                        </select>
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnrsearch">
+                                                            <i class="fa fa-search"></i>
+                                                            查询
+                                                        </button>
+                                                        <button type="button" class="btn btn-warning btn-sm ml10" id="btnrexport" data-url="{:url('/fice/Fice/export')}" table="rfeeRcdTable">
+                                                            <i class="fa fa-share-square-o"></i>&nbsp;导出
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="table-responsive">
+                                                    <table id="rfeeRcdTable" class="resettable" data-toggle="table"
+                                                           data-url="{:url('/fice/Fice/getRcdlist',array('status'=>2))}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true"
+                                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true"
+                                                           data-detail-view="false" data-row-style="rowStyle">
+                                                        <thead>
+                                                            <tr>
+                                                                <th data-field="state" data-checkbox="true"></th>
+                                                                <th data-field="itemName" data-sortable="true"> 项目名称</th>
+                                                                <th data-field="etprsname" data-sortable="true">缴费企业</th>
+                                                                <th data-field="optName" data-sortable="true">缴费标准</th>
+                                                                <th data-field="feestyle" data-sortable="true" data-formatter="feeFmt">收费方式</th>
+                                                                <th data-field="roomId" data-sortable="true">房间号</th>
+                                                                <th data-field="startTime" data-sortable="true">开始时间</th>
+                                                                <th data-field="endTime" data-sortable="true">结束时间</th>
+                                                                <th data-field="fee" data-sortable="true">固定金额</th>
+                                                                <th data-field="price" data-sortable="true">单价</th>
+                                                                <th data-field="num" data-sortable="true">数量</th>
+                                                                <th data-field="total" data-sortable="true">缴费金额</th>
+                                                                <th data-field="action" data-formatter="removeFmt" data-events="removeEnt">操作</th>
+                                                            </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

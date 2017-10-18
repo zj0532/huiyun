@@ -1,0 +1,253 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+
+$(function(){
+    $("#btnsearch").click(function(){
+        var name=$("#name").val();
+        var years = $('#years').val();
+        var months = $('#months').val();
+        var param=new Object();
+        if(name!=""){
+            param.name=name;
+        }
+        if(years !=""){
+            param.years = years;
+        }
+        if(months !=""){
+            param.months = months;
+        }
+        $('#stateTable').bootstrapTable('refresh',{query: param});
+    });
+    $('#btnsum').click(function(){
+        var url = "{:url('/service/Service/totalState')}";
+        location.href = url;
+    });
+
+    $("#btnexport").click(function(){
+        var ids=[];
+        var status=[];
+        var tablename = $(this).attr('table');
+        var table = $('#'+tablename);
+        var url = $(this).attr('data-url');
+        var selections=table.bootstrapTable('getSelections');
+        $.each(selections, function(index, value, array) {
+            ids.push(value.id);
+            status.push(value.status);
+        });
+        if(ids.length==0){
+            toastr.warning("至少选择一条记录");
+            return null;
+        }else{
+            ids=ids.join(",");
+            status = status.join(",");
+            if(ids != null){
+                var query = 'id='+ids+'&status='+status;
+                if( url.indexOf('?')>0 ){
+                    url += '&' + query;
+                }else{
+                    url += '?' + query;
+                }
+                location.href = url ;
+            }
+        }
+    });
+
+    $("#btnsend").click(function(){
+        var years = $('#years').val();
+        var months = $('#months').val();
+        var myDate = new Date();
+        if(years ==''){
+            years =  myDate.getFullYear(); //获取完整的年份(4位,1970-????)
+        }
+        if(months ==""){
+            months =  myDate.getMonth()+1; //获取当前月份(0-11,0代表1月)
+        }
+        var ids=[];
+        var tablename = $(this).attr('table');
+        var table = $('#'+tablename);
+        var url = $(this).attr('data-url');
+        var selections=table.bootstrapTable('getSelections');
+        $.each(selections, function(index, value, array) {
+            ids.push(value.id);
+        });
+        if(ids.length==0){
+            toastr.warning("至少选择一条记录");
+            return null;
+        }else{
+            ids=ids.join(",");
+            var url = "{:url('/service/Service/addMsg/etprsId/"+ids+"/years/"+years+"/months/"+months+"')}";
+            baseadd(url,"发送消息通知","");
+        }
+
+    });
+
+});
+
+function actFmt(value, row, index) {
+
+    return '<a href="javascript:void(0)" class="info ml10" title="企业报表"><i class="fa fa-plus text-navy"></i>&nbsp;企业报表</a>&nbsp;&nbsp;'+
+            '<a href="javascript:void(0)" class="edit ml10" title="消息通知"><i class="fa fa-edit text-navy"></i>&nbsp;发消息通知</a>&nbsp;&nbsp;';
+}
+
+
+function add0(m){return m<10?'0'+m:m }
+function format(time,type)
+{
+//shijianchuo是整数，否则要parseInt转换
+    var time = new Date(time*1000);
+    var y = time.getFullYear();
+    var m = time.getMonth()+1;
+    var d = time.getDate();
+    // var h = time.getHours();
+    //  var mm = time.getMinutes();
+    //  var s = time.getSeconds();
+    // return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+    if(type ==1){
+        return y+'-'+add0(m);
+    }
+    return y+'-'+add0(m)+'-'+add0(d);
+}
+function timeFmt(value,row,index){
+    if(value!=null){
+        return format(parseInt(value));
+    }
+}
+function monthFmt(value,row,index){
+    if(value!=null){
+        return format(parseInt(value),1);
+    }
+}
+function statusFmt(value,row,index){
+    if(value==true){
+        return '已提交报表';
+    }else{
+        return '<span style="color:red;">未提交报表</span>';
+
+    }
+}
+
+
+
+window.actEvt = {
+    'click .info': function (e, value, row, index) {
+        var url="{:url('/service/Service/etprsState/etprsId/"+row.id+"')}";
+        location.href = url;
+    },
+
+    'click .edit': function (e, value, row, index) {
+        var years = $('#years').val();
+        var months = $('#months').val();
+        var myDate = new Date();
+        if(years ==''){
+            years =  myDate.getFullYear(); //获取完整的年份(4位,1970-????)
+        }
+        if(months ==""){
+            months =  myDate.getMonth()+1; //获取当前月份(0-11,0代表1月)
+        }
+
+        var url = "{:url('/service/Service/addMsg/etprsId/"+row.id+"/years/"+years+"/months/"+months+"')}";
+        baseadd(url,"发送消息通知","");
+    }
+};
+/*
+function editopt(parentId,id){
+    var url="{:url('/index/Score/addScore/parentId/"+parentId+ "/id/"+id+"')}";
+    baseadd(url,"编辑选项","");
+}
+function delopt(id){
+    var url = "{:url('/index/Score/delScore')}";
+    basedelete("scoreTable", url, id);
+}
+*/
+
+
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="row">
+                                                    <div class="col-sm-12 m-b-xs">
+                                                        <span>企业名称：</span>
+                                                        <input type="text" placeholder="请输入企业名称" class="input-sm form-control" id="name">
+                                                        <span>报表年份：</span>
+                                                        <select class=" form-control  inline" id="years">
+                                                            <option value="">----请选择----</option>
+                                                            {for start="2014" end="2026"}
+                                                            <option value="{$i}">{$i}&nbsp;年</option>
+                                                            {/for}
+
+                                                        </select>
+                                                        <span>报表月份：</span>
+                                                        <select class=" form-control  inline" id="months">
+                                                            <option value="">----请选择----</option>
+                                                            {for start="1" end="13"}
+                                                            <option value="{$i}">&nbsp;{$i}&nbsp;月</option>
+                                                            {/for}
+                                                        </select>
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnsearch">
+                                                            <i class="fa fa-search"></i>
+                                                            查询
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnsum">
+                                                            <i class="fa fa-search"></i>
+                                                            全部月报
+                                                        </button>
+                                                        <button type="button" class="btn btn-warning btn-sm ml10" id="btnexport" data-url="{:url('/service/Service/exportMonth')}" table="stateTable">
+                                                            <i class="fa fa-share-square-o"></i>
+                                                            导出
+                                                        </button>
+                                                        <button type="button" class="btn btn-info btn-sm ml10" id="btnsend" data-url="{:url('/service/Service/addMsg')}" table="stateTable">
+                                                            <i class="glyphicon glyphicon-edit"></i>&nbsp;发消息通知
+                                                        </button>&nbsp;
+
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table id="stateTable" class="resettable" data-toggle="table" data-url="{:url('/service/Service/getMonthList')}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" >
+                                                        <thead>
+                                                        <tr>
+                                                            <th data-field="state" data-checkbox="true"></th>
+                                                            <th  data-field="name">企业名称</th>
+                                                            <th data-field="contact" >联系人</th>
+                                                            <th data-field="mobile">联系电话</th>
+                                                            <th data-field="entertime" data-formatter="timeFmt">入驻时间</th>
+                                                            <th data-field="status" data-formatter="statusFmt">当月报表状态</th>
+                                                            <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                        </tr>
+                                                        </thead>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

@@ -1,0 +1,196 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css'  rel='stylesheet'/>
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="__JS__/bootstrap_validate.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datetimepicker({
+            minView: "month",
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: true,//今日按钮
+            forceParse : true,
+            format: "yyyy-mm-dd"
+        });
+        var chars=['taxfile','security','reward'];
+        initfile(chars);
+        
+        $("#btnsave").click(function () {
+            var err=custom_validate("quitForm");
+            if(err==0){
+                return;
+            }else {
+                var data=$("#quitForm").serialize();
+                var url="{:url('/index/Apply/saveQuitApl')}";
+                var thisobj =$(this);
+                thisobj.attr("disabled","true");
+                $.post(url, data, function (data) {
+                    if (data.code == 1) {
+                        thisobj.removeAttr("disabled");
+                        toastr.success(data.msg);
+                        location.href="{:url('/index/Apply/quitapl')}";
+                    } else {
+                        thisobj.removeAttr("disabled");
+                        toastr.error(data.msg);
+                    }
+
+
+                });
+            }
+        });
+    });
+
+    function initfile(fields){
+        var ctmparams=new Array();
+        $.each(fields,function(index,value){
+            var tmp = new Object();
+            tmp.name=value;
+            tmp.value=$("#h"+value).val();
+            ctmparams[ctmparams.length] = tmp;
+        });
+        var fileUrl="{:url('/index/Index/initfiles')}";
+        var oFileInput = new FileInput();
+        var url="{:url('/user/Login/saveaplfile')}";
+        $.post(fileUrl,serializeJson(ctmparams),function(data) {
+            $.each(fields,function(index,value){
+                var tmpText=data[value];
+                if(tmpText==""||tmpText==undefined||tmpText==null){
+                    oFileInput.Init(value,url,[],"h"+value);
+                }else{
+                    oFileInput.Init(value,url,["<img src='__PUBLIC__/"+tmpText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"h"+value);
+                }
+            });
+
+        });
+    }
+    function FileInput() {
+        var oFile = new Object();
+        //初始化fileinput控件（第一次初始化）
+        oFile.Init = function(ctrlName,url,initImg,hidefield) {
+            //alert(JSON.stringify(initImg));
+            var control = $('#' + ctrlName);
+            //初始化上传控件的样式
+            control.fileinput({
+                showPreview:false,
+                language: 'zh', //设置语言
+                uploadUrl:url+"?cate="+ctrlName, //上传的地址..
+                allowedFileExtensions: ['jpg','jpeg','gif','png',"doc","docx","xls","xlsx","ppt","pptx"],//接收的文件后缀
+                showUpload: false, //是否显示上传按钮
+                showCaption: true,//是否显示标题
+                browseClass: "btn btn-primary btn-inline", //按钮样式
+                dropZoneEnabled: false,//是否显示拖拽区域
+                initialPreview: initImg,
+                maxFileSize: 3100,//单位为kb，如果为0表示不限制文件大小
+                maxFileCount:0, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount:false,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！"
+            }).on("filebatchselected", function(event, files) {
+                $(this).fileinput("upload");
+            });
+
+            //导入文件上传完成之后的事件
+            $("#"+ctrlName).on("fileuploaded", function (event, data, previewId, index) {
+                if(hidefield!=""){
+                    $("#"+hidefield).val(data["response"]["data"]);
+                }
+                toastr.success("上传成功");
+            });
+        }
+        return oFile;
+    };
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins" style="background:#FFF;">
+                <div class="ibox-title">
+                    <h5>退出申请</h5>
+                    <div class="ibox-content">
+                        <form class="form-horizontal m-t" id="quitForm" method="post" action="">
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">企业名称：</label>
+                                <div class="col-sm-7">
+                                    {$etprs.name|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">退出房间：</label>
+                                <div class="col-sm-7">
+                                    {$data.roomNos|default=''}
+                                    <input id="roomNo" type="hidden" class="form-control" name="roomNo" value="{$data.roomNos|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">联系电话：</label>
+                                <div class="col-sm-7">
+                                    <input id="mobile" type="text" class="form-control require mobile" name="mobile" value="{$data.mobile|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">联系人：</label>
+                                <div class="col-sm-7">
+                                    <input id="contact" type="text" class="form-control require" name="contact" value="{$data.contact|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">申请退出时间：</label>
+                                <div class="col-sm-7">
+                                    <input id="quitdate" type="text" class="form-control datepicker" name="quitdate" value="{$data.quitdate|default=time()|date='Y-m-d',###}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">入驻房间是否经过二次装修：</label>
+                                <div class="col-sm-7">
+                                    <div class="radio radio-success radio-inline"><input type="radio" id="renvtion0" value="1" name="renvtion" {if condition="!empty($data.renvtion)"}checked {/if} ><label for="renvtion0">是</label></div>
+                                    <div class="radio radio-success radio-inline"><input type="radio" id="renvtion1" value="0" name="renvtion" {if condition="empty($data.renvtion)"}checked {/if}><label for="renvtion0">否</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">二次装修是否拆除完毕：</label>
+                                <div class="col-sm-7">
+                                    <div class="radio radio-success radio-inline"><input type="radio" id="renvtionremove0" value="1" name="renvtionremove" {if condition="!empty($data.renvtionremove)"}checked {/if} ><label for="renvtionremove0">是</label></div>
+                                    <div class="radio radio-success radio-inline"><input type="radio" id="renvtionremove1" value="0" name="renvtionremove" {if condition="empty($data.renvtionremove)"}checked {/if}><label for="renvtionremove0">否</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">是否留有装修物品：</label>
+                                <div class="col-sm-7">
+                                    <div class="radio radio-success radio-inline"><input type="radio" id="isleave0" value="1" name="isleave" {if condition="!empty($data.isleave)"}checked {/if} ><label for="isleave0">是</label></div>
+                                    <div class="radio radio-success radio-inline"><input type="radio" id="isleave1" value="0" name="isleave" {if condition="empty($data.isleave)"}checked {/if}><label for="isleave0">否</label></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">留有装修物品说明：</label>
+                                <div class="col-sm-7">
+                                    <textarea id="leavedesc" name="leavedesc" class="form-control">{$data.leavedesc|default=''}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-6 col-sm-offset-3">
+
+                                    <input type="hidden" id="id" name="id" value="{$data.id|default=''}">
+                                    <button class="btn btn-primary" type="button" id="btnsave">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交申请</button>
+                                    <span style="color: #ff0000;" id="msg">{$msg|default=''}</span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

@@ -1,0 +1,160 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var chars=['taxfile','security','reward'];
+        initfile(chars);
+    });
+    function initfile(fields){
+        var ctmparams=new Array();
+        $.each(fields,function(index,value){
+            var tmp = new Object();
+            tmp.name=value;
+            tmp.value=$("#h"+value).val();
+            ctmparams[ctmparams.length] = tmp;
+        });
+        var fileUrl="{:url('/index/Index/initfiles')}";
+        var url="{:url('/user/Login/saveaplfile')}";
+        $.post(fileUrl,serializeJson(ctmparams),function(data) {
+            $.each(fields,function(index,value){
+                $("#"+value).html("<a href='__PUBLIC__/"+data[value]+"' target='_blank'>下载</a>");
+            });
+
+        });
+    }
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h3>{$data.etprsname|default=''}</h3>
+                <div class="apptable">
+                    <div class="ibox-content">
+                        <form class="form-horizontal m-t" id="commentForm" method="post" action="">
+                            <style>
+                                .form-group .control-label{padding-top:0;line-height:25px;}
+                                .form-group .col-sm-7{line-height:25px;}
+                            </style>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">企业名称：</label>
+                                <div class="col-sm-7">
+                                    <span>{$data.etprsname|default=''}</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">现入驻房间号：</label>
+                                <div class="col-sm-7">
+                                    {$data.roomNo|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">现入驻面积（㎡）：</label>
+                                <div class="col-sm-7">
+                                    {$data.currarea|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">申请增加面积（㎡）：</label>
+                                <div class="col-sm-7">
+                                    {$data.plusarea|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">联系电话：</label>
+                                <div class="col-sm-7">
+                                    {$data.mobile|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">入驻时间：</label>
+                                <div class="col-sm-7">
+                                    {$data.entertime|default=''|date="Y-m-d",###}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">工商注册时间：</label>
+                                <div class="col-sm-7">
+                                    {$data.rgsttime|default=''}
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">本年度营业额（万元）：</label>
+                                <div class="col-sm-7">
+                                    {$data.turnover|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">本入驻年度上缴税收（万元）：</label>
+                                <div class="col-sm-7">
+                                    {$data.tax|default=''}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">本入驻年度财务报表：</label>
+                                <div class="col-sm-7">
+                                    <span id="taxfile"></span>
+                                    <input type="hidden" class="opt-require"  name="taxfile" id="htaxfile" value="{$data.taxfile|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">吸纳就业人数：</label>
+                                <div class="col-sm-7">
+                                    {$data.emplmt|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">上传社保证明：</label>
+                                <div class="col-sm-7">
+                                    <span id="security"></span>
+                                    <input type="hidden"  name="security" id="hsecurity" value="{$data.security|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">吸纳见习人数：</label>
+                                <div class="col-sm-7">
+                                    {$data.trainee|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">入驻期间有无特殊贡献或受特别奖励（上传）：</label>
+                                <div class="col-sm-7">
+                                    <span id="reward"></span>
+                                    <input type="hidden"  name="reward" id="hreward" value="{$data.reward|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">企业发展情况：</label>
+                                <div class="col-sm-7">
+                                    {$data.dvlp|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">申请原因：</label>
+                                <div class="col-sm-7">
+                                    {$data.reason|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group" >
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <button class="btn btn-primary" type="button" onclick="window.history.go(-1);">&nbsp;&nbsp;<i class="fa fa-reply"></i>&nbsp;&nbsp;返回</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

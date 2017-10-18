@@ -1,0 +1,141 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btnadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加企业意见建议","");
+        });
+
+        $("#btnedit").click(function(){
+            var url=$(this).attr("data-url");
+            baseedit("suggesttable",url,"编辑企业意见建议","");
+        });
+
+        $("#btndelete").click(function(){
+            var url=$(this).attr("data-url");
+            id = mulitecheck("suggesttable");
+            if (id != null) {
+                basedelete("suggesttable", url, id);
+            }
+        });
+    });
+
+    function actFmt(value, row, index) {
+        var html="";
+        if(row.status==0){
+            html='<a class="edit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;<a class="remove ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>';
+        }
+        if(row.status==2 || row.status==1){
+            html='<a class=" assess ml10" href="javascript:void(0)" title="服务反馈"><i class="fa fa-edit text-navy"></i>&nbsp;服务反馈</a>';
+        }
+
+        return html;
+    }
+    function statusFmt(value, row, index) {
+        switch (value){
+            case 0:
+                return "已提交";
+                break;
+            case 1:
+                return "已回复";
+                break;
+            case 2:
+                return "即将拜访";
+                break;
+            case 3:
+                return '已反馈';
+                break;
+
+            default :
+                return "";
+        }
+    }
+
+    window.actEnt = {
+        'click .edit': function (e, value, row, index) {
+            var url="{:url('/oa/Oa/addSuggest/id/"+row.id+"')}";
+            $.post(url, function(data) {
+                show_modal("编辑企业意见建议",data,"modal-lg");
+            });
+        },
+        'click .remove': function (e, value, row, index) {
+            var url="{:url('/oa/Oa/deleteSuggest')}";
+            basedelete("suggesttable", url, row.id);
+
+        },
+        'click .assess':function(e,value,row,index){
+            var url = "{:url('/oa/Oa/assess/id/"+row.id+"')}";
+            baseadd(url,"服务反馈","");
+
+        }
+    };
+    function detailView(index, row){
+        var tb1="apl_record"+row.id;
+        var tb2="act_detl"+row.id;
+        var html='<div class="tabs-container"> <div class="tabs-left"> <ul class="nav nav-tabs"> ' +
+                '<li class="active"><a data-toggle="tab" href="#'+tb1+'"> 详情</a> </li> ' +
+                '<li class=""><a data-toggle="tab" href="#'+tb2+'"> 回复</a> </li>' +
+                ' </ul>' +
+                ' <div class="tab-content "> <div id="'+tb1+'" class="tab-pane active"><div class="panel-body"> '+row.content+' </div> </div>' +
+                ' <div id="'+tb2+'" class="tab-pane"> <div class="panel-body" id="act-desc"> '+row.desc+' </div></div>' +
+                '  </div> </div> </div>';
+
+        return html;
+    }
+
+
+</script>
+
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div id="sugbar"  class="col-sm-12 m-b-xs">
+                                    <button type="button" class="btn btn-success btn-sm" id="btnadd" data-url="{:url('/oa/Oa/addSuggest')}">
+                                        <i class="glyphicon glyphicon-plus"></i>&nbsp;新增
+                                    </button>
+                                    <button type="button" class="btn btn-info  btn-sm ml10" id="btnedit" data-url="{:url('/oa/Oa/addSuggest')}">
+                                        <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                    </button>
+                                    <button type="button" class="btn btn-danger  btn-sm ml10 " id="btndelete" data-url="{:url('/oa/Oa/deleteSuggest')}">
+                                        <i class="glyphicon glyphicon-trash"></i>&nbsp;删除
+                                    </button>
+                                </div>
+                                 <table id="suggesttable" class="resettable" data-search="true" data-toggle="table"
+                                       data-show-refresh="ture" data-toolbar="#sugbar"  data-pagination="true" data-url="{:url('/oa/Oa/getSuggest')}"
+                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView">
+                                    <thead>
+                                    <tr>
+                                        <th data-field="state" data-checkbox="true"></th>
+                                        <th data-field="name" data-sortable="true">企业名称</th>
+                                        <th data-field="title" data-sortable="true">标题</th>
+                                        <th data-field="typeText" data-sortable="true">分类</th>
+                                        <th data-field="addtime" data-sortable="true">添加时间</th>
+                                        <th data-field="status" data-sortable="true" data-formatter="statusFmt">状态</th>
+                                        <th data-field="action" data-formatter="actFmt" data-events="actEnt">操作</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}
+
+

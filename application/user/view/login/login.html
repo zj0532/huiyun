@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<title>{$name|default="中联慧云孵化器管理系统"}-登录</title>
+<link href="__PUBLIC__/login/css/login.css" rel="stylesheet" type="text/css">
+<script src="__PUBLIC__/login/js/jquery.min.js"></script>
+   <!-- toastr CSS -->
+   <link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+   <!-- toastr Theme JavaScript -->
+   <script src="__PLUG__/toastr/toastr.js"></script>
+
+<script>
+   $(function(){
+      $("#btnlogin").click(function(){
+
+         if($("#name").val()==""){
+           // $("#user").css('display','none');
+            $("#msg").html("登录名不能为空");
+            $("#error").css('display','block');
+            return;
+         }
+         if($("#password").val()==""){
+
+           // $("#user").css('display','none');
+            $("#msg").html("密码不能为空");
+            $("#error").css('display','block');
+            return;
+         }
+
+         $("#loginForm").submit();
+         //$("#error").css('display','block');
+      });
+      //回车自动提交
+      $('#password').keyup(function(event){
+         if(event.keyCode===13){
+            $("#btnlogin").click();
+         }
+      });
+      $("#btnrgt").click(function () {
+         var iqbtId=$("#iqbtId").val();
+         var etprsIqbtId=$("#etprsIqbtId").val();
+         var paramstr="";
+         if(iqbtId!=''&&iqbtId!=0){
+            if(paramstr==''){
+               paramstr="?iqbtId="+iqbtId;
+            }else{
+               paramstr+="&iqbtId="+iqbtId;
+            }
+         }
+         if(etprsIqbtId!=''&&etprsIqbtId!=0){
+            if(paramstr==''){
+               paramstr="?etprsIqbtId="+etprsIqbtId;
+            }else{
+               paramstr+="&etprsIqbtId="+etprsIqbtId;
+            }
+         }
+         //alert("{:url('/user/Login/register')}"+paramstr);
+         //console.log("{:url('/user/Login/register')}"+paramstr);
+         location.href="{:url('/user/Login/register')}"+paramstr;
+
+      });
+
+      var ret=$("#ret").val();
+      if(ret){
+         toastr.warning(ret);
+      }
+   })
+
+   function findpwd(){
+      var phone = $('#name').val();
+      var url = "{:url('/user/Login/findPwd')}";
+      if(phone !="") {
+         var query = 'phone=' + phone;
+         if (url.indexOf('?') > 0) {
+            url += '&' + query;
+         } else {
+            url += '?' + query;
+         }
+         location.href = url;
+      }else{
+         location.href = url;
+      }
+   }
+</script>
+
+</head>
+<body>
+<input type="hidden" id="ret" value="{$ret|default=''}">
+<!--欢迎-->
+<div class="top">
+   <div class="top1">
+      <img src="__PUBLIC__/login/images/logo1.png">
+      <div class="border"></div>
+      <p class="p0">{$name|default="中联慧云孵化器管理系统"}</p>
+   </div>
+</div>
+<div class="center">
+   <img src="__PUBLIC__{$img|default='/login/images/2.jpg'}"><!--背景图片-->
+   <div class="login">
+      <div class="login1">
+         <form action="" method="post" id="loginForm">
+            <div class="ts" {if condition="empty($msg)"}style="display:none"{/if} id="error">
+               <div class="sp1">-</div>
+               <span class="sp2" id="msg">{$msg|default=''}</span>
+            </div>
+            <div id="user" {if condition="!empty($msg)"}style="display:none"{/if}>
+             <p class="p1"><span>用户登录</span></p>
+            </div>
+            <div class="login2">
+               <img src="__PUBLIC__/login/images/tx.jpg">
+               <input type="text" name="name" id="name"  placeholder="用户名/手机号码" onfocus="this.placeholder=''" onblur="this.placeholder='用户名/手机号码'">
+            </div>
+            <div class="login2">
+               <img src="__PUBLIC__/login/images/mm.jpg">
+               <input  type="password" name="password" id="password"  placeholder="密码" onfocus="this.placeholder=''" onblur="this.placeholder='密码'">
+            </div>
+            <input type="hidden" id="etprsIqbtId" name="etprsIqbtId" value="{$etprsIqbtId|default=0}">
+            <input type="hidden" id="iqbtId" name="iqbtId" value="{$iqbtId|default=0}">
+         </form>
+         <p style="font-size:14px;margin-bottom:20px;">
+         	<a  href="javascript:void(0);" onclick="findpwd()" style="color:#1e69be;">忘记密码？</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://open.weixin.qq.com/connect/qrconnect?appid=wx3302d847bfe5dc28&redirect_uri=https%3A%2F%2Fb.zlhuiyun.com%2Fwechat%2FAuth%2Findex&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect" target="_blank">微信登录</a>
+
+         </p>
+         <div class="login4">
+            <input type="button" id="btnlogin" value="登录">
+         </div>
+         <p class="last">
+         	还没有账号？
+            <a href="#" id="btnrgt">企业账号申请</a>
+           </p>
+      </div>
+   </div>
+</div>
+<!--底部-->
+<div class="bottom">
+   <div class="bottom1">
+        <p class="p1"> 
+           <a href="https://www.zlhuiyun.com" target="_blank">技术支持 : 青岛中联慧云信息科技有限公司</a>
+        </p>
+        <p class="p2">服务热线：400-0073-137</p>
+   </div>
+</div>
+</body>
+</html>

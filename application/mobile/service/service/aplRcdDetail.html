@@ -1,0 +1,47 @@
+{include file="index@index/header" /}
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:92%;margin:20px auto;padding:0;}
+    .user_com .row .col-xs-6{padding-left:10px;padding-right:10px;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+       <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">记录详情</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                    <tr>
+                        <td>房间号</td>
+                        <td>{$data['name']}</td>
+                    </tr>
+                    <tr>
+                        <td>地址</td>
+                        <td>{$data['address']}</td>
+                    </tr>
+                    <tr>
+                        <td>开始时间</td>
+                        <td>{$data.startTime|default=''|date="Y-m-d",###}</td>
+                    </tr>
+                    <tr>
+                        <td>结束时间</td>
+                        <td>{$data.endTime|default=''|date="Y-m-d",###}</td>
+                    </tr>
+                    <tr>
+                        <td>申请状态</td>
+                        <td>{$data['status']=='1'?"通过":"退回"}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

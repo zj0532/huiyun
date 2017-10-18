@@ -1,0 +1,125 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        var url="{:url('/service/Service/getEtprsRoomApl')}";
+        var id="{$roomId}"
+        $.post(url,{roomId:id}, function(data) {
+            $("#id").val(data.id);
+            $("#name").val(data.name);
+            initapls(data);
+        });
+
+        $("#btnapl").click(function () {
+            var id=$("#id").val();
+            var name=$("#name").val();
+            var url="{:url('/service/Service//addMeetroomApl/roomId/"+id+"/name/"+name+"')}";
+            $.post(url, function(data) {
+                show_modal("申请会议室",data,"");
+            });
+        });
+    });
+    function initapls(row){
+        var tb3="pass"+row.id;
+        var tb4="history"+row.id;
+
+        var apls="";
+        var pass="";
+        var history="";
+        var aplsdata = row.apls;
+        if(aplsdata.length>0){
+            $('#recordtable').bootstrapTable('destroy');
+            $('#recordtable').bootstrapTable({
+                data: aplsdata
+            });
+            apls=$("#view_record").html();
+        }
+
+        var passdata = row.pass;
+        if(passdata.length>0){
+            $('#recordtable').bootstrapTable('destroy');
+            $('#recordtable').bootstrapTable({
+                data: passdata
+            });
+            pass=$("#view_record").html();
+        }
+
+        var historydata = row.history;
+        if(historydata.length>0){
+            $('#recordtable').bootstrapTable('destroy');
+            $('#recordtable').bootstrapTable({
+                data: historydata
+            });
+            history=$("#view_record").html();
+        }
+        //console.log(apls);
+
+        var html='<div class="tabs-container"> <ul class="nav nav-tabs"> ' +
+                '<li class="active"><a data-toggle="tab" href="#tab1"> 详情</a> </li> ' +
+                '<li class=""><a data-toggle="tab" href="#tab2"> 已申请</a> </li>' +
+                '<li class=""><a data-toggle="tab" href="#'+tb3+'"> 已审批</a> </li>' +
+                '<li class=""><a data-toggle="tab" href="#'+tb4+'"> 历史记录</a> </li>' +
+                ' </ul>' +
+                ' <div class="tab-content "> ' +
+                '<div id="tab1" class="tab-pane active"><div class="panel-body"> '+row.deviceDesc+' </div> </div>' +
+                '<div id="tab2" class="tab-pane"> <div class="panel-body" id="act-desc"> '+apls+' </div></div>' +
+                '<div id="'+tb3+'" class="tab-pane"> <div class="panel-body" id="act-desc"> '+pass+' </div></div>' +
+                '<div id="'+tb4+'" class="tab-pane"> <div class="panel-body" id="act-desc"> '+history+' </div></div>' +
+                '</div></div>';
+        $("#apls").html(html);
+    }
+
+
+    function aplFmt(value, row, index) {
+        var nw=Date.parse(new Date());
+        var url="{:url('/service/Service/aplDetail')}?aplId="+row.id;
+        var url2="{:url('/service/Service/aplRcdDetail')}?aplId="+row.id;
+        if(row.status=='0'&&parseInt(nw/1000)<parseInt(row.startTime)){
+            var html='<a class="apl ml10" href="'+url+'" title="详情"><i class="fa fa-file-text text-blue"></i>&nbsp;详情</a>';
+        }else{
+            var html='<a class="apl ml10" href="'+url2+'" title="详情"><i class="fa fa-file-text text-blue"></i>&nbsp;详情</a>';
+        }
+        return html;
+    }
+
+</script>
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:92%;margin:20px auto;padding:0;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<input type="hidden" id="id" value="">
+<input type="hidden" id="name">
+<div id="view_record" style="display:none;">
+    <table id="recordtable"  data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+        <thead>
+        <tr>
+            <th data-field="name">申请企业</th>
+            <th data-field="action"  data-formatter="aplFmt">操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">会议室详情</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+
+    <div class="row">
+        <div class="form-group">
+            <button type="button" class="btn btn-primary btn-sm" id="btnapl">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;申请&nbsp;&nbsp;</button>
+        </div>
+    </div>
+    <div class="row" id="apls">
+
+    </div>
+</div>
+</body>
+</html>

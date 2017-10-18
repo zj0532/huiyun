@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jquery.seat-charts.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            resetroompicker();
+            $("#btnss").click(function(){alert(3);
+                resetroompicker();
+            });
+
+        });
+
+        function resetroompicker(){
+            var $cart = $('#selected-seats'),
+                    $counter = $('#counter'),
+                    $total = $('#total'),
+                    sc = $('#seat-map').seatCharts({
+                        map: [ //座位图
+                            'eeeeeee',
+                            'eeeeeee',
+                            'eeeeeee',
+                            'eeeeeee',
+                            'eeeeeee',
+                            'eeeeeee',
+                            'eeeeeee',
+                            'eeeeeee',
+                            'eeeeeee',
+                            'eeeeeee',
+                            'eeeeeee',
+                            'eeeeeee'
+                        ],
+                        seats: { //定义座位属性
+                            f: {
+                                price   : 100,
+                                classes : 'first-class',
+                                category: '一等座'
+                            },
+                            e: {
+                                price   : 40,
+                                classes : 'economy-class',
+                                category: '二等座'
+                            }
+                        },
+                        naming : { //定义行列等信息
+                            top : true,
+                            columns: ['A', 'B', 'C', 'D', 'E','F','G'],
+                            rows: ['01','02','03','04','05','06','07','08','09','10','11','12','13'],
+                            getLabel : function (character, row, column) {
+                                return '<div>'+row+column+'<div>';
+                            }
+                        },
+                        legend : { //定义图例
+                            node : $('#legend'),
+                            items : [
+                                [ 'f', 'available',   '一等座' ],
+                                [ 'e', 'available',   '二等座'],
+                                [ 'f', 'unavailable', '已售出']
+                            ]
+                        },
+                        click: function () {
+                            if (this.status() == 'available') {
+                                $('<li>'+this.data().category+'<br/>01车'+this.settings.label+'号<br/>￥'+this.data().price+'</li>')
+                                        .attr('id', 'cart-item-'+this.settings.id)
+                                        .data('seatId', this.settings.id)
+                                        .appendTo($cart);
+                                //更新票数
+                                $counter.text(sc.find('selected').length+1);
+                                //计算总计金额
+                                $total.text(recalculateTotal(sc)+this.data().price);
+                                return 'selected';
+                            } else if (this.status() == 'selected') {
+                                $counter.text(sc.find('selected').length-1);
+                                $total.text(recalculateTotal(sc)-this.data().price);
+                                //删除已预订座位
+                                $('#cart-item-'+this.settings.id).remove();
+                                return 'available';
+                            } else if (this.status() == 'unavailable') {
+                                //已售出
+                                return 'unavailable';
+                            } else {
+                                return this.style();
+                            }
+                        },
+                        focus:function() {
+                            if (this.status() == 'available') {
+                                $("#seat-info").show().html(this.settings.label);
+                                var cd = getMousePoint(event);
+                                //alert(cd.y);
+                                $("#seat-info").css({"left":(cd.x+10)+'px',"top":(cd.y-30)+"px"});
+                                return 'focused';
+                            }else if(this.status() == 'selected'){
+                                $("#seat-info").show().html(this.settings.label);
+                                var cd = getMousePoint(event);
+                                //alert(cd.y);
+                                $("#seat-info").css({"left":(cd.x+10)+'px',"top":(cd.y-30)+"px"});
+                                return 'selected';
+                            } else  {
+                                return this.style();
+                            }
+                        },
+                        blur:function(){
+                            if(this.style()=="focused"){
+                                $("#seat-info").hide();
+                                return 'available';
+                            }else if(this.style()=="selected"){
+                                $("#seat-info").hide();
+                                return 'selected';
+                            }else{
+                                return this.style();
+                            }
+                        }
+                    });
+
+            //已售出不可选座
+            sc.get(['02_A']).status('seted');
+            sc.get(['01_A','02_A']).status('unavailable');
+        }
+
+        //计算总金额
+        function recalculateTotal(sc) {
+            var total = 0;
+            sc.find('selected').each(function () {
+                total += this.data().price;
+            });
+
+            return total;
+        }
+
+        //获取鼠标坐标位置
+        function getMousePoint(ev) {
+            // 定义鼠标在视窗中的位置
+            var point = {
+                x:0,
+                y:0
+            };
+
+            // 如果浏览器支持 pageYOffset, 通过 pageXOffset 和 pageYOffset 获取页面和视窗之间的距离
+            if(typeof window.pageYOffset != 'undefined') {
+                point.x = window.pageXOffset;
+                point.y = window.pageYOffset;
+            }
+            // 如果浏览器支持 compatMode, 并且指定了 DOCTYPE, 通过 documentElement 获取滚动距离作为页面和视窗间的距离
+            // IE 中, 当页面指定 DOCTYPE, compatMode 的值是 CSS1Compat, 否则 compatMode 的值是 BackCompat
+            else if(typeof document.compatMode != 'undefined' && document.compatMode != 'BackCompat') {
+                point.x = document.documentElement.scrollLeft;
+                point.y = document.documentElement.scrollTop;
+            }
+            // 如果浏览器支持 document.body, 可以通过 document.body 来获取滚动高度
+            else if(typeof document.body != 'undefined') {
+                point.x = document.body.scrollLeft;
+                point.y = document.body.scrollTop;
+            }
+
+            // 加上鼠标在视窗中的位置
+            point.x += ev.clientX;
+            point.y += ev.clientY;
+
+            // 返回鼠标在视窗中的位置
+            return point;
+        }
+    </script>
+</head>
+
+<body>
+<div id="header">
+</div>
+
+<div id="main">
+    <div class="demo">
+        <div class="container">
+            <div id="seat-map">
+                <div class="front">01车</div>
+                <div id="seat-info"></div>
+            </div>
+            <div class="booking-details">
+                <h3> 选座信息：</h3>
+                <ul id="selected-seats"></ul>
+                <p>票数: <span id="counter"></span></p>
+
+                <p>总计: ￥<span id="total">0</span></p>
+
+                <button class="checkout-button">确定购买</button>
+
+                <div id="legend"></div>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+</div>
+
+
+<div id="footer">
+</div>
+</body>
+</html>

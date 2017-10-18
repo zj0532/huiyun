@@ -1,0 +1,31 @@
+{include file="index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+</head>
+
+<body class="animated fadeInRight">
+
+<div class="wrapper wrapper-content">
+    <div class="col-sm-12">
+        <!-- Example Events -->
+        <div>
+            <table id="lottable" class="resettable" data-toggle="table" data-show-refresh="true" data-toolbar="#toolbar" data-url="{:url('/Estate/getParklotRcd')}" data-striped="true">
+                <thead>
+                <tr>
+                    <th data-field="areaNoText" data-sortable="true">区域编号</th>
+                    <th data-field="parkNo" data-sortable="true">车位编号</th>
+                    <th data-field="userName" data-sortable="true">当前用户</th>
+                    <th data-field="startTime" data-sortable="true">开始时间</th>
+                    <th data-field="endTime" data-sortable="true">结束时间</th>
+                    <th data-field="plateNo" data-sortable="true">车牌号</th>
+                    <th data-field="mobile" data-sortable="true">联系电话</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+        <!-- End Example Events -->
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnsearch").click(function () {
+            var param = new Object();
+            var key=$("#key").val();
+            if (key != "") {
+                param.key = key;
+            }
+            $('#activitytable').bootstrapTable('refresh', {query: param});
+        });
+    });
+    function statusFmt(a,b){var d="正常";return"1"==b.close?"已结束":d}function actionFormatter(a,b){return html="",html="0"==b.close?'<a class="cloe ml10" href="javascript:void(0)" title="关闭"><i class="fa fa-pinterest"></i>&nbsp;关闭</a>&nbsp;<a class="edit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;<a class="remove ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>':''}function closeActivity(a){var b="{:url('/service/Service/closeActivity')}";$.post(b,{id:a},function(a){1==a.code?(toastr.success("活动已关闭，请及时录入活动记录~"),$("#activitytable").bootstrapTable("refresh"),$("#myModal").modal("hide")):0==a.code?toastr.warning(a.msg):toastr.error(a.msg)})}function detailView(a,b){var c,d,e,f,g;return c=b.apls?$.parseJSON(b.apls):new Array,$("#apltable").bootstrapTable("destroy"),$("#apltable").bootstrapTable({data:c}),d="apl_record"+b.id,e="act_detl"+b.id,f=$("#view_detail").html(),g='<div class="tabs-container"> <div class="tabs-left"> <ul class="nav nav-tabs"> <li class="active"><a data-toggle="tab" href="#'+d+'"> 申请记录</a> </li> '+'<li class=""><a data-toggle="tab" href="#'+e+'"> 活动详情</a> </li>'+" </ul>"+' <div class="tab-content "> <div id="'+d+'" class="tab-pane active"><div class="panel-body"> '+f+" </div> </div>"+' <div id="'+e+'" class="tab-pane"> <div class="panel-body" id="act-desc"> '+b.desc+" </div></div>"+"  </div> </div> </div>"}function statusFmt(a,b){return"1"==b.status?"已申请":"2"==b.status?"已通过":"3"==b.status?"已拒绝":"未申请"}function aplFormatter(a,b){return"1"==b.status?'<a class="aplstat ml10" href="javascript:void(0)" onclick="aplstatus('+b.id+',2)" title="通过">通过</a><a class="aplstat ml10" href="javascript:void(0)" onclick="aplstatus('+b.id+',3)" title="拒绝">拒绝</a>':void 0}function aplstatus(a,b){var c="{:url('/service/Service/aplStatus')}";$.post(c,{id:a,status:b},function(a){1==a.code?(toastr.success(a.msg),$("#activitytable").bootstrapTable("refresh")):0==a.code?toastr.warning(a.msg):toastr.error(a.msg)})}$(function(){$("#btnadd").click(function(){var a=$(this).attr("data-url");baseadd(a,"添加活动","modal-lg")}),$("#btnedit").click(function(){var c,d,e,a=$("#activitytable"),b=a.bootstrapTable("getSelections");for(c=0;c<b.length;c++)if(d=b[c]["close"],"1"==d)return toastr.warning("【"+b[c]["name"]+"】当前状态不可修改"),!1;e=$(this).attr("data-url"),baseedit("activitytable",e,"编辑活动信息","modal-lg")}),$("#btndelete").click(function(){var c,d,e,a=$("#activitytable"),b=a.bootstrapTable("getSelections");for(c=0;c<b.length;c++)if(d=b[c]["close"],"1"==d)return toastr.warning("【"+b[c]["name"]+"】当前状态不可删除"),!1;e=$(this).attr("data-url"),id=mulitecheck("activitytable"),null!=id&&basedelete("activitytable",e,id)})}),window.actionEvents={"click .cloe":function(a,b,c){var f,e=c.id;"1"==c.close?toastr.warning("当前状态不可删除"):(f='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要关闭活动么？关闭活动后，未审核申请将设置为拒绝。</div><div class="modal-footer"><button class="btn btn-primary" onclick="closeActivity(\''+e+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>',show_modal("提示",f,"modal-sm"))},"click .edit":function(a,b,c){if("1"==c.close)toastr.warning(" 当前状态不可修改");else{var e="{:url('/service/Service/addActivity/id/"+c.id+"')}";$.post(e,function(a){show_modal("编辑活动信息信息",a,"modal-lg")})}},"click .record":function(a,b,c){if("1"!=c.close)toastr.warning(" 活动结束后才能维护活动记录");else{var e="{:url('/service/Service/recordActivity/id/"+c.id+"')}";$.post(e,function(a){show_modal("活动记录",a,"modal-lg")})}},"click .remove":function(a,b,c){if("1"==c.close)toastr.warning("当前状态不可删除");else{var e="{:url('/service/Service/deleteActivity')}";basedelete("activitytable",e,c.id)}}};
+</script>
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:92%;margin:20px auto;padding:0;}
+    .user_com .row .col-xs-6{padding-left:10px;padding-right:10px;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">资源详情</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                <tr>
+                    <td>活动名称</td>
+                    <td>{$data.type=='0'?'需求':'资源'}</td>
+                </tr>
+                <tr>
+                    <td>开始时间</td>
+                    <td>{$data.summary}</td>
+                </tr>
+                <tr>
+                    <td>结束时间</td>
+                    <td>{$data.startTime|default=''|date="Y-m-d",###}</td>
+                </tr>
+                <tr>
+                    <td>介绍</td>
+                    <td>{$data.endTime|default=''|date="Y-m-d",###}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="word">
+            <p><strong>说明</strong></p>
+            <p>{$data.desc}</p>
+        </div>
+        <br>
+        {if condition="$data.status!='2'&&$data.status!='3'"}
+        <div class="form-group" style="text-align:center;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="resosStatus({$data.id},2)">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;通过&nbsp;&nbsp;</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="resosStatus({$data.id},3)">&nbsp;&nbsp;<i class="fa fa-times"></i>&nbsp;&nbsp;拒绝&nbsp;&nbsp;</button>
+        </div>
+        {/if}
+    </div>
+</div>
+</body>
+</html>

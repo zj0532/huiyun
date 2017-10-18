@@ -1,0 +1,54 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+<!--右侧部分开始-->
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+<script>
+    function showRoomOpt(id){
+        var url="{:url('/index/Apply/renewRoomOpt/id/"+id+"')}";
+        baseadd(url,"修改房间缴费标准","modal-lg");
+    }
+
+</script>
+<div class="row" style="width:850px;margin:30px auto 0 auto;">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="table-responsive">
+                <style>
+                    .label1{padding:3px 6px;}
+                </style>
+                <table class="table table-bordered table-hover" style="text-align:center;margin-top:10px;">
+                    <thead>
+                    <tr>
+                        <th style="text-align: center;"><span>房间号</span></th>
+                        <th style="text-align: center;"><span  >面积</span></th>
+                        <th style="text-align: center;"><span >缴费标准</span></th>
+                        <th style="text-align: center;"><span ></span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {notempty name='data'}
+                    {volist name='data' id="vo"}
+                        <tr>
+                            <td><span> {$vo.roomNo}</span></td>
+                            <td><span>{$vo.totalarea}</span></td>
+                            <td><span>{$vo.optNames}</span></td>
+                            <td><button onclick='showRoomOpt("{$vo.id}")'>修改缴费标准</button></td>
+                        </tr>
+                    {/volist}
+                    {else/}
+                    <tr>
+                        <td colspan="4"><span>暂时没有房间要修改标准</span></td>
+                    </tr>
+                    {/notempty}
+                    </tbody>
+                </table>
+                <div><button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">确定</span>
+                </button></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+

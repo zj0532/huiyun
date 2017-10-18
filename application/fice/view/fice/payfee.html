@@ -1,0 +1,138 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        initRcd();
+        $("#etprsId").change(function () {
+            initRcd();
+        });
+
+
+    });
+    function initOther(){
+        initRcd();
+    }
+
+    function payfee(ids){
+        var url = "{:url('/fice/Fice/setpayfee')}";
+        $.post(url,{"ids":ids},function(data) {
+            $('#myModal').modal('hide');
+            if(data.code==1){
+                toastr.success("设置成功");
+                initRcd();
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+    function initRcd() {
+        var param = new Object();
+        var etprsId = $("#etprsId").val();
+        if (etprsId != "") {
+            param.etprsId = etprsId;
+            var url = "{:url('/fice/Fice/getEtprsRcdlist')}";
+            $('#feeTable').bootstrapTable('refresh', {'url': url, query: param});
+        }
+    }
+    function feeFmt(value, row, index) {
+        if (value == 'num_price') {
+            return "单价×数量";
+        } else if (value == "input") {
+            return "每户单独输入";
+        } else if (value == "numration") {
+            return "指定金额";
+        }else{
+            return "";
+        }
+    }
+
+
+
+    function rowStyle( row, index){
+        var classes = ['active', 'success', 'info', 'warning', 'danger'];
+        if (row.cate == 2) {
+            return { classes: 'warning' };
+        }
+        if (row.cate == 1) {
+            return { classes: 'success' };
+        }
+        if (row.cate == 0) {
+            return { classes: 'info' };
+        }
+        return {};
+    }
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content" style="border:none;">
+                                            <div class="row">
+                                                <div class="col-sm-12 m-b-xs">
+                                                    <span>选择企业：</span>
+                                                    <select class="form-control inline" id="etprsId"
+                                                            name="etprsId">
+                                                        <option value="">--请选择--</option>
+                                                        {:widget("user/HtmlWidget/initCommonSelect",['table'=>'enterprise','con'=>array('iqbtId'=>session('iqbtId'),'status'=>'1001016'),'default'=>'','field'=>'id,name'])}
+                                                    </select>
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btnadd">
+                                                        &nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增&nbsp;&nbsp;
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btnblance">
+                                                        &nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;结算&nbsp;&nbsp;
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btnfee">
+                                                        &nbsp;&nbsp;<i class="fa fa-search"></i>&nbsp;&nbsp;生成缴费记录&nbsp;&nbsp;
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table id="feeTable" class="resettable" data-toggle="table"
+                                                       data-search="false" data-show-refresh="false" data-pagination="true"
+                                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-row-style="rowStyle">
+                                                    <thead>
+                                                    <tr>
+                                                        <th data-field="state" data-checkbox="true"></th>
+                                                        <th data-field="itemName" data-sortable="true"> 项目名称</th>
+                                                        <th data-field="optName" data-sortable="true">缴费标准</th>
+                                                        <th data-field="feestyle" data-sortable="true" data-formatter="feeFmt">收费方式</th>
+                                                        <th data-field="numration" data-sortable="true">计量方式</th>
+                                                        <th data-field="num" data-sortable="true">数量</th>
+                                                        <th data-field="price" data-sortable="true">单价</th>
+                                                        <th data-field="startTime" data-sortable="true">开始时间</th>
+                                                        <th data-field="endTime" data-sortable="true">结束时间</th>
+                                                        <th data-field="fee" data-sortable="true">指定金额</th>
+                                                        <th data-field="total" data-sortable="true">缴费金额</th>
+                                                        <!--<th data-field="action" data-formatter="actFmt"
+                                                            data-events="actEvt">操作
+                                                        </th>-->
+                                                    </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

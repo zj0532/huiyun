@@ -1,0 +1,46 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datetimepicker({
+            minView: "month",
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: true,//今日按钮
+            forceParse : true,
+            format: "yyyy-mm-dd"
+        });
+    });
+</script>
+<form action="{:url('/tutor/Tutor/saveEvt')}" method="post" tableId="tutorTable" class="form-horizontal m-t" id="tutorForm">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">时间点：</label>
+        <div class="col-sm-8">
+            <input id="eventTime" type="date" class="form-control datepicker  opt-require" name="eventTime" value="{$data.eventTime|default=date('Y-m-d',time())}">
+        </div>
+    </div>
+    <div class="form-group" id="feefield">
+        <label class="col-sm-3 control-label">对应导师：</label>
+        <div class="col-sm-8">
+            {:widget("user/HtmlWidget/initCommonCheckbox",['tutors','table'=>'tutor','con'=>array('id'=>array('in',$tutorIds)),'default'=>isset($data['tutors'])?$data['tutors']:'','field'=>'id,name'])}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">事件描述：</label>
+        <div class="col-sm-8">
+            <textarea id="desc" name="desc" class="form-control require">{$data.desc|default=''}</textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-3">
+            <span style="color: red" id="msg"></span>
+            <input type="hidden" id="etprsId" name="etprsId" value="{$etprsId|default=0}">
+            <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+            <input type="hidden" id="planId" name="planId" value="{$planId|default='0'}">
+            <button type="button" class="btn btn-primary btn-sm btn-save">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+        </div>
+    </div>
+
+</form>

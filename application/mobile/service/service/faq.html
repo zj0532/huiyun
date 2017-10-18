@@ -1,0 +1,68 @@
+{include file="index@index/header" /}
+
+<link href="__PLUG__/summernote/summernote.css" rel="stylesheet">
+<!-- SUMMERNOTE -->
+<script src="__PLUG__/summernote/summernote.min.js"></script>
+<style type="text/css">
+    .file-thumbnail-footer{
+        display: none;
+    }
+    .file-drop-zone {
+        border: 1px dashed #aaa;
+        border-radius: 4px;
+        height: 100%;
+        text-align: center;
+        vertical-align: middle;
+        margin: 0px 0px 0px 0px;
+        padding: 0px;
+    }
+</style>
+<script type="text/javascript">
+    function actFmt(){var d='<a class="edit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;<a class="remove ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>';return d}$(function(){$("#btnadd").click(function(){var a=$(this).attr("data-url");baseadd(a,"添加","")}),$("#btnedit").click(function(){var a=$(this).attr("data-url");baseedit("faqstable",a,"编辑","")}),$("#btndelete").click(function(){var a=$(this).attr("data-url");id=mulitecheck("faqstable"),null!=id&&basedelete("faqstable",a,id)})}),window.actEnt={"click .edit":function(a,b,c){var e="{:url('/service/Service/addFaq/type/2')}";$.post(e,{id:c.id},function(a){show_modal("编辑",a,"")})},"click .remove":function(a,b,c){var e="{:url('/service/Service/deleteFaqs')}";basedelete("faqstable",e,c.id)}};
+</script>
+
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div id="toolbar" class="col-sm-12 m-b-xs">
+                                    <button type="button" class="btn btn-success btn-sm" id="btnadd" data-url="{:url('/service/Service/addFaq/type/2')}">
+                                        <i class="glyphicon glyphicon-plus"></i>&nbsp;新增
+                                    </button>
+                                    <button type="button" class="btn btn-info btn-sm" id="btnedit" data-url="{:url('/service/Service/addFaq/type/2')}">
+                                        <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" id="btndelete" data-url="{:url('/service/Service/deleteFaqs')}">
+                                        <i class="glyphicon glyphicon-trash"></i>&nbsp;删除
+                                    </button>
+                                </div>
+                                <table id="faqstable" class="resettable" data-search="true" data-toggle="table"
+                                       data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true" data-url="{:url('/service/Service/getFaqs/type/2')}"
+                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                    <thead>
+                                    <tr>
+                                        <th data-field="state" data-checkbox="true"></th>
+                                        <th data-field="title">标题</th>
+                                        <th data-field="addtime">录入时间</th>
+                                        <th data-field="username">录入人</th>
+                                        <th data-field="action"  data-formatter="actFmt" data-events="actEnt">操作</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--右侧部分结束-->
+    {include file="index@index/footer" /}

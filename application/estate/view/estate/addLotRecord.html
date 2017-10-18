@@ -1,0 +1,58 @@
+{include file="user@login/addheader" /}
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function(){$(".datetimepicker").datetimepicker({minView:"month",autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd"})});
+</script>
+<form id="lotform" action="{:url('/estate/Estate/saveLotRecord')}" method="post" tableId="lottable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="etprsId">选择企业</label>
+            <div class="col-sm-8">
+                <select data-placeholder="企业..." class="chosen-select col-sm-12" tabindex="2" name="etprsId" id="etprsId">
+                    <option value="">请选择企业</option>
+                    {:widget("user/HtmlWidget/initCommonSelect",['table'=>'enterprise','con'=>array('iqbtId'=>session('user.iqbtId')),'default'=>isset($data['etprsId'])?$data['etprsId']:'0','field'=>'id,name'])}
+                </select>
+                <small>如果没有，空着。</small>
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="userName">姓名</label>
+            <div class="col-sm-8">
+                <input id="userName" name="userName" class="form-control require" value="{$data.userName|default=''}" placeholder="姓名">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="mobile">联系电话</label>
+            <div class="col-sm-8">
+                <input id="mobile" name="mobile" class="form-control require mobile" value="{$data.mobile|default=''}" placeholder="联系电话">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="plateNo">车牌号</label>
+            <div class="col-sm-8">
+                <input id="plateNo" name="plateNo" class="form-control require" value="{$data.plateNo|default=''}" placeholder="车牌号">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="startTime">开始日期</label>
+            <div class="col-sm-8">
+                <input class="form-control datetimepicker opt-require"  name="startTime" id="startTime" placeholder="开始日期" value="{$data.startTime|default=time()|date='Y-m-d',###}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="endTime">结束日期</label>
+            <div class="col-sm-8">
+                <input class="form-control datetimepicker opt-require"  name="endTime" id="endTime" placeholder="结束日期" value="{$data.endTime|default=time()|date='Y-m-d',###}">
+            </div></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <input type="hidden" id="lotId" name="lotId" value="{$lotId|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

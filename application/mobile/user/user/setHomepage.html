@@ -1,0 +1,29 @@
+{include file="user@login/addheader" /}
+
+
+<form id="userform" action="{:url('/user/User/saveHomepage')}" method="post" tableId="roletable" class="form-horizontal">
+    <div class="modal-body">
+
+        <div class="form-group">
+
+            <div style="margin-bottom: 10px; padding-left: 20px;">
+                {volist name="data" id="homepage"}
+                <div class="checkbox checkbox-success checkbox-inline">
+                    <input type="checkbox" value="{$homepage.id}" id="home{$homepage.id}" name="homepageIds" {if condition='$homepage.chk'}checked{/if}>
+                    <label for="home{$homepage.id}"> {$homepage.name} </label>
+                </div>
+                {/volist}
+            </div>
+
+        </div>
+        <div class="hr-line-dashed"></div>
+    </div>
+    <div class="modal-footer">
+        <!--<input type="hidden" name="menuIds" id="hidemenuIds">-->
+        <input type="hidden" id="id" name="id" value="{$id|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btnset"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

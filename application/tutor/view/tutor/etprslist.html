@@ -1,0 +1,114 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsearch").click(function () {
+            var key = $("#key").val();
+            var param = new Object();
+            if (key != "") {
+                param.key = key;
+            }
+            $('#tutorTable').bootstrapTable('refresh', {query: param});
+        });
+        $("#btnadd").click(function () {
+            var url = "{:url('/tutor/Tutor/addTutor')}";
+            $.post(url, function (data) {
+                show_modal("新增导师信息", data, "");
+            });
+        });
+    });
+
+    function detailView(index, row){
+        var desc = row.desc;
+        if(desc==undefined){
+            desc="";
+        }
+        var html='<div class="tabs-container"> <ul class="nav nav-tabs"> ' +
+                '<li class="active"><a data-toggle="tab" href="#tab1">导师简介  </a> </li> '+
+                '</ul>' +
+                '<div class="tab-content "> ' +
+                '<div id="tab1" class="tab-pane active"><div class="panel-body"> '+desc+' </div> </div>' +
+                '</div></div>';
+        return html;
+    }
+    function tutorFmt(value, row, index) {
+        return [
+            '<a href="javascript:void(0)" class="plan ml10"><i class="fa fa-edit text-navy"></i>&nbsp;企业规划</a>&nbsp;&nbsp;'
+        ].join('');
+    }
+    function deltTutor(id) {
+        var url = "{:url('/tutor/Tutor/deltTutor')}";
+        basedelete("tutorTable", url, id);
+    }
+    window.actEvt = {
+        'click .plan': function (e, value, row, index) {
+            var id=row.id;
+            var url = "{:url('/tutor/Tutor/tutorplan')}?etprsId="+id;
+            location.href=url;
+        }
+    };
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content" style="border:none;">
+                                            <div class="row">
+                                                <div class="col-sm-12 m-b-xs">
+                                                    <span>关键字：</span>
+                                                    <input type="text" placeholder="请输入关键字" class="input-sm form-control" id="key">
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btnsearch">
+                                                        &nbsp;&nbsp;<i class="fa fa-search"></i>&nbsp;&nbsp;查询&nbsp;&nbsp;
+                                                    </button>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table id="tutorTable" class="resettable" data-toggle="table"
+                                                       data-url="{:url('/tutor/Tutor/getTutorEtprs')}" data-search="false"
+                                                       data-show-refresh="false" data-pagination="true"
+                                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true"
+                                                       data-detail-view="true" data-detail-formatter="detailView">
+
+                                                    <thead>
+                                                        <tr>
+                                                            <th data-field="name" data-sortable="true"> 企业名称</th>
+                                                            <th data-field="contact" data-sortable="true"> 联系人</th>
+                                                            <th data-field="mobile" data-sortable="true"> 联系电话</th>
+                                                            <th data-field="email" data-sortable="true"> 电子邮件</th>
+                                                            <th data-field="entertime" data-sortable="true"> 入驻时间 </th>
+                                                            <th data-field="action" data-formatter="tutorFmt" data-events="actEvt">操作
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

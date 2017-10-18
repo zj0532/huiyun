@@ -1,0 +1,90 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    function actionFormatter(a,b){return html="",html="0"==b.close?'<a class="cloe ml10" href="javascript:void(0)" title="关闭"><i class="fa fa-pinterest"></i>&nbsp;关闭</a>&nbsp;<a class="edit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;<a class="remove ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>':'<a class="record ml10" href="javascript:void(0)" title="活动记录"><i class="fa fa-file-text"></i>&nbsp;活动记录</a>'}function closeActivity(a){var b="{:url('/service/Service/closeActivity')}";$.post(b,{id:a},function(a){1==a.code?(toastr.success("活动已关闭，请及时录入活动记录~"),$("#activitytable").bootstrapTable("refresh"),$("#myModal").modal("hide")):0==a.code?toastr.warning(a.msg):toastr.error(a.msg)})}function detailView(a,b){var c,d,e,f,g;return c=b.apls?$.parseJSON(b.apls):new Array,$("#apltable").bootstrapTable("destroy"),$("#apltable").bootstrapTable({data:c}),d="apl_record"+b.id,e="act_detl"+b.id,f=$("#view_detail").html(),g='<div class="tabs-container"> <div class="tabs-left"> <ul class="nav nav-tabs"> <li class="active"><a data-toggle="tab" href="#'+d+'"> 申请记录</a> </li> '+'<li class=""><a data-toggle="tab" href="#'+e+'"> 活动详情</a> </li>'+" </ul>"+' <div class="tab-content "> <div id="'+d+'" class="tab-pane active"><div class="panel-body"> '+f+" </div> </div>"+' <div id="'+e+'" class="tab-pane"> <div class="panel-body" id="act-desc"> '+b.desc+" </div></div>"+"  </div> </div> </div>"}function statusFmt(a,b){return"1"==b.status?"已申请":"2"==b.status?"已通过":"3"==b.status?"已拒绝":"未申请"}function aplFormatter(a,b){return"1"==b.status?'<a class="aplstat ml10" href="javascript:void(0)" onclick="statCfm('+b.id+',2)" title="通过">通过</a><a class="aplstat ml10" href="javascript:void(0)" onclick="statCfm('+b.id+',3)" title="拒绝">拒绝</a>':void 0}function aplstatus(a,b){var c="{:url('/service/Service/aplStatus')}";$.post(c,{id:a,status:b},function(a){1==a.code?( $('#myModal').modal('hide'),toastr.success(a.msg),$("#activitytable").bootstrapTable("refresh")):0==a.code?toastr.warning(a.msg):toastr.error(a.msg)})}$(function(){$("#btnadd").click(function(){var a=$(this).attr("data-url");baseadd(a,"添加活动","modal-lg")}),$("#btnedit").click(function(){var c,d,e,a=$("#activitytable"),b=a.bootstrapTable("getSelections");for(c=0;c<b.length;c++)if(d=b[c]["close"],"1"==d)return toastr.warning("【"+b[c]["name"]+"】当前状态不可修改"),!1;e=$(this).attr("data-url"),baseedit("activitytable",e,"编辑活动信息","modal-lg")}),$("#btndelete").click(function(){var c,d,e,a=$("#activitytable"),b=a.bootstrapTable("getSelections");for(c=0;c<b.length;c++)if(d=b[c]["close"],"1"==d)return toastr.warning("【"+b[c]["name"]+"】当前状态不可删除"),!1;e=$(this).attr("data-url"),id=mulitecheck("activitytable"),null!=id&&basedelete("activitytable",e,id)})}),window.actionEvents={"click .cloe":function(a,b,c){var f,e=c.id;"1"==c.close?toastr.warning("当前状态不可删除"):(f='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要关闭活动么？关闭活动后，未审核申请将设置为拒绝。</div><div class="modal-footer"><button class="btn btn-primary" onclick="closeActivity(\''+e+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>',show_modal("提示",f,"modal-sm"))},"click .edit":function(a,b,c){if("1"==c.close)toastr.warning(" 当前状态不可修改");else{var e="{:url('/service/Service/addActivity/id/"+c.id+"')}";$.post(e,function(a){show_modal("编辑活动信息信息",a,"modal-lg")})}},"click .record":function(a,b,c){if("1"!=c.close)toastr.warning(" 活动结束后才能维护活动记录");else{var e="{:url('/service/Service/recordActivity/id/"+c.id+"')}";$.post(e,function(a){show_modal("活动记录",a,"modal-lg")})}},"click .remove":function(a,b,c){if("1"==c.close)toastr.warning("当前状态不可删除");else{var e="{:url('/service/Service/deleteActivity')}";basedelete("activitytable",e,c.id)}}};
+    function redhandle(value, row, index){
+        if(value >0){
+            return '<span style="color:red;">'+value+'条</span>';
+        }else{
+            return value;
+        }
+    }
+
+    function statCfm(id,status){
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要进行该操作？</div><div class="modal-footer"><button class="btn btn-primary" onclick="aplstatus(\''+id+'\',\''+status+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",data,"modal-sm");
+    }
+
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div id="view_detail" style="display:none;">
+        <table id="apltable">
+            <thead>
+            <tr>
+                <th data-field="etprsName">申请企业</th>
+                <th data-field="contact">联系人</th>
+                <th data-field="mobile">联系电话</th>
+                <th data-field="position">职务</th>
+                <th data-field="number">参加人数(人）</th>
+                <th data-field="addtime">申请时间</th>
+                <th data-field="status" data-formatter="statusFmt">状态</th>
+                <th data-field="action" data-formatter="aplFormatter" data-events="aplEvents">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div id="toolbar" class="col-sm-12 m-b-xs">
+                                    <button type="button" class="btn btn-success btn-sm" id="btnadd" data-url="{:url('/service/Service/addActivity')}">
+                                        <i class="glyphicon glyphicon-plus"></i>&nbsp;新增
+                                    </button>
+                                    <button type="button" class="btn btn-info btn-sm" id="btnedit" data-url="{:url('/service/Service/addActivity')}">
+                                        <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" id="btndelete" data-url="{:url('/service/Service/deleteActivity')}">
+                                        <i class="glyphicon glyphicon-trash"></i>&nbsp;删除
+                                    </button>
+                                </div>
+                                <table id="activitytable" class="resettable" data-toggle="table" data-url="{:url('/service/Service/getActivity')}" data-search="true"
+                   data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true"
+                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView" >
+                <thead>
+                    <tr>
+                        <th data-field="state" data-checkbox="true"></th>
+                        <th data-field="name" data-sortable="true">活动名称</th>
+                        <th data-field="startTime" data-sortable="true">报名开始时间</th>
+                        <th data-field="endTime" data-sortable="true">报名结束时间</th>
+                        <th data-field="username" data-sortable="true">录入人</th>
+                        <th data-field="unhandle" data-sortable="true" data-formatter="redhandle">待处理申请</th>
+
+
+                        <!--<th data-field="close" data-formatter="statusFmt" data-sortable="true">状态</th>-->
+                        <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+                    </tr>
+                </thead>
+            </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

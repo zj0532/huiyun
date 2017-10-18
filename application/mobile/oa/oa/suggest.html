@@ -1,0 +1,89 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+    });
+
+    function actFmt(value, row, index) {
+        var url="{:url('/oa/Oa/suggestdetail')}?id="+row.id;
+        var html='<a class="visit" href="'+url+'">详情</a>';
+        return html;
+    }
+    function addSchedule(etprsId){
+        var url="{:url('/index/index/addEtprsSchedule')}";
+        $.post(url,{etprsId:etprsId}, function(data) {
+            show_modal("添加企业拜访日程",data,"");
+        });
+    }
+    function statusFmt(value, row, index) {
+        switch (value){
+            case 0:
+                return "已提交";
+                break;
+            case 1:
+                return "已回复";
+                break;
+            default :
+                return "";
+        }
+    }
+
+    window.actEnt = {
+        'click .reply': function (e, value, row, index) {
+            var url="{:url('/oa/Oa/sgstReply/id/"+row.id+"')}";
+            $.post(url, function(data) {
+                show_modal("意见建议回复",data,"");
+            });
+        }
+    };
+    function detailView(index, row){
+        var tb1="apl_record"+row.id;
+        var tb2="act_detl"+row.id;
+        var html='<div class="tabs-container"> <div class="tabs-left"> <ul class="nav nav-tabs"> ' +
+                '<li class="active"><a data-toggle="tab" href="#'+tb1+'"> 详情</a> </li> ' +
+                '<li class=""><a data-toggle="tab" href="#'+tb2+'"> 回复</a> </li>' +
+                ' </ul>' +
+                ' <div class="tab-content "> <div id="'+tb1+'" class="tab-pane active"><div class="panel-body"> '+row.content+' </div> </div>' +
+                ' <div id="'+tb2+'" class="tab-pane"> <div class="panel-body" id="act-desc"> '+row.desc+' </div></div>' +
+                '  </div> </div> </div>';
+
+        return html;
+    }
+
+
+</script>
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:92%;margin:20px auto;padding:0;}
+    .user_com .row .col-xs-6{padding-left:10px;padding-right:10px;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">园企互动平台</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="table-responsive">
+            <table id="suggesttable" class="resettable" data-search="false" data-toggle="table"
+                   data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true" data-url="{:url('/oa/Oa/getSuggest')}"
+                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                <thead>
+                <tr>
+                    <th data-field="name" data-sortable="true">企业名称</th>
+                    <th data-field="status" data-sortable="true" data-formatter="statusFmt">状态</th>
+                    <th data-field="action" data-formatter="actFmt" data-events="actEnt">操作</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

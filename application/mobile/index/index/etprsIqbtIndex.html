@@ -1,0 +1,444 @@
+{include file="index@index/header" /}
+<!-- 全局js -->
+<script src="__JS__/jquery-2.1.1.min.js"></script>
+<script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+<!-- 自定义js -->
+<script src="__JS__/content.min.js?v=1.0.0"></script>
+<!-- 全局js -->
+<script src="__JS__/jquery-2.1.1.min.js"></script>
+<script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+<!-- 自定义js -->
+<script src="__JS__/content.min.js?v=1.0.0"></script>
+
+<!-- jQuery UI-->
+<script src="__JS__/plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Sparkline -->
+<script src="__JS__/plugins/sparkline/jquery.sparkline.min.js"></script>
+
+<!-- 全局js -->
+
+<script src="__JS__/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="__JS__/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="__JS__/plugins/layer/layer.min.js"></script>
+<!-- 自定义js -->
+<script src="__JS__/hplus.min.js?v=3.0.0"></script>
+<script src="__JS__/contabs.min.js"></script>
+<!-- 第三方插件 -->
+<script src="__JS__/plugins/pace/pace.min.js"></script>
+
+<script src="__JS__/echarts.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $("#sparkline5").sparkline(['{$data["etroomnum"]|default=0}','{$data["roomnum"]|default=0}'],{type:"pie",height:"140",sliceColors:["#1ab394","#F5F5F5"]});
+        $("#sparkline6").sparkline(['{$data["etroomarea"]|default=0}','{$data["roomarea"]|default=0}'],{type:"pie",height:"140",sliceColors:["#1ab394","#F5F5F5"]});
+        $("#sparkline7").sparkline(['{$data["etunitnum"]|default=0}','{$data["unitnum"]|default=0}'],{type:"pie",height:"140",sliceColors:["#ed5565","#F5F5F5"]});
+    });
+
+    $(function(){
+        initChartData();
+        initEtprsData();
+        initUserData();
+    });
+    function initUserData(){
+        //入驻情况统计
+        var enterurl="{:url('/statis/Statis/getIqbtUsersStatis')}";
+        var iqbtIds=$("#iqbtIds").val();
+        $.post(enterurl,{'iqbtIds':iqbtIds}, function (data) {
+            inituserChart(data.userdata,data.studata);
+        });
+    }
+    function inituserChart(data,area){
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('user-pie-chart'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            color:['#1ab394','#EF5352','#1c84c6','#23c6c8','#F8AC59','#F81C59'],
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}: {c} ({d}%)"
+            },
+
+            series: [
+                {
+                    name:'房屋面积统计',
+                    type:'pie',
+                    selectedMode: 'single',
+                    radius: [0, '30%'],
+
+                    label: {
+                        normal: {
+                            position: 'inner'
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    data:area
+                },
+                {
+                    name:'房屋使用情况统计',
+                    type:'pie',
+                    radius: ['40%', '55%'],
+                    data:data
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option,true);
+    }
+
+
+    function initEtprsData(){
+        var start=$("#starttime").val();
+        var end=$("#endtime").val();
+
+        //入驻情况统计
+        var enterurl="{:url('/statis/Statis/getIqbtEtprsStatis')}";
+        var iqbtIds=$("#iqbtIds").val();
+        $.post(enterurl,{"status":['apl','ing','gradt'],'statistype':'months','iqbtIds':iqbtIds,'showtype':'bar','showcate':'totaldata','endtime':0,'starttime':0}, function (data) {
+            if(data['code']==0){
+                toastr.warning(data['msg']);
+            }else {
+                //initetprsChart('flot-dashboard-chart',"入驻情况统计报表",data.color,data.legend,data.xaxis,data.yaxis);
+            }
+        });
+    }
+    function initetprsChart(id,title,color,legend,xaxis,data){
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById(id));
+
+        option = {
+            color: color,
+
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                }
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    data: xaxis
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '企业数量',
+                    min: 0,
+                    position: 'left',
+                    axisLine: {
+                        lineStyle: {
+                            color: color[0]
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '{value}个'
+                    }
+                }
+            ],
+            series: data
+        };
+        myChart.setOption(option,true);
+    }
+
+    function initChartData(){
+        //入驻情况统计
+        var enterurl="{:url('/statis/Statis/getIqbtDataStatis')}";
+        var iqbtIds=$("#iqbtIds").val();
+        $.post(enterurl,{"idx":['rdinput','income','tax','tct','total'],'statistype':'months','iqbtIds':iqbtIds,'showtype':'bar','showcate':'totaldata','endtime':0,'starttime':0}, function (data) {
+            if(data['code']==0){
+                toastr.warning(data['msg']);
+            }else {
+                //initChart('fee-bar-chart',"成长性分析",data.color,data.legend,data.xaxis,data.yaxis);
+            }
+        });
+    }
+    function arrayIndex(arr,value){
+        for(var i=0;i<arr.length;i++){
+            if(arr[i]==value){
+                return i;
+            }
+        }
+    }
+    //id,title,color,legend,xaxis,data
+    function initChart(id,title,color,legend,xaxis,data){
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById(id));
+
+        var colors = color;
+
+        option = {
+            color: colors,
+
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                }
+            },
+            grid: {
+                right: '7%'
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    data: xaxis
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '金额(元)',
+                    min: 0,
+                    position: 'left',
+                    axisLine: {
+                        lineStyle: {
+                            color: colors[2]
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '￥{value}'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '带动就业（人）',
+                    min: 0,
+                    position: 'right',
+                    axisLine: {
+                        lineStyle: {
+                            color: colors[2]
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '{value}人'
+                    }
+                }
+            ],
+            series:data
+        };
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option,true);
+    }
+</script>
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:92%;margin:20px auto;padding:0;}
+    .user_com .row .col-xs-6{padding-left:10px;padding-right:10px;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">退出</a>
+    </div>
+    <div class="h-mid">拜访管理</div>
+    <div class="h-right"></div>
+</div>
+
+<div class="user_com">
+    <div class="row">
+        <div class="table-responsive">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                <h4>辖区孵化器：<span  class="text-success">{$data["iqbtnum"]|default=0} </span> 家</h4>
+                                <h4>其中国家级：<span class="text-success">0</span> 家<br/>市级孵化器：<span class="text-success">10</span> 家<br/>区级孵化器：<span class="text-success">0</span> 家 </h4>
+                                <h4>导师数量：<span class="text-success">5</span> 人<br/>运营人员数量：<span class="text-success">30</span> 人</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <span class="label label-info pull-right">今天</span>
+                                <h5>在孵企业</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <h1 class="no-margins timer" id="count-number1" data-to="4088" data-speed="1500">{$data["ingnum"]|default=0}</h1>
+                                <div class="stat-percent font-bold text-info">当月新增：{$data["monthingnum"]|default=0} <i class="fa fa-level-up"></i>
+                                </div>
+                                <small></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <span class="label label-success pull-right">今天</span>
+                                <h5>申请中企业</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <h1 class="no-margins timer" id="count-number2" data-to="275" data-speed="1500">{$data["aplnum"]|default=0}</h1>
+                                <div class="stat-percent font-bold text-success">当月新增：{$data["monthaplnum"]|default=0} <i class="fa fa-level-up"></i>
+                                </div>
+                                <small></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <span class="label label-warning pull-right">截至到目前</span>
+                                <h5>已毕业企业</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <h1 class="no-margins timer" id="count-number3" data-to="1061" data-speed="1500">{$data["gradtnum"]|default=0}</h1>
+                                <div class="stat-percent font-bold text-warning">当月毕业：{$data["monthgradtnum"]|default=0} <i class="fa fa-level-down"></i>
+                                </div>
+                                <small></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <span class="label label-danger pull-right">最近一个月</span>
+                                <h5>新三板，蓝海上市</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <h1 class="no-margins timer" id="count-number" data-to="80660" data-speed="1500">0</h1>
+                                <div class="stat-percent font-bold text-danger">0% <i class="fa fa-level-up"></i>
+                                </div>
+                                <small></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>入驻详情</h5>
+                                <!--<div class="pull-right">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-xs btn-white active">天</button>
+                                        <button type="button" class="btn btn-xs btn-white">月</button>
+                                        <button type="button" class="btn btn-xs btn-white">年</button>
+                                    </div>
+                                </div>-->
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <!--<div class="col-lg-9">
+                                        <div class="flot-chart">
+                                            <div class="flot-chart-content" id="flot-dashboard-chart" style="height: 237px;"></div>
+                                        </div>
+                                    </div>-->
+                                    <div class="col-lg-12">
+                                        <ul class="stat-list">
+                                            <li>
+                                                <h2 class="no-margins">{$data["etroomnum"]|default=0}</h2>
+                                                <small>入驻总数</small>
+                                                <div class="stat-percent">{$data["ingetprsrate"]|default=0}% <i class="fa fa-level-up text-navy"></i>
+                                                </div>
+                                                <div class="progress progress-mini">
+                                                    <div style="width: {$data['ingetprsrate']|default=0}%;" class="progress-bar"></div>
+                                                </div>
+                                            </li>
+                                            <li style="margin-top:50px;">
+                                                <h2 class="no-margins ">{$data["etroomnum"]|default=0}</h2>
+                                                <small>入驻房间数量</small>
+                                                <div class="stat-percent">{$data["roomNumRate"]|default=0}% <i class="fa fa-level-down text-navy"></i>
+                                                </div>
+                                                <div class="progress progress-mini">
+                                                    <div style="width: {$data['roomNumRate']|default=0}%;" class="progress-bar"></div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="ibox">
+                            <div class="ibox-title">
+                                <h5>已入驻房间占比</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <h5>百分比</h5>
+                                <h2>{$data["etroomnum"]|default=0}/{$data["roomnum"]|default=0}</h2>
+                                <div class="text-center">
+                                    <div id="sparkline5"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="ibox">
+                            <div class="ibox-title">
+                                <h5>已入驻面积占比</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <h5>百分比</h5>
+                                <h2>{$data["etroomarea"]|default=0}/{$data["roomarea"]|default=0}</h2>
+                                <div class="text-center">
+                                    <div id="sparkline6"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="ibox-title">
+                            <h5>工位使用占比</h5>
+                        </div>
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                <h5>百分比</h5>
+                                <h2>{$data["etunitnum"]|default=0}/{$data["unitnum"]|default=0}</h2>
+                                <div class="text-center">
+                                    <div id="sparkline7"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <!--<div class="col-sm-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>财务统计</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div id="fee-bar-chart" style="height: 320px;"></div>
+                            </div>
+                        </div>
+                    </div>-->
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>人员统计</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div id="user-pie-chart" style="height: 320px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+</body>
+</html>
+<input type="hidden" id="iqbtIds" value="{$data['iqbtIds']}">

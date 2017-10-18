@@ -1,0 +1,151 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btnadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加角色","");
+        });
+
+        $("#btnedit").click(function(){
+            var url=$(this).attr("data-url");
+            baseedit("roletable",url,"修改角色信息","");
+        });
+
+        $("#btndelete").click(function(){
+            var url=$(this).attr("data-url");
+            id = mulitecheck("roletable");
+            if (id != null) {
+                basedelete("roletable", url, id);
+            }
+        });
+        $("#btnMenu").click(function(){
+            var url=$(this).attr("data-url");
+            id = singleCheck("roletable");
+
+            if (id != null) {
+                var $table = $("#roletable");
+                var selections=$table.bootstrapTable('getSelections');
+                var parentId=selections[0]["parentId"];
+                $.post(url,{id:id,parentId:parentId}, function (data) {
+                    show_modal("设置 "+selections[0]["rolename"]+" 权限", data, "modal-lg");
+                });
+            }
+        });
+
+        $("button[name='refresh']").click(function(){
+            $("#btnall").css("display","none");
+        });
+
+    });
+
+    function actionFormatter(value, row, index) {
+        if(row.parentId>0){
+            var homepage = '<a class="homepage ml10" href="javascript:void(0)" title="设置首页模块">'+
+            '<i class="fa fa-gears text-navy"></i>&nbsp;设置首页模块' +
+                    '</a>';
+        }else{
+            homepage = '';
+        }
+        return [
+            '<a class="edit ml10" href="javascript:void(0)" title="编辑">',
+            '<i class="fa fa-edit text-navy"></i>&nbsp;编辑',
+            '</a>',
+            '<a class="remove ml10" href="javascript:void(0)" title="删除">',
+            '<i class="fa fa-times text-danger"></i>&nbsp;删除',
+            '</a>',
+            homepage
+        ].join(' ');
+    }
+
+    window.actionEvents = {
+        'click .edit': function (e, value, row, index) {
+            var url="{:url('/user/User/addRole/id/"+row.id+"')}";
+            $.post(url, function(data) {
+                show_modal("修改用户信息",data,"");
+            });
+        },
+        'click .remove': function (e, value, row, index) {
+            var url="{:url('/user/User/deleteRole')}";
+            basedelete("roletable", url, row.id);
+        },
+        'click .homepage': function (e, value, row, index) {
+            var url="{:url('/user/User/setHomepage/id/"+row.id+"')}";
+            $.post(url, function(data) {
+                show_modal("设置首页模块信息",data,"modal-lg");
+            });
+        }
+    };
+
+    function nameFormatter(value, row, index) {
+        if(row.parentId>0){
+            return "&nbsp;&nbsp;&nbsp;&nbsp;"+row.rolename;
+        }else{
+            return '<a class="review2" href="javascript:void(0)" title="edit">'+row.rolename+'</a>';
+        }
+    }
+    window.nameEvents = {
+        'click .review': function (e, value, row, index) {
+            var url=$("#roletable").attr("data-url");
+            $('#roletable').bootstrapTable('refresh',{query: {parentId: row.id}});
+            $("#btnall").css("display","block");
+        }
+    };
+
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div id="toolbar" class="col-sm-12 m-b-xs">
+                                    <button type="button" class="btn btn-success btn-sm" id="btnadd" data-url="{:url('/user/User/addRole')}">
+                                        <i class="glyphicon glyphicon-plus"></i>&nbsp新增
+                                    </button>
+                                    <button type="button" class="btn btn-info btn-sm" id="btnedit" data-url="{:url('/user/User/addRole')}">
+                                        <i class="glyphicon glyphicon-edit"></i>&nbsp编辑
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" id="btndelete" data-url="{:url('/user/User/deleteRole')}">
+                                        <i class="glyphicon glyphicon-trash"></i>&nbsp删除
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm" id="btnMenu" data-url="{:url('/user/User/setRoleMenu')}">
+                                        <i class="glyphicon glyphicon-cog"></i>&nbsp设置权限
+                                    </button>
+                                    <!--<button type="button" class="btn btn-info" id="btnall" name="refresh" data-url="{:url('/user/User/setRoleMenu')}" style="display: none;">
+                                        <i class="fa fa-reply">上级</i>
+                                    </button>-->
+                                </div>
+                                <table id="roletable" class="resettable" data-toggle="table" data-url="{:url('/user/User/getRoles')}" data-search="true"
+                                       data-show-refresh="true" data-show-toggle="false" data-show-columns="false" data-toolbar="#toolbar" data-pagination="true"
+                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" >
+                                    <!--data-card-view="true" data-show-header="false"-->
+                                    <thead>
+                                    <tr>
+                                        <th data-field="state" data-checkbox="true"></th>
+                                        <th data-field="rolename" data-formatter="nameFormatter" data-events="nameEvents" data-sortable="true">角色名</th>
+                                        <th data-field="desc">说明</th>
+                                        <th data-field="parentText" data-sortable="true">上级</th>
+                                        <th data-field="sort" data-sortable="true">排序</th>
+                                        <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

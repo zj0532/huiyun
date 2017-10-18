@@ -1,0 +1,137 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__CSS__/q.css" rel="stylesheet" type="text/css">
+<link href="__CSS__/newsolid_108.css" rel="stylesheet" type="text/css">
+<div id="page-wrapper" class="gray-bg dashbard-1"  style="background:#dbecda  no-repeat fixed 0 center;">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div id="jqContent" class="" style="text-align: left; ">
+            <div id="mainCss">
+                <div id="mainInner">
+                    <div id="box">
+
+                        <div class="survey" style="margin:0px auto;">
+                            <div id="ctl00_ContentPlaceHolder1_JQ1_divHead" class="surveyhead" style="border: 0px;">
+                                <h1 id="ctl00_ContentPlaceHolder1_JQ1_h1Name" style="position:relative;"> <span id="ctl00_ContentPlaceHolder1_JQ1_lblQuestionnaireName">{$ivstData.name}</span> </h1>
+                                <div id="ctl00_ContentPlaceHolder1_JQ1_divUserInfo" style="float: right; margin: 5px 0px;"> <span id="ctl00_ContentPlaceHolder1_JQ1_spanJoinTimes">截止日期：{$ivstData.endTime|date="Y-m-d",###}&nbsp;</span> </div>
+                                <div style="clear: both;"> </div>
+                                <br/>
+                                <div id="ctl00_ContentPlaceHolder1_JQ1_divDec" class="surveydescription">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;{$ivstData.desc}
+                                </div>
+                                <div style="clear: both;"> </div>
+                            </div>
+                            <div id="ctl00_ContentPlaceHolder1_JQ1_question" class="surveycontent">
+                                <div id="ctl00_ContentPlaceHolder1_JQ1_surveyContent">
+                                    <fieldset class="fieldset" id="fieldset1">
+                                    <form id="form" action="{:url('/index/Ivst/saveAnswer',array('ivst'=>$ivstData['id']))}" method="post"  class="form-horizontal">
+                                        {volist name="data" id="vo" key="k"}
+                                        <div class="div_question" id="div{$k}">
+                                            <div class="div_title_question_all">
+                                                <div class="div_topic_question">{$k}.</div>
+                                                <div id="divTitle22" class="div_title_question">{$vo.title}<span class="req">&nbsp;*</span><span class="qtypetip">&nbsp;[{eq name="vo.types" value="1"}单选题{else/}多选题{/eq}]</span></div>
+                                                <div style="clear:both;"></div>
+                                            </div>
+                                            <div class="div_table_radio_question" id="divquestion{$k}">
+                                                <div class="div_table_clear_top"></div>
+                                                <ul class="ulradiocheck">
+                                                    {notempty name="vo.opts"}
+                                                        {volist name="vo.opts" id="opt" key="i"}
+                                                            {if condition="$vo.types eq 1"}
+                                                                <li style="width:99%;">
+                                                                    <input  type="radio" name="q{$vo.id}" id="q{$k}_{$i}" value="{$opt.id}">
+                                                                    <label for="q{$k}_{$i}">{$opt.title}</label>
+                                                                </li>
+                                                            {/if}
+                                                            {if condition="$vo.types eq 2"}
+                                                                <li style="width: 99%;">
+                                                                    <input  id="q{$k}_{$i}" type="checkbox" name="q{$vo.id}" value="{$opt.id}">
+                                                                    <label for="q{$k}_{$i}">{$opt.title}</label>
+                                                                </li>
+                                                            {/if}
+                                                        {/volist}
+                                                    {/notempty}
+
+                                                    <div style="clear:both;"></div>
+                                                </ul>
+                                                <div style="clear:both;"></div>
+                                                <div class="div_table_clear_bottom"></div>
+                                            </div>
+                                            <div class="errorMessage"></div>
+                                        </div>
+                                        {/volist}
+                                    </form>
+                                    </fieldset>
+                                </div>
+                                <div style="padding-top: 6px;clear:both; padding-bottom:10px;" id="submit_div">
+                                    <table id="submit_table" style="margin: 20px auto;">
+                                        <tr>
+                                            <td><input type="button" class="submitbutton" value="提交" onmouseout="this.className=&#39;submitbutton&#39;;" id="btn-save" style="padding:0 24px;height:32px;"></td>
+                                        </tr>
+                                    </table>
+                                    <div style="clear:both;"></div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div style="clear: both;"> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--右侧部分结束-->
+</div>
+<script>
+    $(function(){
+        //重新选择时去掉红色提示
+      /*  $('#box .div_question').each(function(){
+            $(this).click(function(){
+                $(this).find('.errorMessage').text("");
+            })
+        });*/
+        $('#box .div_question').click(function(){
+            $(this).find('.errorMessage').text("");
+        });
+        //按钮提交
+        $("#btn-save").on("click",function(){
+            if(confirm("请确定您所有的问题都已经回答了")){
+                var res = true;
+                $('#box .div_question').each(function(){
+                    var val_radio = $(this).find("input[type='radio']:checked").val();
+                    var i = 0;
+                    $(this).find("input[type='checkbox']:checked").each(function(){
+                        i++;
+                    });
+                    if(val_radio ==null && i==0){
+                        res = false;
+                        $(this).find('.errorMessage').text("该选项是必选项");
+                    }
+                });
+                if(res){
+                     var data,form=$("#form"),url=form.prop("action");
+                      data=form.serializeArray();
+                      $.post(url,serializeJson(data),function(data){
+                          if(1==data.code){
+                             toastr.success(data.msg);
+                              location.href = "{:url('index/Ivst/answerList')}";
+                          }else {
+                              toastr.error(data.msg);
+                          }
+                      });
+                }else{
+
+                    return false;
+                }
+
+            }else{
+                return false;
+            }
+
+        });
+    });
+</script>
+{include file="index@index/footer" /}

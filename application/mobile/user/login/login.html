@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>慧云数字化园区管理云平台-登录</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection"content="telephone=no, email=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/css/public.css"/>
+<script src="__PUBLIC__/login/js/jquery.min.js"></script>
+<script>
+    $(function() {
+        $("#btnlogin").click(function () {
+            if ($("#name").val() == "") {
+                $("#msg").html("登录名不能为空");
+                return;
+            }
+            if ($("#password").val() == "") {
+                $("#msg").html("密码不能为空");
+                return;
+            }
+            $("#loginForm").submit();
+            /*$("#btnlogin").click(function () {
+             var url="{:url('/user/Login/login')}";
+             var name=$("#name").val();
+             var password=$("#password").val();
+             $.post(url,function(data) {
+
+             });
+             });*/
+
+        });
+        $("#btnrgt").click(function () {
+            var iqbtId = $("#iqbtId").val();
+            var etprsIqbtId = $("#etprsIqbtId").val();
+            location.href = "{:url('/user/Login/register')}?iqbtId=" + iqbtId + "&etprsIqbtId=" + etprsIqbtId;
+        });
+    })
+</script>
+</head>
+<body>         
+<div class="login">
+   <div id="Layer1">    
+	   <img src="__PUBLIC__/mobile/images/bg.jpg" />
+   </div>
+    <form action="" method="post" id="loginForm">
+           <div class="login1">
+               <img class="logo" src="__PUBLIC__/mobile/images/logo.png">
+               <div class="sr">
+                   <div class="lefticon"><img src="__PUBLIC__/mobile/images/users.png"></div>
+                   <div class="rightinput"><input type="text" name="name" id="name" placeholder="用户名/手机号"  onfocus="this.placeholder=''" onblur="this.placeholder='用户名/手机号码'"></div>
+               </div>
+               <div class="sr">
+                   <div class="lefticon"><img src="__PUBLIC__/mobile/images/password.png"></div>
+                   <div class="rightinput"><input type="password" name="password" id="password" placeholder="密码" onfocus="this.placeholder=''" onblur="this.placeholder='密码'"></div>
+               </div>
+               <input type="hidden" id="etprsIqbtId" name="etprsIqbtId" value="{$etprsIqbtId|default=0}">
+               <input type="hidden" id="iqbtId" name="iqbtId" value="{$iqbtId|default=0}">
+               <a href="javascript:void(0)" ><div class="loginbtn" id="btnlogin"><span>登录</span></div></a>
+               <span style="color: #ff0000;" id="msg">{$msg|default=''}</span>
+
+               <p class="technology">技术支持 : 青岛中联慧云信息科技有限公司<br>服务热线：400-0073-137</p>
+           </div>
+    </form>
+</div>     
+</body>
+</html>

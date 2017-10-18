@@ -1,0 +1,85 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+
+
+<form action="{:url('/fice/Fice/saveItemOpt')}" method="post" tableId="feeItemTable" class="form-horizontal m-t" id="feeItemForm">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">收费项目2：</label>
+        <div class="col-sm-8">
+            <p>{$data.itemName|default='0'}</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">收费标准：</label>
+        <div class="col-sm-8">
+            <input id="name" name="name" type="text" class="form-control" required aria-required="true" value="{$data.name|default=''}" >
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">收费方式：</label>
+        <div class="col-sm-8">
+            <label class="radio-inline">
+                <input type="radio" value="num_price"  name="feestyle" {if condition="!isset($data.feestyle)||$data.feestyle=='num_price'"}checked{/if}>单价×数量
+            </label><br>
+            <label class="radio-inline">
+                <input type="radio" value="input"  name="feestyle" {if condition="isset($data.feestyle)&&$data.feestyle=='input'"}checked{/if}>每户单独输入
+            </label><br>
+            <label class="radio-inline">
+                <input type="radio" value="numration"  name="feestyle" style="display:inline;" {if condition="isset($data.feestyle)&&$data.feestyle=='numration'"}checked{/if}>指定金额
+            </label>
+            <input  type="text" class="form-control" name="fee" id="fee" style="width:100px;display:inline;" value="{$data.fee|default='0'}">
+            <br>
+            <!--<label class="radio-inline"><input type="radio" value="option2"  name="optionsRadios">自定义公式</label><br>-->
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">单价：</label>
+        <div class="col-sm-8">
+            <input id="price" type="text" class="form-control" name="price" value="{$data.value|default='0'}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">计量方式：</label>
+        <div class="col-sm-8">
+            <select class="form-control inline" id="numration" name="numration">
+                <option value="" {if condition="!isset($data.numration)||empty($data.numration)"}selected{/if}>--请选择--</option>
+                <option value="etprs" {if condition="isset($data.numration)&&$data.numration=='etprs'"}selected{/if}>按企业收取</option>
+                <option value="people" {if condition="isset($data.numration)&&$data.numration=='people'"}selected{/if}>人数</option>
+                <option value="area" {if condition="isset($data.numration)&&$data.numration=='area'"}selected{/if}>建筑面积</option>
+                <option value="day" {if condition="isset($data.numration)&&$data.numration=='day'"}selected{/if}>按天</option>
+                <option value="room" {if condition="isset($data.numration)&&$data.numration=='room'"}selected{/if}>房间数</option>
+                <option value="smlroom" {if condition="isset($data.numration)&&$data.numration=='smlroom'"}selected{/if}>工位数</option>
+                <option value="data" {if condition="isset($data.numration)&&$data.numration=='data'"}selected{/if}>录入数据</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">收费周期：</label>
+        <div class="col-sm-8">
+            每隔
+            <select class="form-control inline" style="display:inline;width:160px;" id="cycle" name="cycle">
+                <option value="0" {if condition="!isset($data.cycle)||$data.cycle=='0'"}selected{/if}>-请选择-</option>
+                <option value="1" {if condition="isset($data.cycle)&&$data.cycle=='1'"}selected{/if}>1</option>
+                <option value="2" {if condition="isset($data.cycle)&&$data.cycle=='2'"}selected{/if}>2</option>
+                <option value="3" {if condition="isset($data.cycle)&&$data.cycle=='3'"}selected{/if}>3</option>
+                <option value="4" {if condition="isset($data.cycle)&&$data.cycle=='4'"}selected{/if} >4</option>
+                <option value="5" {if condition="isset($data.cycle)&&$data.cycle=='5'"}selected{/if}>5</option>
+                <option value="6" {if condition="isset($data.cycle)&&$data.cycle=='6'"}selected{/if}>6</option>
+                <option value="7" {if condition="isset($data.cycle)&&$data.cycle=='7'"}selected{/if}>7</option>
+                <option value="8" {if condition="isset($data.cycle)&&$data.cycle=='8'"}selected{/if}>8</option>
+                <option value="9" {if condition="isset($data.cycle)&&$data.cycle=='9'"}selected{/if}>9</option>
+                <option value="10" {if condition="isset($data.cycle)&&$data.cycle=='10'"}selected{/if}>10</option>
+                <option value="11" {if condition="isset($data.cycle)&&$data.cycle=='11'"}selected{/if}>11</option>
+                <option value="12" {if condition="isset($data.cycle)&&$data.cycle=='12'"}selected{/if}>12</option>
+            </select>
+            月收一次
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-3">
+            <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+            <input type="hidden" id="itemId" name="itemId" value="{$data.itemId|default='0'}">
+            <button type="button" class="btn btn-primary btn-sm btn-save">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+        </div>
+    </div>
+</form>

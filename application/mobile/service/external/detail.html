@@ -1,0 +1,72 @@
+{include file="index@index/header" /}
+<script type="text/javascript">
+
+    function resosStatus(id,status){
+        var remark=$("#remark").val();
+        var url="{:url('/service/Resos/resosStatus')}";
+        $.post(url,{status:status,id:id,remark:remark}, function(data) {
+            if(data.code==1){
+                toastr.success(status=='2'?"已发布":"已退回");
+                $('#resostable').bootstrapTable('refresh');
+                $('#myModal').modal('hide');
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+</script>
+
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:92%;margin:20px auto;padding:0;}
+    .user_com .row .col-xs-6{padding-left:10px;padding-right:10px;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">第三方资源详情</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                <tr>
+                    <td>资源名称</td>
+                    <td>{$data.name}</td>
+                </tr>
+                <tr>
+                    <td>资源分类</td>
+                    <td>{$data.category}</td>
+                </tr>
+                <tr>
+                    <td>企业名称</td>
+                    <td>{$data.etprsName}</td>
+                </tr>
+                <tr>
+                    <td>联系人</td>
+                    <td>{$data.contact}</td>
+                </tr>
+                <tr>
+                    <td>电话</td>
+                    <td>{$data.mobile}</td>
+                </tr>
+                <tr>
+                    <td>email</td>
+                    <td>{$data.email}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="word">
+            <p><strong>说明</strong></p>
+            <p>{$data.desc}</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

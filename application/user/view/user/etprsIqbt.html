@@ -1,0 +1,236 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $("#btnadd").click(function(){
+                var url="{:url('/user/User/addEtprsIqbt')}";
+                $.post(url, function(data) {
+                    show_modal("新增孵化器企业",data,"");
+                });
+            });
+            $("#btniqbtadd").click(function(){
+                var url="{:url('/user/User/addIqbt')}";
+                $.post(url, function(data) {
+                    show_modal("新增孵化器",data,"");
+                });
+            });
+
+        });
+        function editIqbt(id,etprsIqbtId){
+            var url="{:url('/user/User/addIqbt')}?etprsIqbtId="+etprsIqbtId;
+            $.post(url,{id:id}, function(data) {
+                show_modal("编辑孵化器",data,"");
+            });
+        }
+        function initOther(){
+            $('#iqbttable').bootstrapTable('refresh');
+        }
+        function cfmdelete(id){
+            var url="{:url('/user/User/deltIqbt')}";
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要删除么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="deltIqbt(\''+url+'\',\''+id+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        }
+        function deltIqbt(url,id){
+            $.post(url, {id: id}, function (data) {
+                if (data.code == 1) {
+                    toastr.success(data.msg);
+                    $('#myModal').modal('hide');
+                    $('#iqbttable').bootstrapTable('refresh');
+                }else if(data.code == 0){
+                    toastr.warning(data.msg);
+                }else{
+                    toastr.error(data.msg);
+                }
+            });
+        }
+
+        function actionFormatter(value, row, index) {
+            var html = '';
+            var iqbtcate=row.iqbtcate;
+            if(iqbtcate==0){
+                var html = '<a class="iqbt ml10" href="javascript:void(0)" title="添加孵化器"><i class="fa fa-plus text-navy"></i>&nbsp;添加孵化器</a>&nbsp;<a class="edit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;<a class="remove ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;';
+                        /*'<a class="menu ml10" href="javascript:void(0)" title="设置功能权限"><i class="fa fa-cog"></i>&nbsp;设置功能权限</a>';*/
+            }else{
+                html+='<a class="iedit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;<a class="iremove ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;';
+                /*'<a class="imenu ml10" href="javascript:void(0)" title="设置功能权限"><i class="fa fa-cog"></i>&nbsp;设置功能权限</a>';*/
+            }
+
+            return html;
+        }
+        function cateFmt(value, row, index) {
+            var iqbtcate=row.iqbtcate;
+            if(iqbtcate==0){
+                return "孵化器企业";
+            }else{
+                return "孵化器";
+            }
+
+        }
+        function nameFmt(value, row, index){
+            var url="{:url('/user/User/iqbtlist/id/"+row.id+"')}";
+            return "<a href='"+url+"' target='_blank'>"+value+"</a>";
+        }
+
+        window.actionEvents = {
+            'click .edit': function (e, value, row, index) {
+                var url="{:url('/user/User/addEtprsIqbt/id/"+row.id+"')}";
+                $.post(url, function(data) {
+
+                    show_modal("编辑孵化器信息",data,"modal-lg");
+
+                });
+            },
+            'click .iedit': function (e, value, row, index) {
+                var url="{:url('/user/User/addIqbt/id/"+row.id+"')}";
+                $.post(url, function(data) {
+
+                    show_modal("编辑孵化器信息",data,"modal-lg");
+
+                });
+            },
+            'click .remove': function (e, value, row, index) {
+                var url="{:url('/user/User/deltEtprsIqbt')}";
+                basedelete("iqbttable", url, row.id);
+            },
+            'click .iremove': function (e, value, row, index) {
+                var url="{:url('/user/User/deltIqbt')}";
+                basedelete("iqbttable", url, row.id);
+            },
+            'click .iqbt': function (e, value, row, index) {
+                var url="{:url('/user/User/addIqbt/etprsIqbtId/"+row.id+"')}";
+                $.post(url, function(data) {
+                    show_modal("编辑孵化器信息",data,"modal-lg");
+                });
+            },
+            'click .menu': function (e, value, row, index) {
+                var url="{:url('/user/User/setIqbtMenu/flag/0/id/"+row.id+"')}";
+                $.post(url, function(data) {
+                    show_modal("编辑孵化器信息",data,"modal-lg");
+                });
+            },
+            'click .imenu': function (e, value, row, index) {
+                var url="{:url('/user/User/setIqbtMenu/flag/1/id/"+row.id+"')}";
+                $.post(url, function(data) {
+                    show_modal("编辑孵化器信息",data,"modal-lg");
+                });
+            }
+        };
+        function detailView(index, row){
+            var iqbt="";
+            var iqbtdata = row.iqbts;
+            if(iqbtdata.length>0){
+                $('#detailtable').bootstrapTable('destroy');
+                $('#detailtable').bootstrapTable({
+                    data: iqbtdata
+                });
+                iqbt= $("#view_detail").html();
+            }
+            return iqbt;
+
+            /*var html='<div class="tabs-container"> <ul class="nav nav-tabs"> ' +
+                    '<li class="active"><a data-toggle="tab" href="#tab1">企业列表  </a> </li> '+
+                    '<li class=""><a data-toggle="tab" href="#tab2">毕业企业 </a> </li> '+
+                    '<li class=""><a data-toggle="tab" href="#tab3">退出企业  </a> </li> '+
+                    '<li class=""><a data-toggle="tab" href="#tab4">导师简介  </a> </li> '+
+                    '</ul>' +
+                    '<div class="tab-content "> ' +
+                    '<div id="tab1" class="tab-pane active"><div class="panel-body"> '+etprslist+' </div> </div>' +
+                    '<div id="tab2" class="tab-pane"><div class="panel-body"> '+gradetprslist+' </div> </div>' +
+                    '<div id="tab3" class="tab-pane"><div class="panel-body"> '+quitetprslist+' </div> </div>' +
+                    '<div id="tab4" class="tab-pane"><div class="panel-body"> '+desc+' </div> </div>' +
+                    '</div></div>';
+            return html;*/
+        }
+
+        function iqbtFmt(value, row, index){
+            var html='<a class="ml10" href="javascript:void(0)" title="bianji" onclick="editIqbt('+row.id+','+row.etprsIqbtId+')"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;<a class="ml10" href="javascript:void(0)" title="删除" onclick="cfmdelete('+row.id+')"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>';
+            return html;
+        }
+        function add0(m){return m<10?'0'+m:m }
+        function format(time)
+        {
+            //时间戳是整数，否则要parseInt转换
+            var time = new Date(time*1000);
+            var y = time.getFullYear();
+            var m = time.getMonth()+1;
+            var d = time.getDate();
+            // var h = time.getHours();
+            //  var mm = time.getMinutes();
+            //  var s = time.getSeconds();
+            // return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+            return y+'-'+add0(m)+'-'+add0(d);
+        }
+        function timeFmt(value,row,index){
+            if(value!=null && value!='0' && value!='' ){
+                return format(parseInt(value));
+            }else{
+                return '永久';
+            }
+        }
+
+    </script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div id="view_detail" style="display:none;">
+                                <table id="detailtable" class="resettable">
+                                    <thead>
+                                    <tr>
+                                        <th data-field="name" data-sortable="true">名称</th>
+                                        <th data-field="address" data-sortable="true">地址</th>
+                                        <th data-field="leader" data-sortable="true">负责人</th>
+                                        <th data-field="mobile">联系电话</th>
+                                        <th data-field="email" data-sortable="true">电子邮件</th>
+                                        <th data-field="exptime" data-sortable="true" data-formatter="timeFmt">到期时间</th>
+                                        <th data-field="action" data-formatter="iqbtFmt">操作</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="wrapper wrapper-content">
+                                <div class="col-sm-12">
+                                    <!-- Example Events -->
+                                    <div>
+                                        <div id="toolbar" class="btn-group">
+                                            <button type="button" class="btn btn-success btn-sm" id="btnadd" data-url="{:url('/user/User/addEtprsIqbt')}">
+                                                <i class="glyphicon glyphicon-plus">新增孵化器企业</i>
+                                            </button>
+                                            <!--<button type="button" class="btn btn-success btn-sm" id="btniqbtadd" data-url="{:url('/user/User/addIqbt')}">
+                                                <i class="glyphicon glyphicon-plus">新增孵化器</i>
+                                            </button>-->
+                                        </div>
+                                        <table id="iqbttable" class="resettable" data-toggle="table" data-url="{:url('/user/User/getEtprsIqbt')}" data-search="true"
+                                               data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true"
+                                               data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView" >
+                                            <thead>
+                                            <tr>
+                                                <th data-field="name" data-sortable="true" data-formatter="nameFmt">名称</th>
+                                                <th data-field="leader" data-sortable="true">法人</th>
+                                                <th data-field="mobile">联系电话</th>
+                                                <th data-field="email" data-sortable="true">电子邮件</th>
+                                                <th data-field="iqbtcate" data-sortable="true" data-formatter="cateFmt">分类</th>
+                                                <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <!-- End Example Events -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

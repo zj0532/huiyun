@@ -1,0 +1,102 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".datepicker").datetimepicker({autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd hh:ii"});
+        $("#btnsearch").click(function () {
+            var name = $("#name").val();
+            var time_start = $("#time_start").val();
+            var time_end = $("#time_end").val();
+            var param = new Object();
+            if (name != "") {
+                param.name = name;
+            }
+            if (time_start != "") {
+                param.start = time_start;
+            }
+            if (time_end != "") {
+                param.end = time_end;
+            }
+            $('#loginTable').bootstrapTable('refresh', {query: param});
+        });
+    });
+    function reFmt(value, row, index) {
+        if (value == '1') {
+            return "登录失败";
+        } else if (value == "0") {
+            return "登录成功";
+        }else{
+            return '结果未知';
+        }
+    }
+
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content" style="border:none;">
+                                            <div class="row">
+                                                <div class="col-sm-12 m-b-xs">
+                                                    <span>用户名：</span>
+                                                    <input type="text" placeholder="请输入用户名" class="input-sm form-control" id="name">
+                                                    <span>登录时间：</span>
+                                                    <input type="text"  placeholder="开始时间" class="form-control datepicker"  name="time_start" id="time_start">
+                                                    <input type="text" placeholder="结束时间" class="form-control datepicker " name="time_end" id="time_end">
+
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btnsearch">
+                                                        <i class="fa fa-search"></i>
+                                                        查询
+                                                    </button>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table id="loginTable" class="resettable" data-toggle="table"
+                                                       data-url="{:url('/user/User/getuserLoginLog')}" data-search="false"
+                                                       data-show-refresh="false" data-pagination="true"
+                                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true"
+                                                       data-detail-view="false" >
+
+                                                    <thead>
+                                                    <tr>
+                                                        <th data-field="name" data-sortable="true"> 用户名</th>
+                                                        <th data-field="iqbtName" data-sortable="true">所属孵化器</th>
+                                                        <th data-field="loginTime" data-sortable="true"> 登录时间</th>
+                                                        <th data-field="loginIp" data-sortable="true"> 登录IP</th>
+                                                        <th data-field="loginResult" data-sortable="true" data-formatter="reFmt"> 登录结果</th>
+
+                                                    </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

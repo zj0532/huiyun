@@ -1,0 +1,234 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btnadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加资源/需求","");
+        });
+
+        $("#btnedit").click(function(){
+            var url=$(this).attr("data-url");
+            baseedit("resostable",url,"编辑资源信息","");
+        });
+
+        $("#btndelete").click(function(){
+            var url=$(this).attr("data-url");
+            id = mulitecheck("resostable");
+            if (id != null) {
+                basedelete("resostable", url, id);
+            }
+        });
+
+    });
+
+    function actionFormatter(value, row, index) {
+        html="";
+        if(row.status=='1'){
+            html='<a class="handle ml10" href="javascript:void(0)" title="审核"><i class="glyphicon glyphicon-open-file"></i></a>';
+        }
+        return html;
+    }
+
+    window.actionEvents = {
+        'click .handle': function (e, value, row, index) {
+            var id=row.id;
+            var hd='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>';
+            var bd='<div class="modal-body form-horizontal" xmlns="http://www.w3.org/1999/html"> <div class="form-group"><label class="col-sm-3 control-label" for="realname">审核说明</label><div class="col-sm-8"><textarea class="form-control" name="remark" id="remark" placeholder="审核说明""></textarea></div></div></div>';
+            var ft='<div class="modal-footer"><button class="btn btn-primary" onclick="resosStatus(\''+id+'\',\'2\')">发布</button><button class="btn btn-glyph " onclick="resosStatus(\''+id+'\',\'3\')">退回</span></button></div>';
+            show_modal("编辑资源/需求信息",hd+bd+ft,"");
+        }
+    };
+    function resosStatus(id,status){
+        var remark=$("#remark").val();
+        var url="{:url('/service/Resos/resosStatus')}";
+        $.post(url,{status:status,id:id,remark:remark}, function(data) {
+            if(data.code==1){
+                toastr.success(status=='2'?"已发布":"已退回");
+                $('#resostable').bootstrapTable('refresh');
+                $('#myModal').modal('hide');
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+    function detailView(index, row){
+        var contact=null==row.contact?'~':row.contact;
+        var remark=null==row.remark?'~':row.remark;
+        var detail=null==row.detail?'~':row.detail;
+        var baseinfo= '<form class="form-horizontal"><div class="form-group"><label class="col-sm-2 control-label" for="contact">联系信息</label><div class="col-sm-10">'+contact+'</div></div><div class="form-group"><label class="col-sm-2 control-label" for="contact">资源详情</label><div class="col-sm-10">'+detail+'</div></div><div class="form-group"><label class="col-sm-2 control-label" for="contact">审核说明</label><div class="col-sm-10">'+remark+'</div></div></form>';
+        var data = $.parseJSON(row.coperates);
+        if(data.length>0){
+            $('#detailtable').bootstrapTable('destroy');
+            $('#detailtable').bootstrapTable({
+                data: data
+            });
+            return baseinfo+$("#view_detail").html();
+        }else{
+            return baseinfo;
+        }
+    }
+    //合作记录操作format
+    function coperateFormatter(value, row, index){
+        var html="";
+        //合作完成或者合作中止。方可评分
+        if(row.status=='1007003'||row.status=='1007004'){
+            var txt="评分";
+            if(row.cprtReason!=""&&row.cprtReason!=null){
+                txt="已评分";
+            }
+            html='<a class="coperate ml10" href="javascript:void(0)" title="评分" onclick="coperateScore('+row.id+','+row.resosId+')">'+txt+'</a>';
+        }
+        return html;
+    }
+    function coperateScore(id,resosId){
+        var url="{:url('/service/Resos/coperateScore')}";
+        $.post(url,{id:id,resosId:resosId}, function(data) {
+            show_modal("企业合作评分",data,"modal-lg");
+        });
+    }
+
+    //资源企业与需求企业添加拜访计划
+    function resosEtprsFmt(value, row, index){
+        var html=row.resosEtprsText;
+        //合作完成或者合作中止。方可,切没有评分 可添加拜访记录
+        if(row.status=='1007003'||row.status=='1007004'){
+            if(row.cprtReason==""||row.cprtReason==null){
+                html=row.resosEtprsText+'【<a class="coperate" href="javascript:void(0)" title="添加拜访计划" onclick="addSchedule('+row.resosEtprsId+')">拜访</a> 】';
+            }
+        }
+        return html;
+    }
+    function requireEtprsFmt(value, row, index){
+        var html=row.requireEtprsText;
+        //合作完成或者合作中止。方可评分
+        if(row.status=='1007003'||row.status=='1007004'){
+            if(row.cprtReason==""||row.cprtReason==null){
+                html=row.requireEtprsText+'【<a class="coperate" href="javascript:void(0)" title="添加拜访计划" onclick="addSchedule('+row.requireEtprsId+')">拜访</a>】';
+            }
+        }
+        return html;
+    }
+
+    function addSchedule(etprsId){
+        var url="{:url('/service/Common/addEtprsSchedule')}";
+        $.post(url,{etprsId:etprsId}, function(data) {
+            show_modal("添加企业拜访计划",data,"");
+        });
+    }
+</script>
+
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+<div id="view_detail" style="display:none;">
+    <table id="detailtable">
+        <thead>
+        <tr>
+            <th data-field="requireEtprsText" data-formatter="requireEtprsFmt">需求企业</th>
+            <th data-field="resosEtprsText" data-formatter="resosEtprsFmt">资源企业</th>
+            <th data-field="statusText">合作状态</th>
+            <th data-field="cprtReason">合作/不合作 原因</th>
+            <th data-field="action" data-formatter="coperateFormatter" data-events="coperateEvents">操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">资源管理</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">需求管理</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+
+                                                <div class="table-responsive">
+                                                    <table id="resostable" class="resettable" data-toggle="table" data-url="{:url('/service/Resos/getResos/type/0')}" data-search="true"
+                                                           data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true"
+                                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView" >
+                                                        <thead>
+                                                        <tr>
+                                                            <th data-field="state" data-checkbox="true"></th>
+                                                            <th data-field="name" data-sortable="true">资源名称</th>
+                                                            <th data-field="categoryText" data-sortable="true">分类</th>
+                                                            <th data-field="desc">说明</th>
+                                                            <th data-field="etprsText" data-sortable="true">企业</th>
+                                                            <th data-field="deadlineTime" data-sortable="true">截至时间</th>
+                                                            <th data-field="statusText" data-sortable="true">状态</th>
+                                                            <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+
+                                                <div class="table-responsive">
+                                                    <table id="resos1table" class="resettable" data-toggle="table" data-url="{:url('/service/Resos/getResos/type/1')}" data-search="true"
+                                                           data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true"
+                                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView" >
+                                                        <thead>
+                                                        <tr>
+                                                            <th data-field="state" data-checkbox="true"></th>
+                                                            <th data-field="name" data-sortable="true">资源名称</th>
+                                                            <th data-field="categoryText" data-sortable="true">分类</th>
+                                                            <th data-field="desc">说明</th>
+                                                            <th data-field="etprsText" data-sortable="true">企业</th>
+                                                            <th data-field="deadlineTime" data-sortable="true">截至时间</th>
+                                                            <th data-field="statusText" data-sortable="true">状态</th>
+                                                            <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

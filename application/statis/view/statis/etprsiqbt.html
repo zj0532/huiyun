@@ -1,0 +1,154 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__JS__/echarts.min.js"></script>
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet'/>
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datetimepicker({
+            minView: "month",
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: true,//今日按钮
+            forceParse : true,
+            format: "yyyy-mm-dd"
+        });
+        prechart();
+        $("#etprsId").change(function () {
+            prechart();
+        });
+        $("#btnexport").click(function () {
+            var ths=$("#statistab thead tr th");
+            var len=ths.length;
+            var titles=[];
+            var rlt=[];
+            for (var i = 0; i < len; i++) {
+                titles[i]=$("#statistab thead tr th:eq("+i+")").html();
+            }
+            rlt[0]=titles;
+            var trs=$("#statistab tbody tr");
+            for (var i = 0; i < trs.length; i++) {
+                var tr = trs[i];
+                var contants=[];
+                for (var j = 0; j < len; j++) {
+                    contants[j]=$("#statistab tbody tr:eq("+i+") td:eq("+j+")").html();
+                }
+                rlt[i+1]=contants;
+            }
+            if(rlt.length>1){
+                var url="{:url('/statis/Statis/exportdata')}?data="+JSON.stringify(rlt)+"&filename=企业成长性分析";;
+                location.href=url;
+            }else{
+                toastr.warning("没有数据需要导出");
+            }
+        });
+    });
+    function prechart(){
+        var etprsId=$("#etprsId").val();
+        //企业情况统计
+        var etprsurl="{:url('/statis/Statis/etprsiqbtStatis')}";
+        $.post(etprsurl,{'etprsId':etprsId}, function (data) {
+            initChart('chart',"企业成长性分析",data.color,data.legend,data.xaxis,data.yaxis);
+            var xtitle=data.xaxis;
+            var yfdata=data.yaxis[0].data;
+            var trdata=data.yaxis[1].data;
+            var jsdata=data.yaxis[2].data;
+            $("#tabBody").html("");
+            for (var i = 0; i < xtitle.length; i++) {
+                $("#tabBody").append("<tr><td>"+xtitle[i]+"</td><td>"+yfdata[i]+"</td><td>"+trdata[i]+"</td><td>"+jsdata[i]+"</td></tr>");
+
+            }
+        });
+    }
+    //id,title,color,legend,xaxis,data
+    function initChart(id,title,color,legend,xaxis,data){
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById(id));
+
+        // 指定图表的配置项和数据
+        var option = {
+            color: color,
+            title: {
+                text: title
+            },
+            tooltip : {
+                trigger: 'axis',
+                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                    type : 'line'        // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            legend: {
+                data:legend
+            },
+            xAxis: {
+                data: xaxis
+            },
+            yAxis: {},
+            series: data
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option,true);
+    }
+
+</script>
+
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                            <div class="row">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="col-sm-12">
+                                                <div class="col-sm-10">
+                                                    <select data-placeholder="企业..." class="form-control chosen-select col-sm-12" tabindex="2" id="etprsId">
+                                                        <option value="">请选择企业</option>
+                                                        {:widget("user/HtmlWidget/initCommonSelect",['table'=>'enterprise','con'=>array('iqbtId'=>session('iqbtId'),'status'=>'1001016'),'default'=>'','field'=>'id,name'])}
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-2"><button type="button" class="btn btn-warning ml10" id="btnexport"><i class="fa fa-share-square-o"></i>导出</button></div>
+                                            </div>
+                                            <div class="ibox float-e-margins">
+                                                <div class="ibox-content" style="border:none;">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered table-hover" id="statistab">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>时间</th>
+                                                                <th>研发经费（万元）</th>
+                                                                <th>收入（万元）</th>
+                                                                <th>缴费（万元）</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody id="tabBody">
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--图表-->
+                                        <div class="col-sm-6">
+                                            <div class="ibox-content" id="chart"  style="height:500px;"></div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

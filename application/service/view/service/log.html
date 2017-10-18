@@ -1,0 +1,104 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btnadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加工作日志","");
+        });
+
+        $("#btnedit").click(function(){
+            var url=$(this).attr("data-url");
+            baseedit("logtable",url,"编辑工作日志","");
+        });
+
+        $("#btndelete").click(function(){
+            var url=$(this).attr("data-url");
+            id = mulitecheck("logtable");
+            if (id != null) {
+                basedelete("logtable", url, id);
+            }
+        });
+    });
+    function actFmt(value, row, index) {
+        var html='<a class="edit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a><a class="remove ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>';
+        return html;
+    }
+
+    window.actEnt = {
+        'click .edit': function (e, value, row, index) {
+            var url="{:url('/service/Service/addLog/id/"+row.id+"')}";
+            $.post(url, function(data) {
+                show_modal("编辑工作日志",data,"");
+            });
+        },
+        'click .remove': function (e, value, row, index) {
+            var url="{:url('/service/Service/deleteLog')}";
+            basedelete("logtable", url, row.id);
+        }
+    };
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+<div id="view_detail" style="display:none;">
+    <table id="apltable">
+        <thead>
+        <tr>
+            <th data-field="etprsName">申请企业</th>
+            <th data-field="addtime">申请时间</th>
+            <th data-field="status" data-formatter="statusFmt">状态</th>
+            <th data-field="action" data-formatter="aplFormatter" data-events="aplEvents">操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div id="toolbar" class="col-sm-12 m-b-xs">
+                                    <button type="button" class="btn btn-success btn-sm" id="btnadd" data-url="{:url('/service/Service/addLog')}">
+                                        <i class="glyphicon glyphicon-plus"></i>&nbsp;新增
+                                    </button>
+                                    <button type="button" class="btn btn-info btn-sm" id="btnedit" data-url="{:url('/service/Service/addLog')}">
+                                        <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" id="btndelete" data-url="{:url('/service/Service/deleteLog')}">
+                                        <i class="glyphicon glyphicon-trash"></i>&nbsp;删除
+                                    </button>
+                                </div>
+                                <table id="logtable" class="resettable" data-search="true" data-toggle="table"
+                                       data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true" data-url="{:url('/service/Service/getLogs')}"
+                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                    <thead>
+                                    <tr>
+                                        <th data-field="state" data-checkbox="true"></th>
+                                        <th data-field="name">人员</th>
+                                        <th data-field="title">标题</th>
+                                        <th data-field="startTime">开始时间</th>
+                                        <th data-field="endTime">结束时间</th>
+                                        <th data-field="desc">说明</th>
+                                        <th data-field="action"  data-formatter="actFmt" data-events="actEnt">操作</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

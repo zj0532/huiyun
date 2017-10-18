@@ -1,0 +1,67 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $('#btn').click(function(){
+            var url = "{:url('/index/Apply/renewapl')}";
+            location.href=url;
+        })
+
+    });
+    function showRoomOpt(id){
+        var url="{:url('/index/Apply/renewRoomOpt/id/"+id+"')}";
+        baseadd(url,"修改房间缴费标准","modal-lg");
+    }
+
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row" style="width:850px;margin:30px auto 0 auto;">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="table-responsive">
+                    <style>
+                        .label1{padding:3px 6px;}
+                    </style>
+                    <table class="table table-bordered table-hover" style="text-align:center;margin-top:10px;">
+                        <thead>
+                        <tr>
+                            <th style="text-align: center;"><span>房间号</span></th>
+                            <th style="text-align: center;"><span  >面积</span></th>
+                            <th style="text-align: center;"><span >续约缴费标准</span></th>
+                            <th style="text-align: center;"><span >操作</span></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {notempty name='data'}
+                        {volist name='data' id="vo"}
+                        <tr>
+                            <td><span> {$vo.roomNo|default=''}</span></td>
+                            <td><span>{$vo.totalarea|default=''}</span></td>
+                            <td><span>{$vo.optNames|default=''}</span></td>
+                            <td><button onclick='showRoomOpt("{$vo.id}")'>修改缴费标准</button></td>
+                        </tr>
+                        {/volist}
+                        {else/}
+                        <tr>
+                            <td colspan="4"><span>暂时没有房间要修改标准</span></td>
+                        </tr>
+                        {/notempty}
+                        </tbody>
+
+                    </table>
+                    <div>
+                        <button type="button" class="btn" id='btn' ><i class="fa fa-check"></i> <span class="bold">确定</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

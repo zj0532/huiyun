@@ -1,0 +1,28 @@
+@charset "utf-8";
+/* CSS Document */
+/*初始化*/
+body{margin:0;width:100%;min-width:1200px;}
+img{display:block;border:none;}
+p{margin:0;padding:0;}
+dl,dd{margin:0;}
+*{padding:0; margin:0; font-family:"微软雅黑";}
+a{text-decoration:none;}
+ul li{list-style:none;}
+img{border:none; display:block;}
+dl,dd{margin:0;}
+input{margin:0;padding:0;border:none;outline:none;}
+ul,ol{list-style:none;margin:0;padding:0;}
+/*start*/
+body{background:#e7e9eb;}
+.box{width:1000px;margin:auto;background:#fff;overflow:hidden;}
+.box .box1{overflow:hidden;margin:30px;}
+.box .box1 h4{font-size:20px;color:#524d60;line-height:45px;}
+.box .box1 .btn{height:42px;background:#edeff5;margin-top:20px;}
+.box .box1 .btn button{height:28px;font-size:14px;color:#524d60;line-height:28px;background:#FFF;border:1px solid #d3d6dd;width:90px;margin-top:8px;}
+.box .box1 .btn select{height:28px;font-size:14px;color:#524d60;line-height:28px;background:#FFF;border:1px solid #d3d6dd;width:110px;margin-left:15px;margin-top:6px;}
+.box .box1 ul{font-size:14px;line-height:40px;overflow:hidden;}
+.box .box1 ul li{overflow:hidden;border-bottom:1px solid #eeeeee;}
+.box .box1 ul p{color:#524d60;float:left;margin-left:20px;}
+.box .box1 ul span{float:right;margin-right:20px;color:#cac9c9;}
+.box .box1 table{width:100%;font-size:15px;line-height:40px;margin:15px 0;text-align:left;padding-left:20px;}
+.box .box1 table td a{color:#38aeff;}

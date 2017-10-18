@@ -1,0 +1,123 @@
+{include file="user@login/addheader" /}
+<script type="text/javascript">
+    $(function(){
+        $("input[id^='menuIds']").change(function(){
+            var id=$(this).attr("id");
+            var rootId="top"+id.substr(0,id.indexOf("-"));
+            var tmpId=id.substr(0,id.indexOf("-"));
+            //alert(id);
+            var le=$("input[id^="+tmpId+"-]:checked").length;
+            $("#"+rootId).prop("checked",le>0);
+            $("input[id^='sub"+id+"-']").prop("checked", $("#"+id).prop("checked"));
+        });
+        $("input[id^='topmenuIds']").change(function(){
+            var id=$(this).attr("id");
+            var tmpId=id.substring(3);
+            $("input[id^='"+tmpId+"-']").prop("checked", $("#"+id).prop("checked"));
+            $("input[id^='sub"+tmpId+"-']").prop("checked", $("#"+id).prop("checked"));
+        });
+        $("input[id^='submenuIds']").change(function(){
+            var id=$(this).attr("id");
+            var tmpId=id.substring(3,id.lastIndexOf("-"));//二级
+            var thirdTmpId=id.substring(0,id.lastIndexOf("-"));//三级ID 开头
+            var tle=$("input[id^="+thirdTmpId+"-]:checked").length;
+            if(tle>0){
+                $("#"+tmpId).prop("checked",true);
+            }
+
+            var rootId="top"+tmpId.substring(0,tmpId.indexOf("-"));//三级 开头
+            var le=$("input[id^='"+tmpId.substring(0,tmpId.indexOf("-"))+"-']:checked").length;
+            $("#"+rootId).prop("checked",le>0);
+
+        });
+        $("a[id^='menuarrow']").click(function(){
+
+            $("div[id^='submenuarrow']").css("display","none");
+            var id=$(this).attr("id");
+            var idom=$("#"+id+" i").first();
+            if(idom.hasClass("fa-angle-double-right")){
+                idom.removeClass("fa-angle-double-right");
+                idom.addClass("fa-angle-double-down")
+                $("#sub"+id).css("display","block");
+            }else if(idom.hasClass("fa-angle-double-down")){
+                idom.removeClass("fa-angle-double-down");
+                idom.addClass("fa-angle-double-right")
+                $("#sub"+id).css("display","none");
+            }
+            $(".fa-angle-double-down").each(function(){
+                var parent=$(this).parent();
+                if(parent.attr("id")!=id){
+                    $(this).removeClass("fa-angle-double-down");
+                    $(this).addClass("fa-angle-double-right")
+                }
+
+            });
+        });
+        $("#btnset").on("click", function () {
+            var form = $(this).closest("form");
+            var url = form.prop("action");
+            var formId = form.attr("id");
+            $.post(url, serializeJson(form.serializeArray()), function (data) {
+                if (data.code == 1) {
+                    toastr.success(data.msg);
+                } else {
+                    toastr.error(data.msg);
+                }
+                $('#myModal').modal('hide');
+            });
+        });
+    });
+</script>
+
+<form id="userform" action="{:url('/user/User/saveRoleMenu')}" method="post" tableId="roletable" class="form-horizontal">
+    <div class="modal-body">
+        {volist name="menus" id="menu" key="mk"}
+        <div class="form-group">
+            <label class="col-sm-3 control-label">
+                <div class="checkbox checkbox-success checkbox-inline">
+                    <input type="checkbox" value="{$menu.id}" id="topmenuIds{$mk}" name="menuIds" {if condition='$menu.chk'}checked="checked"{/if} {if condition='!$menu.enable'}disabled{/if}>
+                    <label for="topmenuIds{$mk}"> <b>{$menu.name}</b> </label>
+                </div>
+            </label>
+            {if condition="isset($menu.sub)"}
+            <div class="col-sm-9" style="margin-bottom: 10px;">
+                {volist name="menu.sub" id="sub" key="k"}
+                <div class="checkbox checkbox-success checkbox-inline">
+                    <input type="checkbox" value="{$sub.id}" id="menuIds{$mk}-{$k}" name="menuIds" {if condition='$sub.chk'}checked="checked"{/if} {if condition='!$sub.enable'}disabled{/if}>
+                    <label for="menuIds{$mk}-{$k}" title="{$sub.desc}"> {$sub.name} </label>
+                    {if condition="isset($sub.third)&&count($sub.third)>0"}
+                    <!--<a href="javascript:void(0);" id="menuarrow{$mk}-{$k}"> <i class="fa fa-angle-double-right"></i> </a>-->
+                    {/if}
+                </div>
+                {/volist}
+            </div>
+            {/if}
+
+            <!--{if condition="isset($menu.sub)"}
+            {volist name="menu.sub" id="sub" key="k"}
+                {if condition="isset($sub.third)"}
+                    <div class="gray-bg col-sm-9 pull-right" id="submenuarrow{$mk}-{$k}" style="display:none; padding: 10px;">
+                        {volist name="sub.third" id="third" key="t"}
+                            <div class="checkbox checkbox-success checkbox-inline">
+                                <input type="checkbox" value="{$third.id}" id="submenuIds{$mk}-{$k}-{$t}" name="menuIds" {if condition='$third.chk'}checked{/if}>
+                                <label for="submenuIds{$mk}-{$k}-{$t}"> {$third.name}</label>
+                            </div>
+                        {/volist}
+                    </div>
+                {/if}
+            {/volist}
+            {/if}-->
+
+        </div>
+        <div class="hr-line-dashed"></div>
+        {/volist}
+    </div>
+    <div class="modal-footer">
+        <!--<input type="hidden" name="menuIds" id="hidemenuIds">-->
+        <input type="hidden" id="id" name="id" value="{$id|default='0'}">
+        <button type="button" class="btn btn-primary" id="btnset"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

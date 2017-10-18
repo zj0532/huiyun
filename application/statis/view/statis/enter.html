@@ -1,0 +1,122 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__JS__/echarts.min.js"></script>
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet'/>
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datetimepicker({
+            minView: "month",
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: true,//今日按钮
+            forceParse : true,
+            format: "yyyy-mm-dd"
+        });
+        initEnterChart();
+        $("#btnenter").click(function () {
+            initEnterChart();
+        });
+
+    });
+    function initEnterChart(){
+        var start=$("#starttime").val();
+        var end=$("#endtime").val();
+        //入驻情况统计
+        var enterurl="{:url('/statis/Statis/enterStatis')}";
+        $.post(enterurl,{start:start,end:end}, function (data) {
+            initChart('enterchart',"入驻情况统计报表",data.color,data.legend,data.xaxis,data.yaxis);
+            var xtitle=data.xaxis;
+            var data=data.yaxis[0].data;
+            $("#enterBody").html("");
+            for (var i = 0; i < xtitle.length; i++) {
+                $("#enterBody").append("<tr><td>"+xtitle[i]+"</td><td>"+data[i]+"</td></tr>");
+            }
+        });
+    }
+    //id,title,color,legend,xaxis,data
+    function initChart(id,title,color,legend,xaxis,data){
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById(id));
+
+        // 指定图表的配置项和数据
+        var option = {
+            color: color,
+            title: {
+                text: title
+            },
+            tooltip : {
+                trigger: 'axis',
+                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                    type : 'line'        // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            legend: {
+                data:legend
+            },
+            xAxis: {
+                data: xaxis
+            },
+            yAxis: {},
+            series: data
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option,true);
+    }
+
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                        <div class="row">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="col-sm-12">
+                                            <form>
+                                                <label class="col-sm-2 control-label" style="line-height:34px;">选择时间：</label>
+                                                <div class="col-sm-10">
+                                                    <div class="col-sm-4"><input type="text" placeholder="开始时间" class="form-control datepicker" id="starttime" value="{$start|default=time()|date='Y-m-d',###}"></div>
+                                                    <div class="col-sm-4"><input type="text" placeholder="结束时间" class="form-control datepicker" id="endtime" value="{$end|default=time()|date='Y-m-d',###}"></div>
+                                                    <div class="col-sm-4"><a href="javascript:void(0);" id="btnenter" class="btn btn-primary "><i class="fa fa-line-chart"></i>&nbsp;统计</a></div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-hover">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>类型</th>
+                                                            <th>数量</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody id="enterBody">
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--图表-->
+                                    <div class="col-sm-6">
+                                        <div id="enterchart"  style="height:500px;"></div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

@@ -1,0 +1,64 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+
+
+    });
+</script>
+
+<form id="historyform" action="{:url('/service/Report/saveItem')}" method="post" tableId="itemtable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">项目名称：</label>
+            <div class="col-sm-10">
+                <input type="text" placeholder="项目名称" class="form-control" id="name" name="name" value="{$data.name|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">编号：</label>
+            <div class="col-sm-10">
+                <input type="text" placeholder="编号" class="form-control" id="no" name="no" value="{$data.no|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">资助方式：</label>
+            <div class="col-sm-10">
+                <input type="text" placeholder="资助方式" class="form-control" id="type" name="type" value="{$data.type|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">资助金额：</label>
+            <div class="col-sm-10">
+                <input type="text" placeholder="资助金额" class="form-control decimal" id="total" name="total" value="{$data.total|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">项目种类：</label>
+            <div class="col-sm-10">
+                <input type="text" placeholder="项目种类" class="form-control" id="projecttype" name="projecttype" value="{$data.projecttype|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">立项年度：</label>
+            <div class="col-sm-10">
+                <input type="text" placeholder="立项年度" class="form-control" id="year" name="year" value="{$data.year|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">完成情况：</label>
+            <div class="col-sm-10">
+                <input type="text" placeholder="完成情况" class="form-control" id="progress" name="progress" value="{$data.progress|default=''}">
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <input type="hidden" id="tag" name="tag" value="{$data.tag|default=''}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

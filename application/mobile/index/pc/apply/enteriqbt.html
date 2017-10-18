@@ -1,0 +1,219 @@
+{include file="index@index/header" /}
+    <!--右侧部分开始-->
+    <link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+        $("#btnapl").click(function(){
+            var etprs=$("#apletprs").val();
+            var contact=$("#aplcontact").val();
+            var apltype=$("#apltype").val();
+            var param=new Object();
+            if(etprs!=""){
+                param.etprs=etprs;
+            }
+            if(contact!=""){
+                param.contact=contact;
+            }
+            if(apltype!=""){
+                param.apltype=apltype;
+            }
+            $('#aplTable').bootstrapTable('refresh',{query: param});
+        });
+            $("#btnexport").click(function(){
+                var table = $(this).attr('table');
+                var url = $(this).attr('data-url');
+                id = mulitecheck(table);
+                if(id != null){
+                    var query = 'id='+id;
+                    if( url.indexOf('?')>0 ){
+                        url += '&' + query;
+                    }else{
+                        url += '?' + query;
+                    }
+                    location.href = url ;
+                }
+            });
+    });
+    function actFmt(value, row, index) {
+        var type=row.apltype;
+        return '<a href="javascript:void(0)" class="enter ml10"><i class="fa fa-edit text-navy"></i>&nbsp;确认入驻</a>&nbsp;&nbsp;' +
+                '<a class="info ml10" href="javascript:void(0)" title="入驻详情"><i class="fa fa-file-text text-blue"></i>&nbsp;入驻详情</a>&nbsp;&nbsp;'+
+                '<a class="tutor ml10" href="javascript:void(0)" title="导师分配"><i class="fa fa-user text-warning"></i>&nbsp;导师分配</a>&nbsp;&nbsp;';
+    }
+        function bactFmt(value, row, index) {
+            var type=row.apltype;
+            return '<a class="info ml10" href="javascript:void(0)" title="入驻详情"><i class="fa fa-file-text text-blue"></i>&nbsp;入驻详情</a>&nbsp;&nbsp;<a class="tutor ml10" href="javascript:void(0)" title="导师分配"><i class="fa fa-user text-warning"></i>&nbsp;导师分配</a>&nbsp;&nbsp;';
+        }
+    window.actEvt = {
+        'click .info': function (e, value, row, index) {
+            var url = "{:url('/index/Apply/etprsAplInfo/id/" + row.id + "/type/" + row.type + "')}";
+            location.href = url;
+        },
+        'click .enter': function (e, value, row, index) {
+            /*var table="enterprise";
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                    '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确认企业已经入驻？操作后将不能取消</div>' +
+                    '<div class="modal-footer"><button class="btn btn-primary" onclick="setAplStatus(\''+table+'\',\''+row.etprsId+'\',\'1001016\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");*/
+            var id=row.etprsId;
+            var url="{:url('/index/Apply/setEnterTime')}";
+            $.post(url,{"etprsId":id},function(data) {
+                show_modal("设置入驻时间",data,"");
+            });
+        },
+        'click .tutor': function (e, value, row, index) {
+            var id=row.etprsId;
+            var url="{:url('/index/Apply/setEtprsTutor')}";
+            $.post(url,{"etprsId":id},function(data) {
+                show_modal("设置导师",data,"");
+            });
+        }
+    };
+    function setAplStatus(table,id,status){
+        var url = "{:url('/index/Apply/setAplStatus')}";
+        $.post(url,{"table":table,"id":id,"status":status},function(data) {
+            $('#myModal').modal('hide');
+            if(data.code==1){
+                toastr.success("设置成功");
+                $("#aplTable").bootstrapTable('refresh');
+                $("#aplpassTable").bootstrapTable('refresh');
+                $("#aplbackTable").bootstrapTable('refresh');
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+
+    function initOther(){
+        $("#aplTable").bootstrapTable('refresh');
+        $("#baplTable").bootstrapTable('refresh');
+    }
+    function apltype(value, row, index){
+        if(value=='0'){
+            return "企业入驻";
+        }else if(value==1){
+            return "团队入驻";
+        }else if(value=="roomapl"){
+            return "加租房间";
+        }
+    }
+    function typeFmt(value, row, index){
+        if(value=='team'){
+            return "团队";
+        }else if(value=="etprs"){
+            return "企业";
+        }else if(value=="seated"){
+            return "已入驻项目";
+        }
+    }
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">待审核</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">已通过企业</a></li>
+                    </ul>
+                    <div class="tab-content">
+
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="row">
+                                                    <div class="col-sm-12 m-b-xs"><span>企业名称：</span>
+                                                        <input type="text" placeholder="请输入企业名称" class="input-sm form-control" id="apletprs">
+                                                        <span>联系人：</span>
+                                                        <input type="text" placeholder="请输入联系人姓名" class="input-sm form-control" id="aplcontact">
+                                                        <span>类型：</span>
+                                                        <select class="form-control inline" id="apltype">
+                                                            <option value="">--请选择--</option>
+                                                            <option value="etprs">企业</option>
+                                                            <option value="team">团队</option>
+                                                            <option value="seated">已入驻项目</option>
+                                                        </select>
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnapl">
+                                                            <i class="fa fa-search"></i>
+                                                            查询
+                                                        </button>
+                                                        <button type="button" class="btn btn-warning btn-sm ml10" id="btnexport" data-url="{:url('/index/Apply/exportIqbt')}" table="aplTable">
+                                                            <i class="fa fa-share-square-o"></i>
+                                                            导出
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table id="aplTable" class="resettable" data-toggle="table" data-url="{:url('/index/Apply/getEnterApl')}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                        <thead>
+                                                        <tr>
+                                                            <th data-field="state" data-checkbox="true"></th>
+                                                            <th  data-field="etprsName"> 企业名称</th>
+                                                            <th data-field="apltype" data-formatter="apltype">申请类型</th>
+                                                            <th data-field="contact">联系人</th>
+                                                            <th data-field="mobile">联系电话</th>
+                                                            <th data-field="industryText">行业类型</th>
+                                                            <th data-field="workstyleText">办公方式</th>
+                                                            <th data-field="type" data-formatter="typeFmt">类型</th>
+                                                            <th data-field="roomNos">已分配房间</th>
+                                                            <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+
+                                                <div class="table-responsive">
+                                                    <table id="baplTable" class="resettable" data-toggle="table" data-url="{:url('/index/Apply/getEnterApl',array('status'=>'1001016'))}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                        <thead>
+                                                            <tr>
+                                                                <th data-field="state" data-checkbox="true"></th>
+                                                                <th  data-field="etprsName"> 企业名称</th>
+                                                                <th data-field="apltype" data-formatter="apltype">申请类型</th>
+                                                                <th data-field="contact">联系人</th>
+                                                                <th data-field="mobile">联系电话</th>
+                                                                <th data-field="industryText">行业类型</th>
+                                                                <th data-field="workstyleText">办公方式</th>
+                                                                <th data-field="type" data-formatter="typeFmt">类型</th>
+                                                                <th data-field="roomNos">已分配房间</th>
+                                                                <th data-field="action" data-formatter="bactFmt" data-events="actEvt">操作</th>
+                                                            </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

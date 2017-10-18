@@ -1,0 +1,399 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $("#iqbttable").on("expand-row.bs.table",function(param,index,detail){
+                var nowrow=$("#iqbttable").data("nowrow");
+                if(nowrow!=undefined&&nowrow!=index){
+                    $("#iqbttable").bootstrapTable('collapseRow', nowrow);
+                }
+                $("#iqbttable").data("nowrow",index);
+            });
+        });
+        function detailView(index, row){
+            var iqbt="";
+            var userdata = row.users;
+            $('#usertable').bootstrapTable('destroy');
+            if(userdata.length>0){
+                $('#usertable').bootstrapTable({
+                    data: userdata
+                });
+            }
+            var tutordata = row.tutors;
+            $('#tutortable').bootstrapTable('destroy');
+            if(tutordata.length>0){
+                $('#tutortable').bootstrapTable({
+                    data: tutordata
+                });
+            }
+            var etprsdata = row.etprss;
+            $('#etprstable').bootstrapTable('destroy');
+            if(etprsdata.length>0){
+                $('#etprstable').bootstrapTable({
+                    data: etprsdata
+                });
+            }
+            var statisData = row.statis;
+            var userstr=$("#userbody").html();
+            var tutorstr=$("#tutorbody").html();
+            var etprsstr=$("#etprsbody").html();
+            var statis=$("#statisbody").html();
+
+            /*var html='<div class="tabs-container"> <ul class="nav nav-tabs"> ' +
+                    '<li class="active"><a data-toggle="tab" href="#tab1">管理员列表  </a> </li> '+
+                    '<li class=""><a data-toggle="tab" href="#tab2">导师列表 </a> </li> '+
+                    '<li class=""><a data-toggle="tab" href="#tab3">企业列表  </a> </li> '+
+                    '</ul>' +
+                    '<div class="tab-content "> ' +
+                    '<div id="tab1" class="tab-pane active"><div class="panel-body"> '+userstr+' </div> </div>' +
+                    '<div id="tab2" class="tab-pane"><div class="panel-body"> '+tutorstr+' </div> </div>' +
+                    '<div id="tab3" class="tab-pane"><div class="panel-body"> '+etprsstr+' </div> </div>' +
+                    '</div></div>';
+            return html;
+        }*/
+            var html='<div class="tabs-container"> <ul class="nav nav-tabs"> ' +
+                    '<li class="active"><a data-toggle="tab" href="#tab0">数据统计  </a> </li> '+
+                    '<li class=""><a data-toggle="tab" href="#tab1">管理员列表  </a> </li> '+
+                    '<li class=""><a data-toggle="tab" href="#tab2">导师列表 </a> </li> '+
+                    '<li class=""><a data-toggle="tab" href="#tab3">企业列表  </a> </li> '+
+                    '</ul>' +
+                    '<div class="tab-content "> ' +
+                    '<div id="tab0" class="tab-pane active"><div class="panel-body"> '+statis+' </div> </div>' +
+                    '<div id="tab1" class="tab-pane"><div class="panel-body"> '+userstr+' </div> </div>' +
+                    '<div id="tab2" class="tab-pane"><div class="panel-body"> '+tutorstr+' </div> </div>' +
+                    '<div id="tab3" class="tab-pane"><div class="panel-body"> '+etprsstr+' </div> </div>' +
+                    '</div></div>';
+            return html;
+        }
+
+        function collapseRow(index, row, $detail){
+            var nowrow=$("#iqbttable").data("nowrow");
+            alert(nowrow);
+            $table.bootstrapTable('collapseRow', nowrow);
+        }
+        function expandRow(index, row){
+            $("#iqbttable").data("nowrow",index);
+        }
+    </script>
+
+    <div id="userbody" style="display:none;">
+        <table id="usertable" class="resettable">
+            <thead>
+            <tr>
+                <th data-field="realname" data-sortable="true">名称</th>
+                <th data-field="mobile">联系电话</th>
+                <th data-field="email" data-sortable="true">电子邮件</th>
+                <th data-field="rolename" data-sortable="true">角色</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="tutorbody" style="display:none;">
+        <table id="tutortable" class="resettable">
+            <thead>
+            <tr>
+                <th data-field="name" data-sortable="true">名称</th>
+                <th data-field="mobile">联系电话</th>
+                <th data-field="email" data-sortable="true">电子邮件</th>
+                <th data-field="field" data-sortable="true">擅长领域</th>
+                <th data-field="desc" data-sortable="true">说明</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="etprsbody" style="display:none;">
+        <table id="etprstable" class="resettable">
+            <thead>
+            <tr>
+                <th data-field="name" data-sortable="true">名称</th>
+                <th data-field="mobile">联系电话</th>
+                <th data-field="email" data-sortable="true">电子邮件</th>
+                <th data-field="field" data-sortable="true">擅长领域</th>
+                <th data-field="desc" data-sortable="true">说明</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+<div id="statisbody" style="display:none;">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>在孵企业</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="4088" data-speed="1500" id="ingnum"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>申请中企业</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="275" data-speed="1500" id="aplnum"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>完成孵化企业</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="1061" data-speed="1500" id="gradtnum"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>房间总数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="4088" data-speed="1500" id="roomnum"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>已入驻房间数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="275" data-speed="1500" id="etroomnum"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>工位总数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="1061" data-speed="1500" id="unitnum"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>已使用工位数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="80660" data-speed="1500" id="etunitnum"></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>累计房间面积</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="4088" data-speed="1500" id="roomarea"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>使用房间面积</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="275" data-speed="1500" id="etroomarea"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3"></div>
+        <div class="col-sm-3"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>孵化器数量</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="4088" data-speed="1500" id="iqbtnum"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>高新企业数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="275" data-speed="1500" id="highetprs"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3"></div>
+        <div class="col-sm-3"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>带动就业数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="4088" data-speed="1500" id="staffnum"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>应届大学生</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="275" data-speed="1500" id="student"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>千人计划</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="1061" data-speed="1500" id="thousand"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>博士</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="80660" data-speed="1500" id="doctor"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>留学生数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="4088" data-speed="1500" id="overseas"></h1>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>申请专利数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="275" data-speed="1500" id="invent"></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>累计投入</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="4088" data-speed="1500" id="rdinput"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>营业额</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="275" data-speed="1500" id="income"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>缴税额</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="1061" data-speed="1500" id="tax"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>技术成交额</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="80660" data-speed="1500" id="tct"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>获天使投资</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins timer"  data-to="4088" data-speed="1500" id="investment"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2"></div>
+    </div>
+
+</div>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                                <div class="col-sm-12">
+                                    <!-- Example Events -->
+                                        <table id="iqbttable" class="resettable" data-toggle="table" data-url="{:url('/user/User/getIqbtlist',array('districtId'=>$districtId))}" data-search="true"
+                                               data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true"
+                                               data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView"
+                                               onExpandRow="collapseRow" onCollapseRow="expandRow">
+                                            <thead>
+                                            <tr>
+                                                <th data-field="name" data-sortable="true">名称</th>
+                                                <th data-field="address" data-sortable="true">地址</th>
+                                                <th data-field="leader" data-sortable="true">负责人</th>
+                                                <th data-field="mobile">联系电话</th>
+                                                <th data-field="email" data-sortable="true">电子邮件</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    <!-- End Example Events -->
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

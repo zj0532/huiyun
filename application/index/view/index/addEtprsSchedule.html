@@ -1,0 +1,225 @@
+{include file="user@login/addheader" /}
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+        var smnturl="{:url('/index/Index/smntUpload',array('dir'=>'smnt'))}";
+        $('#remark').summernote({
+            lang: "en-US",height: 100,
+            'callbacks': {
+                'onImageUpload': function (files) {
+                    img = smntUploadFile(files,$("#remark"),smnturl,"__PUBLIC__");
+                }
+            }
+        });
+        $("#btnsave").on("click", function () {
+            var form = $(this).closest("form");
+            var url = form.prop("action");
+            var formId = form.attr("id");
+            var err=custom_validate(formId);
+            if(err==0){
+                return;
+            }else {
+                var data=form.serializeArray();
+                if($(".summernote").length>0){
+                    $(".summernote").each(function(){
+                        var obj=new Object();
+                        var smntId=$(this).attr("id");
+                        obj.name=smntId;
+                        obj.value=$("#"+smntId).summernote('code');
+                        data[data.length]=obj;
+                    });
+                }
+                var thisobj = $(this);
+                thisobj.attr("disabled","true");
+                $.post(url, serializeJson(data), function (data) {
+                    if (data.code == 1) {
+                        thisobj.removeAttr("disabled");
+                        toastr.success(data.msg);
+                        try {
+                            if (typeof(eval("initFullCalendar")) == "function") {
+                                initFullCalendar();
+                            }
+                        } catch(e) {}
+
+                        $('#myModal').modal('hide');
+                    } else {
+                        thisobj.removeAttr("disabled");
+                        toastr.error(data.msg);
+                    }
+                });
+            };
+        });
+        $(".chosen-select").chosen({
+            search_contains: true
+        });
+        if($("#holeday").is(':checked')){
+            $('.timespan').hide();
+            $("#isend").prop("checked",false);
+
+            $(".timepicker").html("");
+            $("#timemark").prop("checked",false);
+            $("#p_endtime").hide();
+        }
+        else{
+            /*$(".timepicker").html("");
+             $('.timespan').show();*/
+            if($("#isend").is(':checked')){
+                $("#p_endtime").show();
+                $("#holeday").prop("checked",false);
+            }else{
+                $("#p_endtime").hide();
+            }
+            if($("#timemark").is(':checked')){
+                $(".timespan").show();
+                $("#holeday").prop("checked",false);
+            }else{
+                $(".timespan").hide();
+            }
+        }
+        $('.datepicker').datetimepicker({
+            minView: "month",
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: true,//今日按钮
+            forceParse : true,
+            format: "yyyy-mm-dd"
+        });
+        $('.timepicker').datetimepicker({
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: false,//今日按钮
+            format: "hh:ii",
+            showtitle:true,//lippor修改，选择时间时候，标题修改
+            forceParse : true,//当选择器关闭的时候，是否强制解析输入框中的值。
+            initialDate:$("#startdate").val(),
+            startView:1
+        });
+        $("#holeday").click(function(){
+            if($(this).is(':checked')){
+                $('.timespan').hide();
+                $("#isend").prop("checked",false);
+                $(".timepicker").html("");
+                $("#timemark").prop("checked",false);
+                $("#p_endtime").hide();
+            }
+        });
+
+        $("#isend").click(function(){
+            if($(this).is(':checked')){
+                $("#p_endtime").show();
+                $("#holeday").prop("checked",false);
+            }else{
+                $("#p_endtime").hide();
+                if(!$("#timemark").is(':checked')){
+                    $("#holeday").prop("checked",true);
+                }
+            }
+        });
+
+
+        $("#timemark").click(function(){
+            if($(this).is(':checked')){
+                $(".timespan").show();
+                $("#holeday").prop("checked",false);
+            }else{
+                $(".timepicker").html("");
+                $(".timespan").hide();
+                if(!$("#isend").is(':checked')){
+                    $("#holeday").prop("checked",true);
+                }
+            }
+        });
+    });
+</script>
+    <form id="resosform" action="{:url('/index/Index/saveEtprsSchedule')}" method="post" tableId="resostable" class="form-horizontal">
+        <div class="modal-body">
+            <div class="form-group">
+                <span><label class="col-sm-2 control-label" for="title">日程安排</label>
+                <div class="col-sm-10">
+                    <input class="form-control require"  name="title" id="title" placeholder="记录你将要做的一件事..." value="{$data.name|default=''}">
+                </div></span>
+            </div>
+            <div class="form-group">
+                <span><label class="col-sm-2 control-label" for="startDate">开始日期</label>
+                <div class="col-sm-4">
+                    <input class="form-control datepicker opt-require"  name="startDate" id="startDate" placeholder="开始日期" value="{$data.startDate|default=$startDate|date='Y-m-d',###}">
+                </div></span>
+                <span style="display:none;" class="timespan"><label class="col-sm-2 control-label" for="starttime">选择时间</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control input timepicker opt-require" name="starttime" id="starttime" placeholder="时间" value="{$data.starttime|default=time()|date='H:i',###}">
+                </div></span>
+            </div>
+            <div class="form-group" id="p_endtime"  style="display:none;">
+                <span><label class="col-sm-2 control-label" for="endDate">结束日期</label>
+                <div class="col-sm-4">
+                    <input class="form-control datepicker opt-require"  name="endDate" id="endDate" placeholder="结束日期" value="{$data.endDate|default=time()|date='Y-m-d',###}">
+                </div></span>
+                <span style="display:none;" class="timespan"><label class="col-sm-2 control-label" for="endtime">选择时间</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control input timepicker opt-require" name="endtime" placeholder="时间" id="endtime" value="{$data.endtime|default=time()|date='H:i',###}">
+                </div></span>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label"></label>
+                <div class="col-sm-10">
+                    <div class="checkbox checkbox-success checkbox-inline">
+                        <input type="checkbox" id="holeday"  value="1" name="holeday" {if condition="isset($data.holeday)"}{if condition="!empty($data.holeday)"}checked{/if}{else /}checked{/if}>
+                        <label for="holeday"> 全天 </label>
+                    </div>
+                    <div class="checkbox checkbox-success checkbox-inline">
+                        <input type="checkbox" id="isend" value="1"  name="isend" {if condition="isset($data.isend)&&!empty($data.isend)"}checked{/if}>
+                        <label for="isend"> 结束时间 </label>
+                    </div>
+                    <div class="checkbox checkbox-success checkbox-inline">
+                        <input type="checkbox" id="timemark" value="1"  name="timemark" {if condition="isset($data.timemark)&&!empty($data.timemark)"}checked{/if}>
+                        <label for="timemark"> 时间 </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">事件性质</label>
+                <div class="col-sm-10">
+                    <div class="radio radio-success radio-inline">
+                        <input type="radio" id="color1" value="#5CB85C" name="color" {if condition="isset($data.color)"} {if condition="!empty($data.color)&&$data.color=='#5CB85C'"}checked{/if} {else /}checked{/if}>
+                        <label for="color1" class="text-success"><b>普通</b></label>
+                    </div>
+                    <div class="radio radio-success radio-inline">
+                        <input type="radio" id="color2" value="#f8ac59" name="color" {if condition="isset($data.color)&&$data.color=='#f8ac59'"}checked{/if}>
+                        <label for="color2" class="text-warning"><b>重要</b></label>
+                    </div>
+                    <div class="radio radio-success radio-inline">
+                        <input type="radio" id="color3" value="#ed5565" name="color" {if condition="isset($data.color)&&$data.color=='#ed5565'"}checked{/if}>
+                        <label for="color3" class="text-danger"><b>紧急</b></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <span><label class="col-sm-2 control-label" for="title">事件地址</label>
+                <div class="col-sm-10">
+                    <input class="form-control"  name="address" id="address" placeholder="事件的地址，比如出差地" value="{$data.address|default=''}">
+                </div></span>
+            </div>
+            <div class="form-group">
+            <span><label class="col-sm-2 control-label" for="aim">简要描述</label>
+            <div class="col-sm-10">
+                <textarea class="form-control"  name="aim" id="aim" placeholder="简要描述">{$data.aim|default=''}</textarea>
+            </div></span>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">详细备注</label>
+
+                <div class="col-sm-10">
+                    <div class="summernote" id="remark" name="remark">
+                        {$data.remark|default=''}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+            <button type="button" class="btn btn-primary" id="btnsave"><i class="fa fa-save"></i> <span
+                    class="bold">保存</span></button>
+            <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+            </button>
+        </div>
+    </form>

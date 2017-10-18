@@ -1,0 +1,53 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css'  rel='stylesheet'/>
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="__JS__/bootstrap_validate.js"></script>
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script type="text/javascript">
+    $(function () {
+
+
+    });
+    function copyUrl2()
+    {
+        var Url2=document.getElementById("link");
+        Url2.select(); // 选择对象
+        document.execCommand("Copy"); // 执行浏览器复制命令
+        toastr.warning("已经复制到粘贴板");
+    }
+</script>
+<!--右侧部分开始-->
+<div id="page-wrapper" class="gray-bg dashbard-1" >
+    <div class="row">
+         {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                   <h2 style="text-align:center;">企业申请入驻链接</h2>
+                   <div class="ibox-content" style="border: none;">
+                       <div class="col-sm-12 m-b-xs">
+                           <span>申请链接：</span>
+                           <input type="text" placeholder="申请链接" value="{$url}{:url('/user/Login/register',array('iqbtId'=>$iqbtId,'etprsIqbtId'=>$etprsIqbtId))}"
+                                  class="input-sm form-control" name="lin" id="link">
+
+                           <button type="button" class="btn btn-warning btn-sm ml10"
+                                   onClick="copyUrl2()">
+                               <i class="fa fa-share-square-o"></i>
+                               复制
+                           </button>
+                           <!--<button type="button" class="btn btn-warning btn-sm">&nbsp;&nbsp;<i class="fa fa-mobile"></i>&nbsp;&nbsp;发通知&nbsp;&nbsp;</button>-->
+                           <!--<button type="button" class="btn btn-warning btn-sm">&nbsp;&nbsp;<i class="fa fa-file-text"></i>&nbsp;&nbsp;导出&nbsp;&nbsp;</button>-->
+                       </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

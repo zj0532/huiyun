@@ -1,0 +1,76 @@
+{include file="index@index/header" /}
+<script type="text/javascript">
+
+
+    function aplFmt(value, row, index) {
+        var nw=Date.parse(new Date());
+        if(row.status=='0'&&parseInt(nw/1000)<parseInt(row.startTime)){
+            var html='<a class="apl ml10" onclick="statCfm(\''+row.id+'\',\'1\')" href="javascript:void(0)" title="通过"><i class="fa fa-check text-navy"></i>&nbsp;通过</a><a class="apl ml10" onclick="statCfm(\''+row.id+'\',\'2\')" href="javascript:void(0)" title="拒绝"><i class="fa fa-times text-danger"></i>&nbsp;拒绝</a>';
+        }
+        return html;
+    }
+    function statCfm(id,status,roomId){
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要进行该操作？</div><div class="modal-footer"><button class="btn btn-primary" onclick="setStat(\''+id+'\',\''+status+'\',\''+roomId+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",data,"modal-sm");
+    }
+    function setStat(id,status,roomId){
+        var url="{:url('/service/Service/roomAplStat')}";
+        $.post(url,{status:status,id:id}, function(data) {
+            if(data.code==1){
+                toastr.success("操作成功");
+                location.href="{:url('/service/Service/meetroom')}?id="+roomId;
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+
+
+</script>
+
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:92%;margin:20px auto;padding:0;}
+    .user_com .row .col-xs-6{padding-left:10px;padding-right:10px;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+       <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">记录详情</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                    <tr>
+                        <td>申请企业</td>
+                        <td>{$data['etprsname']}</td>
+                    </tr>
+                    <tr>
+                        <td>开始时间</td>
+                        <td>{$data.startTime|default=''|date="Y-m-d H:i:s",###}</td>
+                    </tr>
+                    <tr>
+                        <td>结束时间</td>
+                        <td>{$data.endTime|default=''|date="Y-m-d H:i:s",###}</td>
+                    </tr>
+                    <tr>
+                        <td>说明</td>
+                        <td>{$data['desc']}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group" style="text-align:center;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="statCfm({$data['id']},1,{$data['roomId']})">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;通过&nbsp;&nbsp;</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="statCfm({$data['id']},0,{$data['roomId']})">&nbsp;&nbsp;<i class="fa fa-times"></i>&nbsp;&nbsp;拒绝&nbsp;&nbsp;</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

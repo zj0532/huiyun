@@ -1,0 +1,461 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $("#iqbttable").on("expand-row.bs.table",function(param,index,detail){
+                var nowrow=$("#iqbttable").data("nowrow");
+                if(nowrow!=undefined&&nowrow!=index){
+                    $("#iqbttable").bootstrapTable('collapseRow', nowrow);
+                }
+                $("#iqbttable").data("nowrow",index);
+            });
+
+            $("#btnexport").click(function(){
+                var ids=[];
+                var tablename = $(this).attr('table');
+                var table = $('#'+tablename);
+                var url = $(this).attr('data-url');
+                var selections=table.bootstrapTable('getSelections');
+                $.each(selections, function(index, value, array) {
+                    ids.push(value.id);
+                });
+                if(ids.length==0){
+                    toastr.warning("至少选择一个孵化器");
+                    return null;
+                }else{
+                    ids=ids.join(",");
+                    if(ids != null){
+                        var query = 'ids='+ids;
+                        if( url.indexOf('?')>0 ){
+                            url += '&' + query;
+                        }else{
+                            url += '?' + query;
+                        }
+                        location.href = url ;
+                    }
+                }
+
+            });
+
+        });
+        function detailView(index, row){
+            var iqbt="";
+            var userdata = row.users;
+            $('#usertable').bootstrapTable('destroy');
+            if(userdata.length>0){
+                $('#usertable').bootstrapTable({
+                    data: userdata
+                });
+            }
+            var tutordata = row.tutors;
+            $('#tutortable').bootstrapTable('destroy');
+            if(tutordata.length>0){
+                $('#tutortable').bootstrapTable({
+                    data: tutordata
+                });
+            }
+            var etprsdata = row.etprss;
+            $('#etprstable').bootstrapTable('destroy');
+            if(etprsdata.length>0){
+                $('#etprstable').bootstrapTable({
+                    data: etprsdata
+                });
+            }
+            var statisData = row.statis;
+            for(var o in statisData){
+                $("#"+o).html(statisData[o]);
+
+            }
+            var userstr=$("#userbody").html();
+            var tutorstr=$("#tutorbody").html();
+            var etprsstr=$("#etprsbody").html();
+            var statis=$("#statisbody").html();
+
+            var html='<div class="tabs-container"> <ul class="nav nav-tabs"> ' +
+                    '<li class="active"><a data-toggle="tab" href="#tab0">数据统计  </a> </li> '+
+                    '<li class=""><a data-toggle="tab" href="#tab1">管理员列表  </a> </li> '+
+                    '<li class=""><a data-toggle="tab" href="#tab2">导师列表 </a> </li> '+
+                    '<li class=""><a data-toggle="tab" href="#tab3">企业列表  </a> </li> '+
+                    '</ul>' +
+                    '<div class="tab-content "> ' +
+                    '<div id="tab0" class="tab-pane active"><div class="panel-body"> '+statis+' </div> </div>' +
+                    '<div id="tab1" class="tab-pane"><div class="panel-body"> '+userstr+' </div> </div>' +
+                    '<div id="tab2" class="tab-pane"><div class="panel-body"> '+tutorstr+' </div> </div>' +
+                    '<div id="tab3" class="tab-pane"><div class="panel-body"> '+etprsstr+' </div> </div>' +
+                    '</div></div>';
+            return html;
+        }
+
+        function collapseRow(index, row, $detail){
+            var nowrow=$("#iqbttable").data("nowrow");
+            alert(nowrow);
+            $table.bootstrapTable('collapseRow', nowrow);
+        }
+        function expandRow(index, row){
+            $("#iqbttable").data("nowrow",index);
+        }
+
+        function add0(m){return m<10?'0'+m:m }
+        function format(time)
+        {
+            //时间戳是整数，否则要parseInt转换
+            var time = new Date(time*1000);
+            var y = time.getFullYear();
+            var m = time.getMonth()+1;
+            var d = time.getDate();
+            // var h = time.getHours();
+            //  var mm = time.getMinutes();
+            //  var s = time.getSeconds();
+            // return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+            return y+'-'+add0(m)+'-'+add0(d);
+        }
+        function timeFmt(value,row,index){
+            if(value!=null && value!='0' && value!='' ){
+                return format(parseInt(value));
+            }else{
+                return '永久';
+            }
+        }
+
+
+    </script>
+
+    <div id="userbody" style="display:none;">
+        <table id="usertable" class="resettable">
+            <thead>
+            <tr>
+                <th data-field="realname" data-sortable="true">名称</th>
+                <th data-field="mobile">联系电话</th>
+                <th data-field="email" data-sortable="true">电子邮件</th>
+                <th data-field="rolename" data-sortable="true">角色</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="tutorbody" style="display:none;">
+        <table id="tutortable" class="resettable">
+            <thead>
+            <tr>
+                <th data-field="name" data-sortable="true">名称</th>
+                <th data-field="mobile">联系电话</th>
+                <th data-field="email" data-sortable="true">电子邮件</th>
+                <th data-field="field" data-sortable="true">擅长领域</th>
+                <th data-field="desc" data-sortable="true">说明</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="etprsbody" style="display:none;">
+        <table id="etprstable" class="resettable">
+            <thead>
+            <tr>
+                <th data-field="name" data-sortable="true">企业名称</th>
+                <th data-field="contact" data-sortable="true">联系人</th>
+                <th data-field="mobile">联系电话</th>
+                <th data-field="batch" data-sortable="true">入驻批次</th>
+                <th data-field="entertime" data-sortable="true">入驻时间</th>
+                <th data-field="pactquittime" data-sortable="true">退出时间</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="statisbody" style="display:none;">
+        <div class="row">
+
+            <div class="col-sm-3">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>在孵企业（个）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="ingnum"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-3">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>申请中企业（个）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="aplnum"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-3">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>完成孵化企业（个）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="gradtnum"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-sm-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>房间总数（个）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="roomnum"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-3">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>已入驻房间数（个）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="etroomnum"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-3">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>工位总数（个）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="unitnum"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-3">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>已使用工位数（个）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="etunitnum"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>累计房间面积（㎡）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="roomarea"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-3">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>使用房间面积（㎡）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="etroomarea"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-sm-3"></div>
+            <div class="col-sm-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>孵化器数量（个）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="iqbtnum"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-3">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>高新企业数（个）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="highetprs"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-sm-3"></div>
+            <div class="col-sm-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>带动就业数（人）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="staffnum"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>应届大学生（人）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="student"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>千人计划（人）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="thousand"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>博士（人）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="doctor"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>留学生数（人）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="overseas"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>申请专利数（件）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="invent"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>累计投入（万元）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="rdinput"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>营业额（万元）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="income"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>缴税额（万元）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="tax"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>技术成交额（万元）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="tct"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <ul class="sortable-list connectList agile-list">
+                    <li class="info-element">
+                        <span>获天使投资（万元）</span>
+                        <div class="agile-detail">
+                            <span style="font-weight:bold;" id="investment"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+
+                            <div id="toolbar" class="col-sm-12 m-b-xs">
+                                <button type="button" class="btn btn-warning btn-sm ml10" id="btnexport" data-url="{:url('/user/User/exportIqbtStat')}" table="iqbttable">
+                                    <i class="fa fa-share-square-o"></i>
+                                    导出数据统计
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <!-- Example Events -->
+                                <table id="iqbttable" class="resettable" data-toggle="table" data-url="{:url('/user/User/getIqbtlist',array('id'=>$id))}" data-search="true"
+                                       data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true"
+                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView"
+                                       onExpandRow="collapseRow" onCollapseRow="expandRow">
+                                    <thead>
+                                    <tr>
+                                        <th data-field="state" data-checkbox="true"></th>
+                                        <th data-field="name" data-sortable="true">名称</th>
+                                        <th data-field="address" data-sortable="true">地址</th>
+                                        <th data-field="leader" data-sortable="true">负责人</th>
+                                        <th data-field="mobile">联系电话</th>
+                                        <th data-field="email" data-sortable="true">电子邮件</th>
+                                        <th data-field="exptime" data-sortable="true" data-formatter="timeFmt">到期时间</th>
+                                        <th data-field="levelText">孵化器级别</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <!-- End Example Events -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

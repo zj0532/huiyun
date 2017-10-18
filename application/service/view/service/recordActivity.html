@@ -1,0 +1,133 @@
+{include file="user@login/addheader" /}
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $('#summary').summernote({lang:"zh-CN",focus:true,height:100,
+            callbacks: {
+                onImageUpload: function (files) {
+                    img = smntUploadFile(files,$("#summary"),"{:url('/index/Index/smntUpload',array('dir'=>'smnt'))}","__PUBLIC__");
+                }
+            }});
+        var oFileInput = new FileInput();
+        var url="{:url('/oa/Oa/uploadFile')}";
+        oFileInput.Init("pics",url);
+        oFileInput.Init("videos",url);
+        oFileInput.Init("xls_file",url);
+    });
+    function FileInput() {
+        var oFile = new Object();
+
+        //初始化fileinput控件（第一次初始化）
+        oFile.Init = function(ctrlName,url) {
+            var control = $('#' + ctrlName);
+            //初始化上传控件的样式
+            control.fileinput({
+                showPreview:true,
+                language: 'zh', //设置语言
+                uploadUrl:url, //上传的地址..
+                allowedFileExtensions: ['jpg','jpeg','gif','png','rmvb','mp4','mp3'],//接收的文件后缀
+                showUpload: false, //是否显示上传按钮
+                showCaption: true,//是否显示标题
+                browseClass: "btn btn-primary btn-inline", //按钮样式
+                dropZoneEnabled: true,//是否显示拖拽区域
+                /*initialPreview: [
+                 "<img src='../public\\files\\default\\21-1476429623-39869-0.jpg' class='kv-preview-data file-preview-image' />",
+                 "<img src='public\files/default\21-1476429623-39869-0.jpg' class='kv-preview-data file-preview-image' />",
+                 ],*/
+                //minImageWidth: 50, //图片的最小宽度
+                //minImageHeight: 50,//图片的最小高度
+                //maxImageWidth: 1000,//图片的最大宽度
+                //maxImageHeight: 1000,//图片的最大高度
+                maxFileSize: 3100,//单位为kb，如果为0表示不限制文件大小
+                //minFileCount: 0,
+                maxFileCount:0, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount:false,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！"
+            }).on("filebatchselected", function(event, files) {
+                $(this).fileinput("upload");
+            });
+
+            //导入文件上传完成之后的事件
+            $("#"+ctrlName).on("fileuploaded", function (event, data, previewId, index) {
+                if(data["response"]["code"]=="1"){
+                    if($("#h"+ctrlName).val()!=""){
+                        $("#h"+ctrlName).val($("#h"+ctrlName).val()+","+data["response"]["data"]);
+                    }else{
+                        $("#h"+ctrlName).val(data["response"]["data"]);
+                    }
+                }
+            });
+            /*$("#"+ctrlName).on('filepredelete', function(event, key) {
+             console.log('Key = ' + key);
+             });
+             $("#"+ctrlName).on("filecleared", function (event, key) {
+             $("#h"+ctrlName).val("");
+             });
+             $("#"+ctrlName).on("filesuccessremove", function (event, key) {
+             alert(JSON.stringify(key)+"----1");
+             });*/
+        }
+        return oFile;
+    };
+</script>
+
+
+<form id="resosform" action="{:url('/service/Service/saveRecordActivity')}" method="post" tableId="activitytable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label"></label>
+            <div class="col-sm-10">
+                <label class="control-label">{$data.name|default=''}</label>
+            </div></span>
+        </div>
+    </div>
+    <div>
+        <div class="tabs-container">
+
+            <div class="tabs-left">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1"> 图片上传</a>
+                    </li>
+                    <li class=""><a data-toggle="tab" href="#tab-2"> 视频上传</a>
+                    </li>
+                    <li class=""><a data-toggle="tab" href="#tab-3"> 活动总结</a>
+                    </li>
+                </ul>
+                <div class="tab-content ">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <input id="pics" type="file" class="projectfile" multiple >
+                        </div>
+                    </div>
+                    <div id="tab-2" class="tab-pane">
+                        <div class="panel-body">
+                            <input id="videos" type="file" class="projectfile" multiple>
+                        </div>
+                    </div>
+                    <div id="tab-3" class="tab-pane">
+                        <div class="panel-body">
+                            <div class="summernote" id="summary" name="summary">
+                                {$data.summary|default=''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="hpics" name="pics" value="{$data.pics|default=''}">
+        <input type="hidden" id="hvideos" name="videos" value="{$data.videos|default=''}">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

@@ -1,0 +1,269 @@
+{include file="index/header" /}
+    <script type="text/javascript" src="__PLUG__/roompicker/jquery.seat-charts.min.js"></script>
+    <link href="__CSS__/plugins/chosen/chosen.min.css" rel="stylesheet">
+    <link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <link href="__PLUG__/roompicker/roompicker.css" rel="stylesheet">
+    <script src="__JS__/plugins/chosen/chosen.jquery.min.js"></script>
+    <script src="__JS__/estate/roompicker.js"></script>
+    <script src="__JS__/bootstrap_validate.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $("#btnsave").click(function(){
+            var form = $(this).closest("form");
+            var url = form.prop("action");
+            var tableId = form.attr("tableId");
+            var formId = form.attr("id");
+            var err=custom_validate(formId);
+            if(err==0){
+                return;
+            }else {
+                var data=form.serializeArray();
+                $.post(url, serializeJson(data), function (data) {
+                    if (data.code == 1) {
+                        initFloor();
+                        toastr.success(data.msg);
+                    } else {
+                        toastr.error(data.msg);
+                    }
+
+
+                });
+            };
+        });
+        $("#btnset").click(function(){
+            var form = $(this).closest("form");
+            var url = form.prop("action");
+            var formId = form.attr("id");
+            var err=custom_validate(formId);
+            if(err==0){
+                return;
+            }else {
+                var data=form.serializeArray();
+                $.post(url, serializeJson(data), function (data) {
+                    if (data.code == 1) {
+                        initFloor();
+                        $("#selected-seats").html("");
+                        $("#counter").html(0);
+                        $("#total").html(0);
+                        /*$("#etprsId2").find("option[value='']").attr("selected",true);
+                        alert($("#etprsId2").find("option[value='']").length);*/
+                        toastr.success(data.msg);
+                    } else {
+                        toastr.error(data.msg);
+                    }
+                });
+            };
+        });
+        $("#build").chosen();
+        $("#flooropt").chosen();
+        $("#etprsId2").chosen();
+
+        resetroompicker(null);
+        $("#build").change(function(){
+            $("#flooropt").chosen("destroy");
+            var url="{:url('/Estate/getFloor')}";
+            var bid=$(this).val();
+            $.post(url,{id:bid}, function(data) {
+                var htm='<option value="">-楼层-</option>';
+                if(data!=""&&data!=0){
+                    for(var i=1;i<=data;i++){
+                        htm=htm+ '<option value="'+i+'">'+i+'层</option>';
+                    }
+                }
+                $("#flooropt").html(htm);
+                $("#flooropt").chosen();
+            });
+
+        });
+        $("#flooropt").change(function(){
+            initFloor();
+        });
+        $("input[name='type']").change(function(){
+            var vType=$(this).val();
+            /*alert(vType);
+             if($("#flooropt").val()!=""){*/
+            $("input[name='status'][value='2']").attr("checked",true);
+            if(vType=="0"){
+                $("#statusDiv").css("display","block");
+            }else{
+                $("#statusDiv").css("display","none");
+            }
+            /*}*/
+        });
+    });
+    function initFloor(){
+        var buildId=$("#build").val();
+        var flooropt=$("#flooropt").val();
+        var url="{:url('/Estate/getFloorRoom')}";
+        var seted=new Array();
+        var floor=new Array();
+        var free=new Array();
+        var unvlb=new Array();
+        var  chartStatus = new Object();
+        var  chartData = new Array();
+        $.post(url,{buildId:buildId,floor:flooropt}, function(data) {
+            for ( var i in data ){
+                var room=data[i];
+                chartData[i]=room;
+                if(room["type"]=='0')
+                {
+                    //普通房间
+                    if(room["etprsId"]=="0"&&room["status"]=="2"){
+                        free.push(i);
+                    }else{
+                        seted.push(i);
+                    }
+                }else if(room["type"]=="1"){
+                    //楼道电梯口等
+                    floor.push(i);
+                }else if(room["type"]=="2"){
+                    //内部办公用房
+                    unvlb.push(i);
+                }
+            }
+            chartStatus.seted=seted;
+            chartStatus.free=free;
+            chartStatus.floor=floor;
+            chartStatus.unvlb=unvlb;
+
+            $("#seat-map").data("floorData",data);
+            resetroompicker(chartStatus);
+        });
+    }
+</script>
+</head>
+
+<body>
+<div id="header">
+</div>
+
+<div id="main">
+    <div class="demo">
+        <div class="container">
+
+            <div class="room-assign">
+                <h3> 房间信息维护：</h3>
+                <form id="dataform" action="{:url('/Estate/saveRoom')}" method="post" class="form-horizontal">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <span><label class="col-sm-4 control-label" for="roombh">房间编号</label>
+                            <div class="col-sm-8">
+                                <span id="roombh">未选择</span>
+                                <input type="hidden" id="roomIndex" name="roomIndex" class="require" placeholder="房间编号" value="">
+                            </div></span>
+                        </div>
+                        <div class="form-group">
+                            <span><label class="col-sm-4 control-label">入驻企业</label>
+                            <div class="col-sm-8">
+                                <span id="etprsName">未分配企业</span>
+                            </div></span>
+                        </div>
+                        <div class="form-group">
+                            <span><label class="col-sm-4 control-label" for="roomNo">房间编号</label>
+                            <div class="col-sm-8">
+                                <input id="roomNo" name="roomNo" class="form-control require" value="{$data.roomNo|default=''}" placeholder="房间编号">
+                            </div></span>
+                        </div>
+                        <div class="form-group">
+                            <span><label class="col-sm-4 control-label" for="totalarea">房间面积</label>
+                            <div class="col-sm-8">
+                                <input id="totalarea" name="totalarea" class="form-control require decimal" value="{$data.totalarea|default='0'}" placeholder="房间面积">
+                            </div></span>
+                        </div>
+                        <div class="form-group">
+                            <span><label class="col-sm-4 control-label">分类</label>
+                            <div class="col-sm-8">
+                                <div class="radio radio-success"><input type="radio" id="type0" value="0" name="type" checked><label for="type0">房间</label></div>
+                                <div class="radio radio-success"><input type="radio" id="type1" value="1" name="type"><label for="type1">楼道</label></div>
+                                <div class="radio radio-success"><input type="radio" id="type2" value="2" name="type"><label for="type2">内部办公</label></div>
+                            </div></span>
+                        </div>
+                        <div class="form-group" id="statusDiv" style="display:block;">
+                            <span><label class="col-sm-4 control-label">状态</label>
+                            <div class="col-sm-8">
+                                <div class="radio radio-success"><input type="radio" id="status0" value="0" name="status"><label for="status0">已分配</label></div>
+                                <div class="radio radio-success"><input type="radio" id="status1" value="1" name="status"><label for="status1">正常使用</label></div>
+                                <div class="radio radio-success"><input type="radio" id="status2" value="2" name="status" checked><label for="status2">空闲</label></div>
+                                <div class="radio radio-success"><input type="radio" id="status3" value="3" name="status"><label for="status3">未及时缴费</label></div>
+                            </div></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" id="id" name="id" value="0">
+                        <input type="hidden" id="buildId" name="buildId" value="0">
+                        <input type="hidden" id="floor" name="floor" value="0">
+                        <input type="hidden" id="etprsId" name="etprsId" value="0">
+
+                        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                                class="bold">保存</span></button>
+                        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+
+            <div id="seat-map">
+                <div class="front">
+                    <select data-placeholder="-写字楼-" class="chosen-floor col-sm-6" tabindex="2" id="build">
+                        <option value="">请选择写字楼</option>
+                        {:widget("HtmlWidget/initCommonSelect",['table'=>'EstateBuilding','con'=>array('iqbtId'=>session('user.iqbtId')),'default'=>isset($data['floorId'])?$data['floorId']:'0','field'=>"id,name"])}
+                    </select>
+                    <select data-placeholder="-楼层-" class="chosen-floor col-sm-4" tabindex="2" id="flooropt">
+                        <option value="">-楼层-</option>
+
+                    </select>
+                </div>
+                <div id="seat-info"></div>
+            </div>
+
+            <div class="booking-details">
+
+
+                <h3> 房间分配：</h3>
+                <ul id="selected-seats"></ul>
+                <form id="userform" action="{:url('/Estate/saveEtprsRoom')}" method="post" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="etprsId2">房间分配</label>
+                        <div class="col-sm-8">
+                            <span id="counter">0</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="etprsId2">面积</label>
+                        <div class="col-sm-8">
+                            <span id="total">0</span>
+                            <input type="hidden" id="roomIds" name="roomIds">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="etprsId2">选择企业</label>
+                        <div class="col-sm-8">
+                            <select data-placeholder="企业..." class="chosen-select col-sm-12 opt-require" tabindex="2" name="etprsId" id="etprsId2">
+                                <option value="">请选择企业</option>
+                                {:widget("HtmlWidget/initCommonSelect",['table'=>'enterprise','con'=>array('iqbtId'=>session('user.iqbtId')),'default'=>'0','field'=>'id,name'])}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-save" id="btnset"><i class="fa fa-save"></i> <span
+                                class="bold">保存</span></button>
+                        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">取消</span>
+                        </button>
+                    </div>
+                </form>
+
+
+                <div id="legend"></div>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+</div>
+
+
+<div id="footer">
+</div>
+</body>
+</html>

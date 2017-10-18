@@ -1,0 +1,445 @@
+{include file="index@index/header" /}
+<!--时间选择-->
+<link href="__CSS__/evenFlow.css" rel="stylesheet">
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="__JS__/bootstrap_validate.js"></script>
+<style>
+    ul li{list-style:none;}
+    ul,ol{list-style:none;margin:0;padding:0;}
+    .ceng{width:6%;overflow:hidden;text-align:center;float:left;font-size:15px;text-align:center;line-height:40px;}
+    .ceng ul li{cursor:pointer;width:40px;margin:auto;height:40px;font-size:15px;text-align:center;line-height:40px;color:#000;border-radius:50%;margin-bottom:10px;background:#e5e9f5;}
+    .ceng ul li.now{background:#15b697;color:#FFF;}
+
+    .con{width:94%;float:left;overflow:hidden;}
+    .con .rbutton{position:relative;width:230px;height:80px;border:1px solid #424242;border-color:rgba(66,66,66,0.6);margin:10px 0 10px 30px;font-size:12px;font-weight:bold;float:left;background:#FFF;cursor:pointer;line-height:80px;text-align:center;}
+    .con .rbutton .roomnumber{width:90px;height:30px;background: rgba(0,0,0,0.5);position:absolute;left:0;top:0;color:#FFF;font-size:16px;line-height:30px;}
+    .con .rbutton:hover .roomnumber{display:none;}
+    .con .rbutton .company{width:100%;height:60px;margin-top:6px;}
+    .con .rbutton .company p{line-height:20px;margin:0;padding:0;}
+
+    #bgDiv{width:100%;height:100%;background:#000;opacity:.5;position:fixed;display:none;z-index:99;bottom:0;}
+    #rightNav{width:65%;max-width:550px;height:100%;background:#fff;position:fixed;z-index:999;top:55px;right:-65%;border-left:4px solid #15b697;}
+    #rightNav .title{width:100%;height:50px;background:#263747;color:#FFF;text-align:center;line-height:50px;font-size:18px;font-weight:bold;}
+    #rightNavform{width:65%;max-width:550px;height:100%;background:#fff;position:fixed;z-index:999;top:55px;right:-65%;border-left:4px solid #15b697;}
+    #rightNavform .title{width:100%;height:50px;background:#263747;color:#FFF;text-align:center;line-height:50px;font-size:18px;font-weight:bold;}
+
+
+    .ibox-content .building{margin-right:50px;display:inline;}
+    .ibox-content .building div{display:inline-block;width:25px;height:25px;border:1px solid #000;}
+    .ibox-content .building div.state1{background:#15b697;}
+    .ibox-content .building div.state2{background:#f8ab59;}
+    .ibox-content .building div.state3{background:#22c6c8;}
+    .ibox-content .building div.state4{background:#FFF;}
+
+    .con .rbutton.state1{background:#15b697;color:#FFF;}
+    .con .rbutton.state2{background:#f8ab59;color:#FFF;}
+    .con .rbutton.state3{background:#22c6c8;color:#FFF;}
+
+
+</style>
+<script>
+    $(function () {
+        $('.datepicker').datetimepicker({
+            minView: "month",
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: true,//今日按钮
+            forceParse : true,
+            format: "yyyy-mm-dd"
+        });
+
+        $("#buildfloor").on("click","li",function() {
+            $(this).addClass("now").siblings().removeClass("now");
+            var floor=$(this).html();
+            initFloorRoom(floor);
+        });
+
+        var id=$("#build").val();
+        initfloor(id,1);
+        $("#build").change(function(){
+            var id=$("#build").val();
+            initfloor(id,1);
+        });
+
+
+        var right = $('.right');
+        var bg = $('#bgDiv');
+        $("#roomfield").on("click",".right",function() {
+
+            if($(this).hasClass("state1")||$(this).hasClass("state2")||$(this).hasClass("state3")||$(this).hasClass("state4")){
+                var rightNav = $('#rightNav');
+                var url="{:url('/index/Apply/initetprsroom')}";
+                var roomid=$(this).attr("roomid");
+                $.post(url,{"id":roomid},function(data) {
+                    if(data.code=="1"){
+                        var room=data.data;
+                        $("#etprsname").html(room.etprsName);
+                        $("#roomNo").html(room.roomNo);
+                        $("#roomType").html(room.typeStr);
+                        $("#roomarea").html(room.totalarea);
+                        $("#lbstarttime").html(room.starttime);
+                        $("#lbendtime").html(room.endtime);
+                        if(room.type==0){
+                            $("#optdiv").hide();
+                        }else{
+                            $('#optdiv').show();
+                            $("#optName").html(room.optName);
+                        }
+                        if(room.status==1){
+                            $("#cancel").show();
+                            $("#btncancel").attr("data-id",room.id);
+                        }else{
+                            $("#cancel").hide();
+                            $("#btncancel").attr("data-id",0);
+                        }
+                        if(room.status==3){
+                            $("#release").show();
+                            $("#btnrelease").attr("data-id",room.id);
+                        }else{
+                            $("#release").hide();
+                            $("#btnrelease").attr("data-id",0);
+                        }
+
+                    }
+                });
+
+                $("#bgDiv").data("model","rightNav");
+            }else{
+                var rightNav = $('#rightNavform');
+                var url="{:url('/index/Apply/initemptyroom')}";
+                var roomid=$(this).attr("roomid");
+                var etprsId=$("#etprsId").val();
+                $.post(url,{"id":roomid,"etprsId":etprsId},function(data){
+                    if(data.code=="1"){
+                        var room=data.data;
+                        $("#formetprsname").html(room.etprsname);
+                        $("#formroomNo").html(room.roomNo);
+                        $("#formType").html(room.typeStr);
+                        $("#formroomarea").html(room.totalarea);
+                        $("#roomId").val(room.id);
+                        if(room.type==0){
+                            $("div[id^='feeitem']").hide();
+                        }else{
+                            $("div[id^='feeitem']").show();
+                        }
+                    }
+                });
+                $("#btndstb").attr("disabled",false);
+                $("#bgDiv").data("model","rightNavform");
+            }
+            var direction="right";
+            bg.css({
+                display: "block",
+                transition: "opacity .5s"
+            });
+            if (direction == "right") {
+                rightNav.css({
+                    right: "0px",
+                    transition: "right 1s"
+                });
+            }
+
+        });
+        $('span').each(function () {
+            var dom = $(this);
+            dom.on('click', function () {
+                hideNav();
+                alert(dom.text())
+            });
+        });
+        bg.on('click', function (){
+            var div=$("#bgDiv").data("model");
+            var rightNav = $('#'+div);
+            var bg = $('#bgDiv');
+            hideNav(rightNav,bg);
+        });
+
+        $("#btndstb").click(function () {
+            var err=custom_validate("dstbform");
+            if(err==0){
+                return;
+            }else {
+                var data=$("#dstbform").serialize();
+                var url="{:url('/index/Apply/dstbEtprsRoom')}";
+                $(this).attr("disabled",true);
+                $.post(url, data, function (data) {
+                    if (data.code == 1) {
+                        toastr.success(data.msg);
+                        var div=$("#bgDiv").data("model");
+                        var rightNav = $('#'+div);
+                        var bg = $('#bgDiv');
+                        hideNav(rightNav,bg);
+                        var floorid=$("#buildfloor .now").first().html();
+                        var buildId=$("#buildId").val();
+                        initfloor(buildId,floorid);
+
+                    } else {
+                        toastr.error(data.msg);
+                    }
+
+
+                });
+            }
+        });
+
+        //取消分配房间
+        $("#btncancel").click(function(){
+            $(".btn-sure").attr('disabled',false);
+            var roomid = $(this).attr('data-id');
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                    '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body"><p>取消分配，该房间就会被重置清空，确定要取消吗？</p></div>' +
+                    '<div class="modal-footer"><button class="btn btn-primary btn-sure" onclick="setRoomStatus(\''+roomid+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        });
+
+        //释放房间，对于那些已经过期的房间的操作
+        $("#btnrelease").click(function(){
+            $(".btn-sure").attr('disabled',false);
+            var roomid = $(this).attr('data-id');
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                    '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body"><p>释放房间，该房间就会被重置清空，确定要释放吗？</p></div>' +
+                    '<div class="modal-footer"><button class="btn btn-primary btn-sure" onclick="setRoomStatus(\''+roomid+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        })
+
+
+    });
+
+    function setRoomStatus(roomid){
+        var url ="{:url('/index/Apply/roomCancel')}";
+        $(".btn-sure").attr('disabled',true);
+        $.post(url,{"roomid":roomid},function(data) {
+            $('#myModal').modal('hide');
+            if(data.code==1){
+                toastr.success("重置成功");
+                var div=$("#bgDiv").data("model");
+                var rightNav = $('#'+div);
+                var bg = $('#bgDiv');
+                hideNav(rightNav,bg);
+
+                var floorid=$("#buildfloor .now").first().html();
+                var buildId=$("#buildId").val();
+                initfloor(buildId,floorid);
+
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+
+    function hideNav(rightNav,bg) {
+        rightNav.css({
+            right: "-50%",
+            transition: "right .5s"
+        });
+        bg.css({
+            display: "none",
+            transition: "display 1s"
+        });
+    }
+    function initfloor(id,floorid){
+        $("#buildfloor").html("");
+        $("#buildId").val(id);
+        if(!id){
+            toastr.warning("请先初始化楼宇和房间");
+        }else{
+            var url="{:url('/index/Apply/initFloor')}";
+            $.post(url,{"id":id},function(data) {
+                if(data.code=="1"){
+                    var floornum=data.data.floor;
+                    for(var i=0;i<floornum;i++){
+                        if(i==0){
+                            $("#buildfloor").append("<li class='now'>"+(i+1)+"</li>");
+                            initFloorRoom(floorid);
+                        }else{
+                            $("#buildfloor").append("<li>"+(i+1)+"</li>");
+                        }
+                    }
+                    $("#buildfloor .now").first().addClass("now").siblings().removeClass("now");
+                }else{
+                    toastr.error("初始化失败");
+                }
+            });
+        }
+    }
+    function initFloorRoom(floor){
+        $("#roomfield").html("");
+        var id=$("#build").val();
+        var url="{:url('/index/Apply/initFloorRoom')}";
+        $.post(url,{"id":id,"floor":floor},function(data) {
+            if(data.code=="1"){
+                var rooms=data.data;
+                $.each(rooms,function(index,value){
+                    var room=rooms[index];
+                    if(room.etprsId>0){
+                        if(room.status=='2'){
+                            $("#roomfield").append("<div class='inactive right rbutton evenflow_scale state1' roomid='"+room.id+"'><div class='roomnumber'><p>"+room.roomNo+"</p></div><div class='company'><p>"+room.etprsName+"</p><p>面积："+room.totalarea+"㎡</p><p>类型："+room.typeStr+"</p></div></div>")
+                        }
+                        if(room.status=='1'){
+                            $("#roomfield").append("<div class='inactive right rbutton evenflow_scale state3' roomid='"+room.id+"'><div class='roomnumber'><p>"+room.roomNo+"</p></div><div class='company'><p>"+room.etprsName+"</p><p>面积："+room.totalarea+"㎡</p><p>类型："+room.typeStr+"</p></div></div>")
+                        }
+                        if(room.status=='0'){
+                            $("#roomfield").append("<div class='inactive right rbutton evenflow_scale state4' roomid='"+room.id+"'><div class='roomnumber'><p>"+room.roomNo+"</p></div><div class='company'><p>"+room.etprsName+"</p><p>面积："+room.totalarea+"㎡</p><p>类型："+room.typeStr+"</p></div></div>")
+                        }
+                        if(room.status=='3'){
+                            $("#roomfield").append("<div class='inactive right rbutton evenflow_scale state2' roomid='"+room.id+"'><div class='roomnumber'><p>"+room.roomNo+"</p></div><div class='company'><p>"+room.etprsName+"</p><p>面积："+room.totalarea+"㎡</p><p>类型："+room.typeStr+"</p></div></div>")
+                        }
+                    }
+                    if(room.etprsId==0){
+                        $("#roomfield").append("<div class='inactive right rbutton evenflow_scale' roomid='"+room.id+"'><div class='roomnumber'><p>"+room.roomNo+"</p></div><div class='company'><p>面积："+room.totalarea+"㎡</p><p>类型："+room.typeStr+"</p></div></div>")
+                    }
+
+                });
+            }else{
+                toastr.error("初始化失败");
+            }
+        });
+    }
+
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+
+    <div class="row">
+
+        <div class="col-sm-12 m-b-xs">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title" style="text-align:center;"><h3>房间分配</h3></div>
+                <div class="ibox-content" style="height:61px;">
+                    <span class="building"><strong>当前楼宇名称</strong></span>
+                    <select class="form-control inline" id="build">
+                        {:widget("user/HtmlWidget/initCommonSelect",['table'=>'estateBuilding','con'=>array('iqbtId'=>$iqbtId),'default'=>'','field'=>'id,name'])}
+                    </select>
+                    <span class="building">房间状态：
+                        <div class="state1"></div>&nbsp;已入驻&nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="state2"></div>&nbsp;待续费&nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="state3"></div>&nbsp;已分配&nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="state4"></div>&nbsp;未分配&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                    <!--<button style="margin-bottom:0;" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal5">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增合同&nbsp;&nbsp;</button>-->
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="buildId" value="">
+        <div class="ceng">
+            <p>楼层</p>
+            <ul id="buildfloor">
+
+            </ul>
+        </div>
+        <div class="con" id="roomfield">
+
+        </div>
+        <div id="bgDiv"></div>
+        <div id="rightNav">
+            <div class="title"><p>当前合同</p></div>
+            <div class="row" style="margin-top:30px;">
+                <div class="form-group col-sm-12">
+                    <label class="col-sm-4 control-label" style="text-align:right;">企业名称：</label>
+                    <div class="col-sm-8" id="etprsname"></div>
+                </div>
+                <div class="form-group col-sm-12">
+                    <label class="col-sm-4 control-label" style="text-align:right;">房间号：</label>
+                    <div class="col-sm-8" id="roomNo"></div>
+                </div>
+                <div class="form-group col-sm-12">
+                    <label class="col-sm-4 control-label" style="text-align:right;">房间类型：</label>
+                    <div class="col-sm-8" id="roomType"></div>
+                </div>
+
+                <div class="form-group col-sm-12">
+                    <label class="col-sm-4 control-label" style="text-align:right;">房间面积：</label>
+                    <div class="col-sm-8" id="roomarea"></div>
+                </div>
+                <div class="form-group col-sm-12">
+                    <label class="col-sm-4 control-label" style="text-align:right;">合同起始时间：</label>
+                    <div class="col-sm-8" id="lbstarttime"></div>
+                </div>
+                <div class="form-group col-sm-12">
+                    <label class="col-sm-4 control-label" style="text-align:right;">合同结束时间：</label>
+                    <div class="col-sm-8" id="lbendtime"></div>
+                </div>
+                <div class="form-group col-sm-12" id="optdiv">
+                    <label class="col-sm-4 control-label" style="text-align:right;">缴费项目：</label>
+                    <div class="col-sm-8" id="optName"></div>
+                </div>
+                <div class="form-group col-sm-12" id="cancel" style="display:none">
+                    <label class="col-sm-4 control-label" style="text-align:right;"></label>
+                    <div class="col-sm-8" >
+                        <button type="button" class="btn btn-danger" data-id="" id="btncancel">&nbsp;&nbsp;<i class="fa fa-time "></i>&nbsp;&nbsp;取消分配</button>
+                    </div>
+                </div>
+                <div class="form-group col-sm-12" id="release" style="display:none">
+                    <label class="col-sm-4 control-label" style="text-align:right;"></label>
+                    <div class="col-sm-8" >
+                        <button type="button" class="btn btn-danger" data-id="" id="btnrelease">&nbsp;&nbsp;<i class="fa fa-time "></i>&nbsp;&nbsp;释放房间</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="rightNavform">
+            <div class="title"><p>当前合同</p></div>
+            <div class="row" style="margin-top:30px;">
+                <form method="post" action="{:url('/index/Apply/dstbEtprsRoom')}" id="dstbform">
+                    <div class="form-group col-sm-12">
+                        <label class="col-sm-4 control-label" style="text-align:right;">企业名称：</label>
+                        <div class="col-sm-8" id="formetprsname"></div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label class="col-sm-4 control-label" style="text-align:right;">房间号：</label>
+                        <div class="col-sm-8" id="formroomNo">1001</div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label class="col-sm-4 control-label" style="text-align:right;">房间类型：</label>
+                        <div class="col-sm-8" id="formType"></div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label class="col-sm-4 control-label" style="text-align:right;">房间面积：</label>
+                        <div class="col-sm-8" id="formroomarea"></div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label class="col-sm-4 control-label" style="text-align:right;">合同起始时间：</label>
+                        <div class="col-sm-8" id="formstarttime">
+                            <input type="text" name="startTime" id="starttime" class="datepicker opt-require form-control" value="{$time|default=time()|date='Y-m-d',###}" >
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label class="col-sm-4 control-label" style="text-align:right;">合同结束时间：</label>
+                        <div class="col-sm-8" id="formendtime">
+                            <input type="text" name="endTime" id="endtime" class="datepicker opt-require form-control" value="{$time|default=time()+31536000-86400|date='Y-m-d',###}">
+                        </div>
+                    </div>
+                    {volist name="items" id="item"}
+                    <div class="form-group col-sm-12 " id="feeitem{$i}">
+                        <label class="col-sm-4 control-label" style="text-align:right;">{$item.itemName}</label>
+                        <div class="col-sm-8">
+                            <!--<input type="text" name="item-{$item.itemId}" value="0"  class="form-control number">-->
+                            <select data-placeholder="{$item.itemName}" class="chosen-select form-control " tabindex="2" name="optId[]" id="optId{$item.id}">
+                                <option value="">请选择缴费标准</option>
+                                {:widget("user/HtmlWidget/initCommonSelect",['table'=>'FeeItemOpt','con'=>array('iqbtId'=>session('iqbtId'),'itemId'=>$item['itemId']),'default'=>$item['optId'],'field'=>'id,name'])}
+                            </select>
+                        </div>
+                    </div>
+                    {/volist}
+                    <div class="form-group col-sm-12">
+                        <input type="hidden" value="{$id}" id="etprsId" name="etprsId">
+                        <input type="hidden" value="" id="roomId" name="roomId">
+                        <label class="col-sm-4 control-label" style="text-align:right;"></label>
+                        <div class="col-sm-8" id="">
+                            <button type="button" class="btn btn-primary" id="btndstb">&nbsp;&nbsp;<i class="fa fa-save"></i>&nbsp;&nbsp;分配</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

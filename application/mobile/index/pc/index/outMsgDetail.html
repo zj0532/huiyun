@@ -1,0 +1,111 @@
+{include file="index@index/header" /}
+<script>
+    $(function(){
+        $('#btnedit').click(function(){
+            var id = $('#id').val();
+            var url = "{:url('/index/Index/addMsg')}?id="+id;
+            location.href = url;
+        });
+        $('#btndel').click(function(){
+            var id = $('#id').val();
+            if(confirm("确定要删除吗")){
+                var url = "{:url('/index/Index/delOutMsg')}";
+                $.post(url,{'ids':id},function(data){
+                    if(data.code ==1){
+                        toastr.success("删除草稿成功");
+                        setTimeout("jump()",2000);
+                    }else{
+                        toastr.error(data.msg);
+                    }
+                })
+            }
+        })
+    })
+    function jump(){
+        var url = "{:url('index/Index/outMsg')}?status=0";
+        location.href = url;
+    }
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+
+                             <div class="col-sm-3">
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-content mailbox-content">
+                                        <div class="file-manager">
+                                            <input type="hidden" id="id" value="{$detail.id|default=0}">
+                                            <a class="btn btn-block btn-primary compose-mail" href="{:url('/index/Index/addMsg')}">写信</a>
+                                            <div class="space-25"></div>
+
+                                            <h5>文件夹</h5>
+                                            <ul class="folder-list m-b-md" style="padding: 0">
+
+                                                <li><a href="{:url('index/Index/outMsg',array('status'=>1))}"><i class="fa fa-envelope-o"></i> 发件箱<span class="label label-primary pull-right">{$data.out_send}</span></a></li>
+
+                                                <li><a href="{:url('index/Index/outMsg',array('status'=>0))}"><i class="fa fa-file-text-o"></i> 草稿箱 <span class="label label-danger pull-right">{$data.out_draft}</span></a></li>
+                                                <li><a href="{:url('index/Index/msg')}"><i class="fa fa-file-text-o"></i> 收件箱 <span class="label label-info pull-right">{$data.in_all}</span></a></li>
+
+                                            </ul>
+
+                                            <div class="hr-line-dashed"></div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                             <div class="col-sm-9 animated fadeInRight">
+            <div class="mail-box-header">
+                <div class="pull-right tooltip-demo">
+                    <!--<a href="mail_compose.html" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="回复"><i class="fa fa-reply"></i> 回复</a>
+                    <a href="mail_detail.html#" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="打印邮件"><i class="fa fa-print"></i> </a>-->
+                    <!--<a href="mailbox.html" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="移到回收站"><i class="fa fa-trash-o"></i>移到回收站 </a>-->
+                </div>
+                <h2>
+                    内容详情
+                </h2>
+                <div class="mail-tools tooltip-demo m-t-md">
+
+
+                    <h3>
+                        <span class="font-noraml">主题： </span>{$detail.title}
+                    </h3>
+                    <h5>
+                        <span class="pull-right font-noraml">{$detail.addtime}</span>
+                        <span class="font-noraml">接收联系人： </span>{$detail.toUserName}
+                    </h5>
+                </div>
+            </div>
+            <div class="mail-box">
+
+
+                <div class="mail-body">
+                    {$detail.content}
+                </div>
+
+
+                <div class="mail-body text-right tooltip-demo">
+                 {eq name="detail.status" value="0"}   <a href="javascript:void(0)" id="btnedit" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> 编辑</a>
+                    <a href="javascript:void(0)" id="btndel" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Move to draft folder"><i class="fa fa-times"></i>删除</a>
+                 {/eq}
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

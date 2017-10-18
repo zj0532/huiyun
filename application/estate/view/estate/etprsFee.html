@@ -1,0 +1,59 @@
+{include file="index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        var url="{:url('/Oa/checkEtprs')}";
+        $.post(url, function(code) {
+            if(code=="1013005"){
+                initpage();
+            }else if(code=="1013003"){
+                //非企业用户,权限错误，重新登录
+                alert("权限错误，当前用户非企业用户,请重新登录，如有问题，请与系统管理员联系");
+                location.href="{:url('/Login/logout')}";
+            }else if(code=="1013008"){
+                $("body").html("");
+                toastr.warning("企业状态错误，请确认！");
+            }else{
+                $("body").html("");
+                toastr.warning("状态码错误！");
+            }
+        });
+    });
+    function initpage(){
+        $('#feetable').bootstrapTable({
+            url: "{:url('/Estate/getEtprsFee')}"
+        });
+    }
+
+</script>
+
+</head>
+
+<body class="animated fadeInRight">
+
+<div class="wrapper wrapper-content">
+    <div class="col-sm-12">
+        <!-- Example Events -->
+        <div>
+            <table id="feetable" class="resettable" data-search="true"
+                   data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true"
+                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                <thead>
+                <tr>
+                    <th data-field="etprsname">缴费企业</th>
+                    <th data-field="roomNo">房间</th>
+                    <th data-field="payaccount">缴费金额</th>
+                    <th data-field="addtime">缴费时间</th>
+                    <th data-field="staff">收费人</th>
+                    <th data-field="typeText">分类</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+        <!-- End Example Events -->
+    </div>
+</div>
+</body>
+</html>

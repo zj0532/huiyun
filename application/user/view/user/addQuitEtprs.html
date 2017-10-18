@@ -1,0 +1,513 @@
+{include file="index@index/header" /}
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script src="__JS__/idcard.js"></script>
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css'  rel='stylesheet'/>
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+<script src="__JS__/bootstrap_validate.js"></script>
+<style type="text/css">
+    .ibox-title{
+        border-style: none;
+    }
+    .file-thumbnail-footer{
+        display: none;
+    }
+    .file-drop-zone {
+        border: 1px dashed #aaa;
+        border-radius: 4px;
+        height: 100%;
+        text-align: center;
+        vertical-align: middle;
+        margin: 0px 0px 0px 0px;
+        padding: 0px;
+    }
+    .file-input{
+        float: right;
+    }
+
+    .control-label{font-size:14px;font-weight:normal;}
+    legend{font-weight:bold;}
+    .form-group table{width:96%;margin:auto;border-collapse: collapse;border:1px solid #cccccc;line-height:40px;}
+    .form-group table td{width:25%;}
+    .form-group table td.bt{text-align: right;}
+    .form-group table td.nr{text-align:left;}
+    .form-group table tr:hover td{background:#f1f1f1;}
+</style>
+<script>
+    $(function () {
+        $('.datepicker').datetimepicker({
+            minView: "month",
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: true,//今日按钮
+            forceParse : true,
+            format: "yyyy-mm-dd"
+        });
+
+      /*  $("#addpdt").click(function () {
+            var url="{:url('/index/Apply/addEtprsAplPdt')}";
+            $.post(url,function(data) {
+                show_modal("添加产品",data,"");
+            });
+        }); */
+        $("#btnsave").click(function(){
+            var cardno = $('#idcard').val();
+            if(cardno!=""){
+                var idresult = checkCard(cardno);
+                if(idresult['code']==0){
+                    toastr.error(idresult['msg']);
+                    return ;
+                }
+            }
+            var form = $("#aplForm");
+            var err=custom_validate("aplForm");
+            var url="{:url('/user/User/saveQuitEtprs')}";
+            if(err==0){
+                toastr.error("有未通过的校验！");
+                return;
+            }else {
+                var data = form.serialize();
+                var thisobj = $(this);
+                thisobj.attr("disabled","true");
+                $.post(url, data, function (data) {
+                    thisobj.removeAttr("disabled");
+                    if (data.code == 1) {
+                        toastr.success(data.msg);
+                        window.history.go(-1);
+                    } else {
+                        thisobj.removeAttr("disabled");
+                        toastr.error(data.msg);
+                    }
+                });
+            }
+        });
+        var fileUrl="{:url('/user/Login/initfiles')}";
+        var oFileInput = new FileInput();
+        var url="{:url('/user/Login/saveaplfile')}";
+        $.post(fileUrl,function(data) {
+            var charterText=data.charter;
+            if(charterText==""||charterText==undefined||charterText==null){
+                oFileInput.Init("charter",url,[],"hcharter");
+            }else{
+                oFileInput.Init("charter",url,["<img src='__PUBLIC__/"+charterText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"hcharter");
+            }
+
+            var lastficereportText=data.lastficereport;
+            if(lastficereportText==""||lastficereportText==undefined||lastficereportText==null){
+                oFileInput.Init("lastficereport",url,[],"hlastficereport");
+            }else{
+                oFileInput.Init("lastficereport",url,["<img src='__PUBLIC__/"+lastficereportText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"hlastficereport");
+            }
+
+            var highetprscertText=data.highetprscert;
+            if(highetprscertText==""||highetprscertText==undefined||highetprscertText==null){
+                oFileInput.Init("highetprscert",url,[],"hhighetprscert");
+            }else{
+                oFileInput.Init("highetprscert",url,["<img src='__PUBLIC__/"+highetprscertText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"hhighetprscert");
+            }
+
+            var idcartfileText=data.idcartfile;
+            if(idcartfileText==""||idcartfileText==undefined||idcartfileText==null){
+                oFileInput.Init("idcartfile",url,[],"hidcartfile");
+            }else{
+                oFileInput.Init("idcartfile",url,["<img src='__PUBLIC__/"+idcartfileText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"hidcartfile");
+            }
+
+            var projectdescText=data.projectdesc;
+            if(projectdescText==""||projectdescText==undefined||projectdescText==null){
+                oFileInput.Init("projectdesc",url,[],"hprojectdesc");
+            }else{
+                oFileInput.Init("projectdesc",url,["<img src='__PUBLIC__/"+projectdescText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"hprojectdesc");
+            }
+
+            var patentText=data.patent;
+            if(patentText==""||patentText==undefined||patentText==null){
+                oFileInput.Init("patent",url,[],"hpatent");
+            }else{
+                oFileInput.Init("patent",url,["<img src='__PUBLIC__/"+patentText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"hpatent");
+            }
+
+
+            var edufileText=data.edufile;
+            if(edufileText==""||edufileText==undefined||edufileText==null){
+                oFileInput.Init("edufile",url,[],"hedufile");
+            }else{
+                oFileInput.Init("edufile",url,["<img src='__PUBLIC__/"+edufileText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"hedufile");
+            }
+        });
+    });
+   /* function actFmt(value, row, index) {
+        return [
+            '<a class="edit ml10" href="javascript:void(0)" title="修改">',
+            '<i class="fa fa-edit text-navy"></i>&nbsp;&nbsp;编辑',
+            '</a>',
+            '<a class="remove ml10" href="javascript:void(0)" title="删除" onclick="dltpdt('+row.id+')">',
+            '<i class="fa fa-times text-danger"></i>&nbsp;&nbsp;删除',
+            '</a>'
+        ].join('');
+    }
+    function dltpdt(id){
+        var url="{:url('/index/Apply/dlteAplPdt')}";
+        basedelete("aplpdtId", url, id);
+    }
+    window.actEvt = {
+        'click .edit': function (e, value, row, index) {
+            var url="{:url('/index/Apply/addEtprsAplPdt/id/"+row.id+"')}";
+            $.post(url, function(data) {
+                show_modal("修改产品信息",data,"");
+            });
+        }
+    };*/
+    function FileInput() {
+        var oFile = new Object();
+        //初始化fileinput控件（第一次初始化）
+        oFile.Init = function(ctrlName,url,initImg,hidefield) {
+            //alert(JSON.stringify(initImg));
+            var control = $('#' + ctrlName);
+            //初始化上传控件的样式
+            control.fileinput({
+                showPreview:false,
+                language: 'zh', //设置语言
+                uploadUrl:url+"?cate="+ctrlName, //上传的地址..
+                allowedFileExtensions: ['jpg','jpeg','gif','png',"doc","docx","xls","xlsx","ppt","pptx","pdf"],//接收的文件后缀
+                showUpload: false, //是否显示上传按钮
+                showCaption: true,//是否显示标题
+                browseClass: "btn btn-primary btn-inline", //按钮样式
+                dropZoneEnabled: false,//是否显示拖拽区域
+                initialPreview: initImg,
+                maxFileSize: 8192,//单位为kb，如果为0表示不限制文件大小
+                maxFileCount:0, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount:false,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！"
+            }).on("filebatchselected", function(event, files) {
+                $(this).fileinput("upload");
+            });
+
+            //导入文件上传完成之后的事件
+            $("#"+ctrlName).on("fileuploaded", function (event, data, previewId, index) {
+                if(hidefield!=""){
+                    $("#"+hidefield).val(data["response"]["data"]);
+                }
+                toastr.success("上传成功");
+            });
+        }
+        return oFile;
+    };
+</script>
+
+
+
+
+
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h2 style="text-align:center;font-weight:bold;">毕业企业信息录入</h2>
+            </div>
+            <div class="ibox-content" style="border:none;">
+                <form action="" class="form-horizontal" method="post" id="aplForm">
+                    <fieldset>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">企业名称：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="企业名称" class="form-control require" id="name" name="name" value="">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">入驻时间：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="入驻时间" class="form-control opt-require datepicker" id="entertime" name="entertime" value="{:date('Y-m-d',time())}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">毕业时间：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="毕业时间" class="form-control opt-require datepicker " id="quittime" name="quittime" value="{:date('Y-m-d',time())}">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">租赁面积(㎡)：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="租赁面积（㎡）" class="form-control  decimal" id="area" name="area" value="0.00">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">办公方式：</label>
+                            <div class="col-sm-10">
+                                <div class="radio radio-success radio-inline">
+                                    <input type="radio" id="type1" value="1021001" name="workstyle" checked>
+                                    <label for="type1" class="text-success"><b>办公室</b></label>
+                                </div>
+                                <div class="radio radio-success radio-inline">
+                                    <input type="radio" id="type2" value="1021002" name="workstyle" >
+                                    <label for="type2" class="text-success"><b>工位</b></label>
+                                </div>
+                                <div class="radio radio-success radio-inline">
+                                    <input type="radio" id="type3" value="1021003" name="workstyle" >
+                                    <label for="type3" class="text-success"><b>虚拟入驻</b></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">法人代表：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="法人代表" class="form-control require" id="lealPerson" name="lealPerson" value="">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">企业成立时间：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="成立时间" class="datepicker form-control " id="rgsttime" name="rgsttime" value="{:date('Y-m-d',time())}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">注册资本(万元)：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="注册资本(万元)" class="form-control " id="capital" name="capital" value="">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">纳税人类型：</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control " id="taxpayertype" name="taxpayertype">
+                                        {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1022%'),'level'=>'2'),'default'=>'1022001'])}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">上传营业执照：</label>
+                                <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf" >
+                                    <input type="file" class="charter form-control" id="charter" value="" >
+                                    <input type="hidden" placeholder="上传营业执照"  name="charter" id="hcharter" value="" class="">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">财务报表：</label>
+                                <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                    <input type="file" class="form-control" id="lastficereport" value="">
+                                    <input type="hidden" placeholder="上一年度财务报表" class=""  name="lastficereport" id="hlastficereport" value="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            function senfe_id(sid){
+                                id_body.style.display=sid;
+                            }
+                        </script>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">是否高新企业：</label>
+                            <div class="col-sm-10">
+                                <div class="radio radio-success radio-inline">
+                                    <input type="radio" id="highetprs1" value="1" checked name="highetprs" onchange="senfe_id('');" checked >
+                                    <label for="highetprs1" class="text-success"><b>是</b></label>
+                                </div>
+                                <div class="radio radio-success radio-inline">
+                                    <input type="radio" id="highetprs2" value="0" name="highetprs" onchange="senfe_id('none');" >
+                                    <label for="highetprs2" class="text-success"><b>否</b></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group hc" id=id_body>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">高新企业认定时间：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="高新企业认定时间" class="datepicker form-control" id="highetprstime" name="highetprstime" value="{:date('Y-m-d',time())}">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">高新企业认定证书：</label>
+                                <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                    <input type="file" class="form-control" id="highetprscert" value="">
+                                    <input type="hidden" placeholder="高新企业认定证书"  name="highetprscert" id="hhighetprscert" value="" >
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">行业类型：</label>
+                                <div class="col-sm-8">
+                                    <select id="industry" name="industry" style="width:100%;height:35px;line-height:35px;">
+                                        {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1023%'),'level'=>'2'),'default'=>'1023001'])}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">技术领域：</label>
+                                <div class="col-sm-8">
+                                    <select id="technical" name="technical" style="width:100%;height:35px;line-height:35px;">
+                                        {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1024%'),'level'=>'2'),'default'=>'1024001'])}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">负责人：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="负责人" class="form-control" id="leader" name="leader" value="">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">性别：</label>
+                                <div class="col-sm-8">
+                                    {:widget("user/HtmlWidget/initDictRedio",['iptname'=>'sex','con'=>['code'=>array('like','2001%'),'level'=>'2'],'default'=>isset($data['sex'])?$data['sex']:'2001001'])}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">联系方式：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="联系方式" class="form-control mobile" id="mobile" name="mobile" value="">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">邮箱：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="邮箱" class="form-control " id="email" name="email" value="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">身份证号：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" placeholder="身份证号" class="form-control" id="idcard" name="idcard" value="">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">最高学历：</label>
+                                <div class="col-sm-8">
+                                    <select class="" id="edu" name="edu" style="width:100%;height:35px;line-height:35px;">
+                                        {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1010%'),'level'=>'2'),'default'=>'1010001'])}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">上传身份证：</label>
+                                <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                    <input type="file" class="form-control" id="idcartfile" value="">
+                                    <input type="hidden" placeholder="上传身份证" class=""  name="idcartfile" id="hidcartfile" value="">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">上传学历证：</label>
+                                <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                    <input type="file" class="form-control" id="edufile" value="">
+                                    <input type="hidden" placeholder="上传学历证" class=""  name="edufile" id="hedufile" value="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-2 control-label">主要负责人创业特征：</label>
+                                <div class="col-sm-10">
+                                    {:widget("user/HtmlWidget/initDictCheckbox",['iptname'=>'worktype[]','con'=>['level'=>'2','code'=>['like','1025%']],'default'=>''])}
+                                </div>
+                            </div>
+                        </div>
+                        <style>
+                            .form-group table td input[type="text"]{height:35px;border:none;text-align:center;}
+                        </style>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-2 control-label">人员情况：</label>
+                                <div class="col-sm-10">
+                                    <table class="table table-bordered table-hover" style="text-align:center;width:100%;">
+                                        <tr>
+                                            <td>人员数量（人）</td>
+                                            <td>博士（人）</td>
+                                            <td>大专以上（人）</td>
+                                            <td>千人计划（人）</td>
+                                            <td>吸纳应届大学生（人）</td>
+                                        </tr>
+                                        <tbody>
+                                        <tr>
+                                            <td><input type="text" placeholder="人员数量" class="" id="total" name="total" value=""></td>
+                                            <td><input type="text" placeholder="博士" class="" id="doctor" name="doctor" value=""></td>
+                                            <td><input type="text" placeholder="大专以上" class="" id="junior" name="junior" value=""></td>
+                                            <td><input type="text" placeholder="千人计划" class="" id="thousand" name="thousand" value=""></td>
+                                            <td><input type="text" placeholder="吸纳应届大学生" class="" id="student" name="student" value=""></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                      <!--  <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-2 control-label" id="pdtathor">主要产品及服务 <br />【<a href="#pdtathor" id="addpdt">新增</a>】 </label>
+                                <div class="col-sm-10">
+                                    <table id="aplpdtId" class="table table-bordered table-hover resettable" data-toggle="table" data-url="{:url('/index/Apply/getPdts')}" data-search="false"
+                                           data-show-refresh="false" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" style="text-align:center;">
+                                        <thead>
+                                        <tr>
+                                            <th data-field="pdtname">名称</th>
+                                            <th data-field="pdtdesc">说明</th>
+                                            <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">项目计划书：</label>
+                                <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                    <input type="file" class="form-control" id="projectdesc" value="">
+                                    <input type="hidden" placeholder="项目计划书" name="projectdesc" id="hprojectdesc" class="" value="">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="col-sm-4 control-label">知识产权情况：</label>
+                                <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                    <input type="file" class="form-control" id="patent"  value="">
+                                    <input type="hidden" placeholder="知识产权情况"  name="patent" id="hpatent" value="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <label class="col-sm-2 control-label">其它未尽事项说明：</label>
+                                <div class="col-sm-10">
+                                    <textarea class="" placeholder="其它未尽事项说明" id="desc" rows="4" name="desc" style="width:100%;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="width:100%;overflow:hidden;text-align:center;">
+
+                            <button type="button" class="btn btn-primary btn-sm" id="btnsave">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+                            <button type="button" class="btn btn-danger btn-sm">&nbsp;&nbsp;<i class="fa fa-remove"></i>&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

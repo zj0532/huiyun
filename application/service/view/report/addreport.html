@@ -1,0 +1,746 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+
+<script type="text/javascript">
+$(function () {
+    $("#btnreport").click(function () {
+        var form = $("#frmreport");
+        var url = form.prop("action");
+        var tableId = form.attr("tableId");
+        var formId = "frmreport";
+
+        var data=form.serializeArray();
+        $.post(url, serializeJson(data), function (data) {
+            if (data.code == 1) {
+                toastr.success(data.msg);
+            } else {
+                toastr.error(data.msg);
+            }
+        });
+    });
+    $("#btnfls").click(function () {
+        var form = $("#flsform");
+        var url = form.prop("action");
+
+        var data=form.serializeArray();
+        $.post(url, serializeJson(data), function (data) {
+            if (data.code == 1) {
+                toastr.success(data.msg);
+            } else {
+                toastr.error(data.msg);
+            }
+        });
+    });
+    $("#btnfile").click(function () {
+        var form = $("#fileform");
+        var url = form.prop("action");
+
+        var data=form.serializeArray();
+        $.post(url, serializeJson(data), function (data) {
+            if (data.code == 1) {
+                toastr.success(data.msg);
+            } else {
+                toastr.error(data.msg);
+            }
+        });
+    });
+
+    $("#btnsys,#btnact,#btnpdt,#btnitem,#btnpatent,#btnsoft,#btnpjt").click(function () {
+        var tag=$("#tag").val();
+        var url=$(this).attr("data-url")+"?tag="+tag;
+        baseadd(url,"添加","");
+    });
+    var oFileInput = new FileInput();
+    var url="{:url('/user/Login/saveaplfilewithpath')}";
+    $(".rptfile").each(function () {
+        var id=$(this).attr("id");
+        var filepath=$("#h"+id).val();
+        if(filepath!=''){
+            oFileInput.Init(id,url,["<img src='__PUBLIC__/"+filepath+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"h"+id);
+        }else{
+            oFileInput.Init(id,url,[],"h"+id);
+        }
+    });
+});
+function sysactfmt(value, row, index) {
+    var html='<a class="sysedit ml10" href="javascript:void(0)"><i class="fa fa-edit text-blue">&nbsp;编辑&nbsp;</i></a>' +
+            '<a class="sysdelete ml10" href="javascript:void(0)"><i class="fa fa-trash-o text-danger">&nbsp;删除&nbsp;</i></a>';
+    return html;
+}
+function actactfmt(value, row, index) {
+    var html='<a class="actedit ml10" href="javascript:void(0)"><i class="fa fa-edit text-blue">&nbsp;编辑&nbsp;</i></a>' +
+            '<a class="actdelete ml10" href="javascript:void(0)"><i class="fa fa-trash-o text-danger">&nbsp;删除&nbsp;</i></a>';
+    return html;
+}
+function pdtactfmt(value, row, index) {
+    var html='<a class="pdtedit ml10" href="javascript:void(0)"><i class="fa fa-edit text-blue">&nbsp;编辑&nbsp;</i></a>' +
+            '<a class="pdtdelete ml10" href="javascript:void(0)"><i class="fa fa-trash-o text-danger">&nbsp;删除&nbsp;</i></a>';
+    return html;
+}
+function patentactfmt(value, row, index) {
+    var html='<a class="patentedit ml10" href="javascript:void(0)"><i class="fa fa-edit text-blue">&nbsp;编辑&nbsp;</i></a>' +
+            '<a class="patentdelete ml10" href="javascript:void(0)"><i class="fa fa-trash-o text-danger">&nbsp;删除&nbsp;</i></a>';
+    return html;
+}
+function itemactfmt(value, row, index) {
+    var html='<a class="itemedit ml10" href="javascript:void(0)"><i class="fa fa-edit text-blue">&nbsp;编辑&nbsp;</i></a>' +
+            '<a class="itemdelete ml10" href="javascript:void(0)"><i class="fa fa-trash-o text-danger">&nbsp;删除&nbsp;</i></a>';
+    return html;
+}
+function softactfmt(value, row, index) {
+    var html='<a class="softedit ml10" href="javascript:void(0)"><i class="fa fa-edit text-blue">&nbsp;编辑&nbsp;</i></a>' +
+            '<a class="softdelete ml10" href="javascript:void(0)"><i class="fa fa-trash-o text-danger">&nbsp;删除&nbsp;</i></a>';
+    return html;
+}
+function pjtactfmt(value, row, index) {
+    var html='<a class="pjtedit ml10" href="javascript:void(0)"><i class="fa fa-edit text-blue">&nbsp;编辑&nbsp;</i></a>' +
+            '<a class="pjtdelete ml10" href="javascript:void(0)"><i class="fa fa-trash-o text-danger">&nbsp;删除&nbsp;</i></a>';
+    return html;
+}
+function exportfmt(value,row,index){
+    if(value=='1'){
+        return "是";
+    }else{
+        return "否";
+    }
+}
+window.actevt = {
+    'click .sysedit': function (e, value, row, index) {
+        var url="{:url('/service/Report/addSys/id/"+row.id+"')}";
+        $.post(url, function(data) {
+            show_modal("编辑",data,"");
+        });
+    },
+    'click .sysdelete': function (e, value, row, index) {
+        var url="{:url('/service/Report/delete/tab/ReportSys')}";
+        basedelete("systable", url, row.id);
+    },
+    'click .actedit': function (e, value, row, index) {
+        var url="{:url('/service/Report/addAct/id/"+row.id+"')}";
+        $.post(url, function(data) {
+            show_modal("编辑",data,"");
+        });
+    },
+    'click .actdelete': function (e, value, row, index) {
+        var url="{:url('/service/Report/delete/tab/ReportActivity')}";
+        basedelete("acttable", url, row.id);
+    },
+    'click .pdtedit': function (e, value, row, index) {
+        var url="{:url('/service/Report/addPdt/id/"+row.id+"')}";
+        $.post(url, function(data) {
+            show_modal("编辑",data,"");
+        });
+    },
+    'click .pdtdelete': function (e, value, row, index) {
+        var url="{:url('/service/Report/delete/tab/ReportProduct')}";
+        basedelete("pdttable", url, row.id);
+    },
+    'click .softedit': function (e, value, row, index) {
+        var url="{:url('/service/Report/addSoft/id/"+row.id+"')}";
+        $.post(url, function(data) {
+            show_modal("编辑",data,"");
+        });
+    },
+    'click .softdelete': function (e, value, row, index) {
+        var url="{:url('/service/Report/delete/tab/ReportSoft')}";
+        basedelete("softtable", url, row.id);
+    },
+    'click .itemedit': function (e, value, row, index) {
+        var url="{:url('/service/Report/addItem/id/"+row.id+"')}";
+        $.post(url, function(data) {
+            show_modal("编辑",data,"");
+        });
+    },
+    'click .itemdelete': function (e, value, row, index) {
+        var url="{:url('/service/Report/delete/tab/ReportItem')}";
+        basedelete("itemtable", url, row.id);
+    },
+    'click .patentedit': function (e, value, row, index) {
+        var url="{:url('/service/Report/addPatent/id/"+row.id+"')}";
+        $.post(url, function(data) {
+            show_modal("编辑",data,"");
+        });
+    },
+    'click .patentdelete': function (e, value, row, index) {
+        var url="{:url('/service/Report/delete/tab/ReportPatent')}";
+        basedelete("patenttable", url, row.id);
+    },
+    'click .pjtedit': function (e, value, row, index) {
+        var url="{:url('/service/Report/addPjt/id/"+row.id+"')}";
+        $.post(url, function(data) {
+            show_modal("编辑",data,"");
+        });
+    },
+    'click .pjtdelete': function (e, value, row, index) {
+        var url="{:url('/service/Report/delete/tab/ReportProject')}";
+        basedelete("pjttable", url, row.id);
+    }
+};
+function FileInput() {
+    var oFile = new Object();
+    //初始化fileinput控件（第一次初始化）
+    oFile.Init = function(ctrlName,url,initImg,hidefield) {
+        //alert(JSON.stringify(initImg));
+        var control = $('#' + ctrlName);
+        //初始化上传控件的样式
+        control.fileinput({
+            showPreview:false,
+            language: 'zh', //设置语言
+            uploadUrl:url+"?cate="+ctrlName, //上传的地址..
+            allowedFileExtensions: ['jpg','jpeg','gif','png',"doc","docx","xls","xlsx","ppt","pptx",'pdf'],//接收的文件后缀
+            showUpload: false, //是否显示上传按钮
+            showCaption: true,//是否显示标题
+            browseClass: "btn btn-primary btn-inline", //按钮样式
+            dropZoneEnabled: false,//是否显示拖拽区域
+            initialPreview: initImg,
+            maxFileSize: 3100,//单位为kb，如果为0表示不限制文件大小
+            maxFileCount:0, //表示允许同时上传的最大文件个数
+            enctype: 'multipart/form-data',
+            validateInitialCount:false,
+            previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+            msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！"
+        }).on("filebatchselected", function(event, files) {
+            $(this).fileinput("upload");
+        });
+
+        //导入文件上传完成之后的事件
+        $("#"+ctrlName).on("fileuploaded", function (event, data, previewId, index) {
+            if(hidefield!=""){
+                $("#"+hidefield).val(data["response"]["data"]);
+            }
+            toastr.success("上传成功");
+        });
+    }
+    return oFile;
+};
+</script>
+
+<input type="hidden" id="tag" value="{$data.tag}" />
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h3 style="text-align:center;">企业信息录入</h3></div>
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">企业基本情况</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">经营管理</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">主要产品</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">研发能力</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-5" aria-expanded="false">在研项目</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-6" aria-expanded="false">融资情况</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-7" aria-expanded="false">附件</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <form class="form-horizontal" id="frmreport" action="{:url('/service/Report/saveReport')}" method="post">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">企业名称：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="企业名称" class="form-control require " name="name" id="name" value="{$data['name']|default=''}">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">入驻面积：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="面积" class="form-control require " name="area" id="area" value="{$data['area']|default=''}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">成立时间：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="date" placeholder="成立时间" class="form-control require " name="rgsttime" value="{$data['rgsttime']|default=''}">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">入驻时间：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="date" placeholder="入驻时间" class="form-control require " name="entertime" value="{$data['entertime']|default=''}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">注册资本：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="注册资本" class="form-control require " name="rgstment" value="{$data['rgstment']|default=''}">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">注册地址：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="注册地址" class="form-control require " name="address" value="{$data['address']|default=''}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">法定代表人：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="法定代表人" class="form-control require " name="lealPerson" value="{$data['lealPerson']|default=''}">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">联系电话：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="联系电话" class="form-control require " name="mobile" value="{$data['mobile']|default=''}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">生产场地：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="生产场地" class="form-control require " name="factory" value="{$data['factory']|default=''}">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">所属行业：</label>
+                                                <div class="col-sm-8">
+                                                    <select id="industry" name="industry" style="width:100%;height:35px;line-height:35px;">
+                                                        {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1023%'),'level'=>'2'),'default'=>isset($data['industry'])?$data['industry']:'1023001'])}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">总经理：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="总经理" class="form-control require " name="gm" value="{$data['gm']|default=''}">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">联系电话：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="联系电话" class="form-control require " name="gmmobile" value="{$data['gmmobile']|default=''}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">固定联络员：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="固定联络员" class="form-control require " name="liaison" value="{$data['liaison']|default=''}">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">联系电话：</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" placeholder="联系电话" class="form-control require " name="lsmobile" value="{$data['lsmobile']|default=''}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <style>
+                                            .form-group table td input[type="text"]{width:100%;height:35px;border:none;text-align:center;}
+                                        </style>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">企业从业人员情况：</label>
+                                            <div class="col-sm-10">
+                                                <table class="table table-bordered table-hover" style="text-align:center;">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>总数</td>
+                                                        <td>博士</td>
+                                                        <td>硕士</td>
+                                                        <td>本科</td>
+                                                        <td>大专</td>
+                                                        <td>其他</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" name="total" value="{$data['total']|default=''}"></td>
+                                                        <td><input type="text" name="doctor" value="{$data['doctor']|default=''}"></td>
+                                                        <td><input type="text" name="postgrad" value="{$data['postgrad']|default=''}"></td>
+                                                        <td><input type="text" name="undgrad" value="{$data['undgrad']|default=''}"></td>
+                                                        <td><input type="text" name="junior" value="{$data['junior']|default=''}"></td>
+                                                        <td><input type="text" name="other" value="{$data['other']|default=''}"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>留学人员</td>
+                                                        <td>管理人员</td>
+                                                        <td>研发人员</td>
+                                                        <td>销售人员</td>
+                                                        <td>高级职称</td>
+                                                        <td>中级或初级</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" name="overseas" value="{$data['overseas']|default=''}"></td>
+                                                        <td><input type="text" name="manage" value="{$data['manage']|default=''}"></td>
+                                                        <td><input type="text" name="rd" value="{$data['rd']|default=''}"></td>
+                                                        <td><input type="text" name="market" value="{$data['market']|default=''}"></td>
+                                                        <td><input type="text" name="senior" value="{$data['senior']|default=''}"></td>
+                                                        <td><input type="text" name="itmedate" value="{$data['itmedate']|default=''}"></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">主要财务指标(万元)：</label>
+                                            <div class="col-sm-10">
+                                                <table class="table table-bordered table-hover" style="text-align:center;">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>总资产</td>
+                                                        <td>总资产较上一年度增长率%</td>
+                                                        <td>销售收入</td>
+                                                        <td>销售收入较上一年度增长率%</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" name="assets" value="{$data['assets']|default=''}"></td>
+                                                        <td><input type="text" name="growth" value="{$data['growth']|default=''}"></td>
+                                                        <td><input type="text" name="income" value="{$data['income']|default=''}"></td>
+                                                        <td><input type="text" name="incomerate" value="{$data['incomerate']|default=''}"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>净利润</td>
+                                                        <td>研发经费</td>
+                                                        <td>研发经费占产品销售收入比例（%）</td>
+                                                        <td>上缴税金</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" name="profit" value="{$data['profit']|default=''}"></td>
+                                                        <td><input type="text" name="profitrate" value="{$data['profitrate']|default=''}"></td>
+                                                        <td><input type="text" name="develop" value="{$data['develop']|default=''}"></td>
+                                                        <td><input type="text" name="developrate" value="{$data['developrate']|default=''}"></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">企业获荣誉资质情况：</label>
+                                            <div class="col-sm-10">
+                                                <table class="table table-bordered table-hover" style="text-align:center;">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <textarea id="honor" name="honor" class="form-control" required aria-required="true" placeholder="企业获荣誉资质情况">{$data['honor']|default=''}</textarea>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div style="width:100%;overflow:hidden;text-align:center;">
+                                            <input type="hidden" name="tag" value="{$data['tag']|default=''}">
+                                            <input type="hidden" name="id" value="{$data['id']|default='0'}">
+                                            <button type="button" id="btnreport" class="btn btn-primary btn-sm">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+                                            <button type="reset" class="btn btn-danger btn-sm">&nbsp;&nbsp;<i class="fa fa-remove"></i>&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+                                            <button class="btn btn-primary btn-sm" type="button" onclick="window.history.go(-1);">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;返回</button>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <button type="button" id="btnsys" class="btn btn-primary btn-sm" data-url="{:url('/service/Report/addSys')}">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增制度&nbsp;&nbsp;</button>
+                                </div>
+                                <div>
+                                    <table id="systable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getSys',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                            <tr>
+                                                <th data-field="name" data-sortable="true">制度名称</th>
+                                                <th data-field="createtime" data-sortable="true">时间</th>
+                                                <th data-field="action" data-formatter="sysactfmt" data-events="actevt">操作</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <hr />
+                                <div class="form-group">
+                                    <button type="button" id="btnact" class="btn btn-primary btn-sm" data-url="{:url('/service/Report/addAct')}">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增活动&nbsp;&nbsp;</button>
+                                </div>
+                                <div>
+                                    <table id="acttable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getAct',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="name" data-sortable="true">活动名称</th>
+                                            <th data-field="acttime" data-sortable="true">活动时间</th>
+                                            <th data-field="action" data-formatter="actactfmt" data-events="actevt">操作</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-3" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <button type="button" id="btnpdt" class="btn btn-primary btn-sm" data-url="{:url('/service/Report/addPdt')}">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增产品&nbsp;&nbsp;</button>
+                                </div>
+                                <table id="pdttable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getPdts',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                       data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                    <thead>
+                                    <tr>
+                                        <th data-field="name" data-sortable="true">产品名称</th>
+                                        <th data-field="technicalText" data-sortable="true">技术领域</th>
+                                        <th data-field="export" data-sortable="true" data-formatter="exportfmt">是否出口</th>
+                                        <th data-field="action" data-formatter="pdtactfmt" data-events="actevt">操作</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="tab-4" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <button type="button" id="btnitem" class="btn btn-primary btn-sm" data-url="{:url('/service/Report/addItem')}">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增项目&nbsp;&nbsp;</button>
+                                </div>
+                                <div>
+                                    <table id="itemtable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getItems',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                            <tr>
+                                                <th data-field="name" data-sortable="true">项目名称</th>
+                                                <th data-field="no" data-sortable="true">项目编号</th>
+                                                <th data-field="type" data-sortable="true">资助方式</th>
+                                                <th data-field="total" data-sortable="true">资助金额</th>
+                                                <th data-field="projecttype" data-sortable="true">项目种类</th>
+                                                <th data-field="year" data-sortable="true">立项年度</th>
+                                                <th data-field="progress" data-sortable="true">完成情况</th>
+                                                <th data-field="action" data-formatter="itemactfmt" data-events="actevt">操作</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <hr />
+                                <div class="form-group">
+                                    <button type="button" id="btnpatent" class="btn btn-primary btn-sm" data-url="{:url('/service/Report/addPatent')}">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增专利&nbsp;&nbsp;</button>
+                                </div>
+                                <div>
+                                    <table id="patenttable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getPatent',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="name" data-sortable="true">专利(申请)名称</th>
+                                            <th data-field="type" data-sortable="true">类型</th>
+                                            <th data-field="approval" data-sortable="true" data-formatter="exportfmt">是否审批</th>
+                                            <th data-field="no" data-sortable="true">批准（申请）号</th>
+                                            <th data-field="time" data-sortable="true">批准（申请）时间</th>
+                                            <th data-field="action" data-formatter="patentactfmt" data-events="actevt">操作</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <hr />
+                                <div class="form-group">
+                                    <button type="button" id="btnsoft" class="btn btn-primary btn-sm" data-url="{:url('/service/Report/addSoft')}">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增著作权&nbsp;&nbsp;</button>
+                                </div>
+                                <div>
+                                    <table id="softtable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getSoft',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="name" data-sortable="true">名称</th>
+                                            <th data-field="no" data-sortable="true">编号</th>
+                                            <th data-field="time" data-sortable="true">时间</th>
+                                            <th data-field="action" data-formatter="softactfmt" data-events="actevt">操作</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-5" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary btn-sm" id="btnpjt" data-url="{:url('/service/Report/addPjt')}">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增项目&nbsp;&nbsp;</button>
+                                </div>
+                                <table id="pjttable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getProject',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                       data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                    <thead>
+                                        <tr>
+                                            <th data-field="name" data-sortable="true">项目名称</th>
+                                            <th data-field="technicalText" data-sortable="true">技术领域</th>
+                                            <th data-field="action" data-formatter="pjtactfmt" data-events="actevt">操作</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="tab-6" class="tab-pane">
+                            <div class="panel-body">
+                                <form class="form-horizontal" id="flsform" action="{:url('/service/Report/saveFinance')}" method="post" tableId="historytable">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">融资情况：</label>
+                                            <div class="col-sm-10">
+                                                <table class="table table-bordered table-hover" style="text-align:center;">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <textarea id="desc" name="desc" class="form-control" required aria-required="true" placeholder="企业投融资情况说明：（是否成功融资/是否对外投资及取得的成果/是否有融资需求）">{$fls['desc']|default=''}</textarea>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div style="width:100%;overflow:hidden;text-align:center;">
+                                            <input type="hidden" name="tag" value="{$fls['tag']}">
+                                            <input type="hidden" name="id" value="{$fls['id']|default='0'}">
+                                            <button type="button" id="btnfls" class="btn btn-primary btn-sm">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+                                            <button type="button" class="btn btn-danger btn-sm">&nbsp;&nbsp;<i class="fa fa-remove"></i>&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="tab-7" class="tab-pane">
+                            <div class="panel-body">
+                                <form class="form-horizontal" id="fileform" action="{:url('/service/Report/saveFiles')}" method="post" tableId="historytable">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">企业法人营业执照复印件(公章)：</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                                        <input type="file" class="form-control rptfile" id="yyzz">
+                                                        <input type="hidden" placeholder="上传"  name="yyzz" id="hyyzz"  class="opt-require uplod" value="{$file.yyzz|default=''}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">企业年度财务报表（财务章）：</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                                        <input type="file" class="form-control rptfile" id="cwbb">
+                                                        <input type="hidden" placeholder="上传"  name="cwbb" id="hcwbb"  class="opt-require uplod" value="{$file['cwbb']|default=''}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">人员花名册：</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                                        <input type="file" class="form-control rptfile" id="renyuan">
+                                                        <input type="hidden" placeholder="上传"  name="renyuan" id="hrenyuan"  class="opt-require uplod" value="{$file['renyuan']|default=''}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">项目立项文件：</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                                        <input type="file" class="form-control rptfile" id="lxwj">
+                                                        <input type="hidden" placeholder="上传"  name="lxwj" id="hlxwj"  class="opt-require uplod" value="{$file['lxwj']|default=''}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">专利证书：</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                                        <input type="file" class="form-control rptfile" id="zlzs">
+                                                        <input type="hidden" placeholder="上传"  name="zlzs" id="hzlzs"  class="opt-require uplod" value="{$file['zlzs']|default=''}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">软件产品（企业）认定证书：</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                                        <input type="file" class="form-control rptfile" id="rjcp">
+                                                        <input type="hidden" placeholder="上传"  name="rjcp" id="hrjcp"  class="opt-require uplod" value="{$file['rjcp']|default=''}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">高新技术企业认定证书：</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                                        <input type="file" class="form-control rptfile" id="gxjs">
+                                                        <input type="hidden" placeholder="上传"  name="gxjs" id="hgxjs"  class="opt-require uplod" value="{$file['gxjs']|default=''}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">项目技术鉴定证书：</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                                        <input type="file" class="form-control rptfile" id="xmjs">
+                                                        <input type="hidden" placeholder="上传"  name="xmjs" id="hxmjs"  class="opt-require uplod" value="{$file['xmjs']|default=''}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">产品测试报告：</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                                        <input type="file" class="form-control rptfile" id="cpcs">
+                                                        <input type="hidden" placeholder="上传"  name="cpcs" id="hcpcs"  class="opt-require uplod" value="{$file['cpcs']|default=''}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">质量标准体系认证证书：</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                                        <input type="file" class="form-control rptfile" id="zlbz">
+                                                        <input type="hidden" placeholder="上传"  name="zlbz" id="hzlbz"  class="opt-require uplod" value="{$file['zlbz']|default=''}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">企业获得的资质和荣誉：</label>
+                                                <div class="col-sm-8">
+                                                    <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                                    <input type="file" class="form-control rptfile" id="zzry">
+                                                    <input type="hidden" placeholder="上传"  name="zzry" id="hzzry"  class="opt-require uplod" value="{$file['zzry']|default=''}">
+                                                </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6"></div>
+                                        </div>
+                                        <div style="width:100%;overflow:hidden;text-align:center;">
+                                            <input type="hidden" name="tag" value="{$file['tag']}">
+                                            <input type="hidden" name="id" value="{$file['id']|default='0'}">
+                                            <button type="button" class="btn btn-primary btn-sm" id="btnfile">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+                                            <button type="button" class="btn btn-danger btn-sm">&nbsp;&nbsp;<i class="fa fa-remove"></i>&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+                                            <button class="btn btn-primary btn-sm" type="button" onclick="window.history.go(-1);">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;返回</button>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

@@ -1,0 +1,329 @@
+{include file="index@index/header" /}
+  <!--时间选择-->
+    <link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css'  rel='stylesheet'/>
+    <script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script>
+	$(function(){
+		
+            $("#addpdt").click(function () {
+                var url="{:url('/index/Apply/addEtprsAplPdt')}";
+                $.post(url,function(data) {
+                    show_modal("添加产品",data,"");
+                });
+            });
+             $('.datepicker').datetimepicker({
+                minView: "month",
+                autoclose: true,//选中之后自动隐藏日期选择框
+                todayBtn: true,//今日按钮
+                forceParse : true,
+                format: "yyyy-mm-dd"
+            });
+              $("#btnsave").click(function(){
+                    var form = $("#infoform");
+                    var err=1;
+                    var url="{:url('/service/Service/saveUpdateInfo')}";
+                    if(err==0){
+                        toastr.error("有未通过的校验");
+                        return;
+                    }else {
+                        var data = form.serialize();
+                        $.post(url, data, function (data) {
+                            if (data.code == 1) {
+                                toastr.success(data.msg);
+                                location.href="{:url('index/Apply/etprsAplInfo')}";
+                            } else {
+                                toastr.error(data.msg);
+                            }
+                        });
+                    }
+            });
+	});
+
+     function actFmt(value, row, index) {
+            return [
+                '<a class="edit ml10" href="javascript:void(0)" title="修改">',
+                '<i class="fa fa-edit text-navy"></i>&nbsp;编辑&nbsp;&nbsp;',
+                '</a>&nbsp;&nbsp;',
+                '<a class="remove ml10" href="javascript:void(0)" title="删除" onclick="dltpdt('+row.id+')">',
+                '<i class="fa fa-times text-danger"></i>&nbsp;删除',
+                '</a>'
+            ].join('');
+        }
+        function dltpdt(id){
+            var url="{:url('/index/Apply/dlteAplPdt')}";
+            basedelete("aplpdtId", url, id);
+        }
+        window.actEvt = {
+            'click .edit': function (e, value, row, index) {
+                var url="{:url('/index/Apply/addEtprsAplPdt/id/"+row.id+"')}";
+                $.post(url, function(data) {
+                    show_modal("修改产品信息",data,"");
+                });
+            }
+        };
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+            <div class="row">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h3 style="text-align:center;">企业信息维护</h3></div>
+                    <div class="ibox-content">
+                        <form class="form-horizontal" id="infoform" action="" method="post" >
+                            <fieldset>
+                            	<div class="form-group">
+                                    <label class="col-sm-2 control-label"><h3>一、企业基本情况</h3></label>
+                                    <div class="col-sm-10"></div>   
+                                </div>
+                                <div class="form-group">
+                                	<div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">企业名称：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="企业名称" class="form-control " name="etprsname" value="{$data.etprsname|default=''}">
+	                                    </div>
+                                    </div>
+                                    <div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">组织机构代码：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="组织机构代码" class="form-control " name="ognzCode" value="{$data.ognzCode|default=''}">
+	                                    </div>
+	                                </div>    
+                                </div>
+                                <div class="form-group">
+                                	<div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">企业登记注册类型：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="企业登记注册类型" class="form-control " value="{$data.rgsttype|default=''}" name="rgsttype">
+	                                    </div>
+	                                </div>
+	                                 <div class="col-sm-6">
+                                        <label class="col-sm-4 control-label">企业成立时间：</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" placeholder="成立时间" class="form-control datepicker opt-require"  name="rgsttime" value="{$data.rgsttime|default=''}">
+                                        </div>
+                                    </div>
+                                </div>
+                              
+                                <div class="form-group">
+	                                <div class="col-sm-6">
+                                        <label class="col-sm-4 control-label">企业注册资本（万元）：</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" placeholder="企业成立时注册资本" class="form-control " name="rgstment" value="{$data.rgstment|default=''}">
+                                        </div>
+                                    </div> 
+	                                <div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">是否高新企业：</label>
+	                                    <div class="col-sm-8">
+	                                        <div class="radio radio-success radio-inline">
+						                         <input type="radio" id="type5" value="1"  name="highetprs" {if condition="!empty($data.highetprs) && ($data.highetprs eq 1) "}checked{/if}>
+						                         <label for="type5" class="text-success"><b>是</b></label>
+						                    </div>
+						                    <div class="radio radio-success radio-inline">
+						                         <input type="radio" id="type6" value="0" name="highetprs" {if condition="empty($data.highetprs)"}checked{/if}>
+						                         <label for="type6" class="text-success"><b>否</b></label>
+						                    </div>
+	                                    </div>
+	                                </div>    
+                                </div>
+                                
+                                                         
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><h3>二、企业产品和服务</h3></label>
+                                    <div class="col-sm-10">
+
+                                    </div>   
+                                </div>
+                               <div class="form-group">
+                                   <div class="col-sm-12">
+                                       <label class="col-sm-2 control-label" id="pdtathor">主要产品及服务 <br />【<a href="#pdtathor" id="addpdt">新增</a>】 </label>
+                                       <div class="col-sm-10">
+                                           <table id="aplpdtId" class="table table-bordered table-hover resettable" data-toggle="table" data-url="{:url('/index/Apply/getPdts',array('etprsId'=>$etprsId))}" data-search="false"
+                                           data-show-refresh="false" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" style="text-align:center;">
+                                                <thead>
+                                                <tr>
+                                                    <th data-field="pdtname">名称</th>
+                                                    <th data-field="pdtdesc">说明</th>
+                                                    <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                       </div>
+                                   </div>
+                               </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><h3>三、企业经济概况</h3></label>
+                                    <div class="col-sm-10"></div>
+                                </div>
+                                <div class="form-group">
+                                	<div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">总收入（千元）：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="总收入" class="form-control " name="income" value="{$data.income|default=''}">
+	                                    </div>
+	                                </div>
+	                                <div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">净利润（千元）：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="净利润" class="form-control " name="profit" value="{$data.profit|default=''}">
+	                                    </div>
+	                                </div>    
+                                </div>
+                                <div class="form-group">
+                                	<div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">出口创汇（千元）：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="出口创汇" class="form-control" name="exptprofit" value="{$data.exptprofit|default=''}">
+	                                    </div>
+	                                </div>
+	                                <div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">R&D投入（千元）：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="R&D投入" class="form-control " name="rdinput" value="{$data.rdinput|default=''}">
+	                                    </div>
+	                                </div>    
+                                </div>
+                                <div class="form-group">
+	                                <div class="col-sm-6">	
+	                                    <label class="col-sm-4 control-label">实际上缴税费（千元）：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="实际上缴税费" class="form-control " name="tax" value="{$data.tax|default=''}">
+	                                    </div>
+	                                </div>
+
+                                    <div class="col-sm-6">
+                                        <label class="col-sm-4 control-label">获天使或风险投资额（千元）：</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" placeholder="获天使或风险投资额" class="form-control " name="investment" value="{$data.investment|default=''}">
+                                        </div>
+                                    </div>
+                                       
+                                </div>
+	                                
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><h3>四、企业从业人员情况</h3></label>
+                                    <div class="col-sm-10"></div>   
+                                </div>
+                                <style>
+								   .form-group table td input[type="text"]{width:100%;height:35px;border:none;text-align:center;}
+                                </style>
+                                <div class="form-group">
+	                                	<label class="col-sm-2 control-label">企业从业人员情况：</label>
+	                                	<div class="col-sm-10">
+		                                    <table class="table table-bordered table-hover" style="text-align:center;">
+		                                        <tbody>
+		                                            <tr>
+		                                                <td>人员数量</td>
+		                                                <td>博士</td>
+		                                                <td>大专以上</td>
+		                                                <td>千人计划</td>
+		                                                <td>吸纳应届大学生</td>
+		                                            </tr>
+		                                            <tr>
+		                                                <td><input type="text" class="form-control" name="total" value="{$data.total|default=''}"></td>
+		                                                <td><input type="text" class="form-control" name="doctor" value="{$data.doctor|default=''}"></td>
+		                                                <td><input type="text" class="form-control" name="junior" value="{$data.junior|default=''}"></td>
+		                                                <td><input type="text" class="form-control" name="thousand" value="{$data.thousand|default=''}"></td>
+		                                                <td><input type="text" class="form-control" name="student" value="{$data.student|default=''}"></td>
+		                                            </tr>
+		                                        </tbody>
+		                                    </table>
+		                                </div>    
+                                </div>
+                                <div class="form-group">
+	                                    <label class="col-sm-2 control-label"><h3>五、企业知识产权情况</h3></label>
+	                                    <div class="col-sm-10"></div>
+                                </div>
+                                <div class="form-group">
+                                	<div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">当年知识产权申请数：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="当年知识产权申请数" class="form-control" name="iprapl" value="{$data.iprapl|default=''}">
+	                                    </div>
+	                                </div>
+	                                <div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label"></label>
+	                                    <div class="col-sm-8"></div>
+	                                </div>    
+                                </div>
+                                <div class="form-group">
+	                                    <label class="col-sm-2 control-label">当年知识产权授权数：</label>
+	                                    <div class="col-sm-10">
+	                                        <table class="table table-bordered table-hover" style="text-align:center;">
+		                                        <tbody>
+		                                            <tr>
+		                                                <td>当年知识产权授权数</td>
+		                                                <td>发明专利</td>
+		                                                <td>软件著作权</td>
+		                                                <td>植物新品种</td>
+		                                                <td>集成电路布图</td>
+		                                                <td>拥有知识产权数</td>
+		                                            </tr>
+		                                            <tr>
+		                                                <td><input type="text" name="iprapl" value="{$data.iprapl|default=''}"></td>
+		                                                <td><input type="text" name="invent" value="{$data.invent|default=''}"></td>
+		                                                <td><input type="text" name="soft" value="{$data.soft|default=''}"></td>
+		                                                <td><input type="text" name="plant" value="{$data.plant|default=''}"></td>
+		                                                <td><input type="text" name="circuit" value="{$data.circuit|default=''}"></td>
+		                                                <td><input type="text" name="ipr" value="{$data.ipr|default=''}"></td>
+		                                            </tr>
+		                                        </tbody>
+		                                    </table>
+	                                    </div>
+                                </div>
+                                <div class="form-group">
+                                	<div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">购买国外专利（件）：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="购买国外专利" class="form-control " name="patent" value="{$data.patent|default=''}">
+	                                    </div>
+	                                </div>
+	                                <div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">技术合同交易数量（项）</label>
+	                                    <div class="col-sm-8">
+	                                    	<input type="text" placeholder="技术合同交易数量" class="form-control" name="techdealnum" value="{$data.techdealnum|default=''}">
+	                                    </div>
+	                                </div>    
+                                </div>
+                                <div class="form-group">
+                                	<div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">技术合同交易额（千元）：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="技术合同交易额" class="form-control" name="techdeal" value="{$data.techdeal|default=''}">
+	                                    </div>
+	                                </div>
+	                                <div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">当年承担国家级科技计划项目数（项）</label>
+	                                    <div class="col-sm-8">
+	                                    	<input type="text" placeholder="当年承担国家级科技计划项目数" class="form-control  " name="project" value="{$data.project|default=''}">
+	                                    </div>
+	                                </div>    
+                                </div>
+                                <div class="form-group">
+                                	<div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label">当年获得省级以上奖励（项）：</label>
+	                                    <div class="col-sm-8">
+	                                        <input type="text" placeholder="当年获得省级以上奖励" class="form-control" value="{$data.reward|default=''}" name="reward">
+	                                    </div>
+	                                </div>
+	                                <div class="col-sm-6">
+	                                    <label class="col-sm-4 control-label"></label>
+	                                    <div class="col-sm-8"></div>
+	                                </div>    
+                                </div>
+                                <input type="hidden" name="id" value="{$data.id|default=''}">
+                                <div style="width:100%;overflow:hidden;text-align:center;">
+                                   <button type="button" class="btn btn-primary btn-sm" id="btnsave">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+</div>
+    <!--右侧部分结束-->
+{include file="index@index/footer" /}

@@ -1,0 +1,127 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="__JS__/bootstrap_validate.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var chars=['taxfile','security','reward'];
+        initfile(chars);
+        $("#btnback").click(function(){
+            window.history.go(-1);
+        });
+    });
+    function initfile(fields){
+        var ctmparams=new Array();
+        $.each(fields,function(index,value){
+            var tmp = new Object();
+            tmp.name=value;
+            tmp.value=$("#h"+value).val();
+            ctmparams[ctmparams.length] = tmp;
+        });
+        var fileUrl="{:url('/index/Index/initfiles')}";
+        $.post(fileUrl,serializeJson(ctmparams),function(data) {
+            $.each(fields,function(index,value){
+                $("#"+value).html("<a href='__PUBLIC__/"+data[value]+"' target='_blank'>下载</a>");
+            });
+
+        });
+    }
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins" style="background:#FFF;">
+                <div class="ibox-title">
+                    <h5>退出申请详情</h5>
+                    <div class="ibox-content">
+                        <form class="form-horizontal m-t" id="renewForm" method="post" action="">
+                            <style>
+                                .form-group .control-label{padding-top:0;line-height:25px;}
+                                .form-group .col-sm-7{line-height:25px;}
+                            </style>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">企业名称：</label>
+                                <div class="col-sm-7">
+                                    {$data.etprsname|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">清退房间：</label>
+                                <div class="col-sm-7">
+                                    {$data.roomNo|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">联系人：</label>
+                                <div class="col-sm-7">
+                                    {$data.contact|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">联系电话：</label>
+                                <div class="col-sm-7">
+                                    {$data.mobile|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">入驻时间：</label>
+                                <div class="col-sm-7">
+                                    {$data.entertime|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">申请退出时间：</label>
+                                <div class="col-sm-7">
+                                    {$data.quitdate|default=''}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">入驻房间是否经过二次装修：</label>
+                                <div class="col-sm-7">
+                                    {if condition="!empty($data.renvtion)"}是 {else /}否 {/if}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">二次装修是否拆除完毕：</label>
+                                <div class="col-sm-7">
+                                    {if condition="!empty($data.renvtionremove)"}是 {else /}否 {/if}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">是否留有装修物品：</label>
+                                <div class="col-sm-7">
+                                    {if condition="!empty($data.isleave)"}是 {else /}否 {/if}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">留有装修物品说明：</label>
+                                <div class="col-sm-7">
+                                    {$data.leavedesc|default=''}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <input type="hidden" id="id" name="id" value="{$data.id|default=''}">
+                                    <button class="btn btn-primary" type="button" id="btnback">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;返回</button>
+                                    <span style="color: #ff0000;" id="msg">{$msg|default=''}</span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

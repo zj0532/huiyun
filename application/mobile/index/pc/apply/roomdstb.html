@@ -1,0 +1,305 @@
+{include file="index@index/header" /}
+    <!--右侧部分开始-->
+    <link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+        $("#btnapl").click(function(){
+            var etprs=$("#apletprs").val();
+            var contact=$("#aplcontact").val();
+            var apltype=$("#apltype").val();
+            var param=new Object();
+            if(etprs!=""){
+                param.etprs=etprs;
+            }
+            if(contact!=""){
+                param.contact=contact;
+            }
+            if(apltype!=""){
+                param.apltype=apltype;
+            }
+            $('#aplTable').bootstrapTable('refresh',{query: param});
+        });
+
+        $("#btnpass").click(function(){
+            var etprs=$("#passetprs").val();
+            var contact=$("#passcontact").val();
+            var apltype=$("#passtype").val();
+            var param=new Object();
+            if(etprs!=""){
+                param.etprs=etprs;
+            }
+            if(contact!=""){
+                param.contact=contact;
+            }
+            if(apltype!=""){
+                param.apltype=apltype;
+            }
+            $('#aplpassTable').bootstrapTable('refresh',{query: param});
+        });
+            $("#btnexport").click(function(){
+                var ids=[];
+                var types=[];
+                var tablename = $(this).attr('table');
+                var table = $('#'+tablename);
+                var url = $(this).attr('data-url');
+                var selections=table.bootstrapTable('getSelections');
+                $.each(selections, function(index, value, array) {
+                    ids.push(value.id);
+                    types.push(value.type);
+                });
+                if(ids.length==0){
+                    toastr.warning("至少选择一条记录");
+                    return null;
+                }else{
+                    ids=ids.join(",");
+                    types = types.join(",");
+                    if(ids != null){
+                        var query = 'id='+ids+'&type='+types;
+                        if( url.indexOf('?')>0 ){
+                            url += '&' + query;
+                        }else{
+                            url += '?' + query;
+                        }
+                        location.href = url ;
+                    }
+                }
+
+            });
+            $("#btnexportroom").click(function(){
+                var ids=[];
+                var types=[];
+                var tablename = $(this).attr('table');
+                var table = $('#'+tablename);
+                var url = $(this).attr('data-url');
+                var selections=table.bootstrapTable('getSelections');
+                $.each(selections, function(index, value, array) {
+                    ids.push(value.id);
+                    types.push(value.type);
+                });
+                if(ids.length==0){
+                    toastr.warning("至少选择一条记录");
+                    return null;
+                }else{
+                    ids=ids.join(",");
+                    types = types.join(",");
+                    if(ids != null){
+                        var query = 'id='+ids+'&type='+types;
+                        if( url.indexOf('?')>0 ){
+                            url += '&' + query;
+                        }else{
+                            url += '?' + query;
+                        }
+                        location.href = url ;
+                    }
+                }
+
+            });
+    });
+    function actFmt(value, row, index) {
+        var type=row.apltype;
+        if(type=="0"||type=="1"){
+            return '<a href="javascript:void(0)" class="dstbroom ml10"><i class="fa fa-edit text-navy"></i>&nbsp;分配房间</a>&nbsp;&nbsp;' +
+                    '<a class="aplroomok ml10" href="javascript:void(0)" title="完成分配"><i class="fa fa-check text-danger"></i>&nbsp;完成分配</a>&nbsp;&nbsp;';
+        }else {
+            //申请加租房间
+            return '<a href="javascript:void(0)" class="dstbroom ml10"><i class="fa fa-edit text-navy"></i>&nbsp;增加房间</a>&nbsp;&nbsp;'+
+                    '<a class="roomok ml10" href="javascript:void(0)" title="完成分配"><i class="fa fa-check text-danger"></i>&nbsp;完成分配</a>&nbsp;&nbsp;';;
+        }
+    }
+    function deltRoomApl(id) {
+        var url = "{:url('/index/Apply/deltRoomApl')}";
+        basedelete("aplTable", url, id);
+    }
+    window.actEvt = {
+        'click .dstbroom': function (e, value, row, index) {
+            var url = "{:url('/index/Apply/distrib/id/" + row.etprsId + "')}";
+            location.href = url;
+        },
+        'click .aplroomok': function (e, value, row, index) {
+            var table="enterprise";
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                    '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body"><p>确认要房间已经分配完成，完成后将不能再分配房间，确定操作么？</p>'+
+                    '<input type="checkbox" name="sms" id="sms3" value="1"><label for="sms3">&nbsp;&nbsp;短信通知</label></div>'  +
+                    '<div class="modal-footer"><button class="btn btn-primary" onclick="setAplStatus(\''+table+'\',\''+row.etprsId+'\',\'1001015\',\'sms3\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        },
+        'click .roomok': function (e, value, row, index) {
+            var table="EtprsAplRoom";
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                    '<h4 class="modal-title" id="myModalLabel"></h4></div><div> <div class="modal-body"><p>请确认要房间已经分配完成，完成后将不能再分配房间，确定操作么？</p>' +
+                    '<input type="checkbox" name="sms" id="sms4" value="1" ><label for="sms4">&nbsp;&nbsp;短信通知</label></div>'  +
+                    '<div class="modal-footer"><button class="btn btn-primary" onclick="setAplStatus(\''+table+'\',\''+row.id+'\',\'1027003\',\'sms4\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        }
+    };
+        function setAplStatus(table,id,status,smsid){
+            var url = "{:url('/index/Apply/setAplStatus')}";
+            var sms = '2';
+            if($('#'+smsid).is(':checked')) {
+                sms ='1';
+            }
+            $.post(url,{"table":table,"id":id,"status":status,'sms':sms},function(data) {
+                $('#myModal').modal('hide');
+                if(data.code==1){
+                    if(data.msg ==0){
+                        alert('短信发送失败，请人工通知');
+                    }
+                    toastr.success("设置成功");
+                    $("#aplTable").bootstrapTable('refresh');
+                    $("#aplpassTable").bootstrapTable('refresh');
+                    $("#aplbackTable").bootstrapTable('refresh');
+                }else{
+                    toastr.error(data.msg);
+                }
+            });
+        }
+    function apltype(value, row, index){
+        if(value=='0'){
+            return "企业入驻";
+        }else if(value==1){
+            return "团队入驻";
+        }else if(value=="roomapl"){
+            return "加租房间";
+        }
+    }
+    function typeFmt(value, row, index){
+        if(value=='team'){
+            return "团队";
+        }else if(value=="etprs"){
+            return "企业";
+        }else if(value=="seated"){
+            return "已入驻项目";
+        }
+    }
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">待分配房间</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">完成分配房间</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="row">
+                                                    <div class="col-sm-12 m-b-xs"><span>企业名称：</span>
+                                                        <input type="text" placeholder="请输入企业名称" class="input-sm form-control" id="apletprs">
+                                                        <span>联系人：</span>
+                                                        <input type="text" placeholder="请输入联系人姓名" class="input-sm form-control" id="aplcontact">
+                                                        <span>类型：</span>
+                                                        <select class="form-control inline" id="apltype">
+                                                            <option value="">--请选择--</option>
+                                                            <option value="etprs">企业</option>
+                                                            <option value="team">团队</option>
+                                                            <option value="seated">已入驻项目</option>
+                                                        </select>
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnapl">
+                                                            <i class="fa fa-search"></i>
+                                                            查询
+                                                        </button>
+                                                        <button type="button" class="btn btn-warning btn-sm ml10" id="btnexport" data-url="{:url('/index/Apply/exportRoom')}" table="aplTable">
+                                                            <i class="fa fa-share-square-o"></i>
+                                                            导出
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table id="aplTable" class="resettable" data-toggle="table" data-url="{:url('/index/Apply/getRoomDitbApl',array('type'=>'apl'))}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                        <thead>
+                                                        <tr>
+                                                            <th data-field="state" data-checkbox="true"></th>
+                                                            <th  data-field="etprsName"> 企业名称</th>
+                                                            <th data-field="apltype" data-formatter="apltype">申请类型</th>
+                                                            <th data-field="contact">联系人</th>
+                                                            <th data-field="mobile">联系电话</th>
+                                                            <th data-field="industryText">行业类型</th>
+                                                            <th data-field="workstyleText">办公方式</th>
+                                                            <th data-field="type" data-formatter="typeFmt">类型</th>
+                                                            <th data-field="roomNos">已分配房间</th>
+                                                            <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="row">
+                                                    <div class="col-sm-12 m-b-xs"><span>企业名称：</span>
+                                                            <input type="text" placeholder="请输入企业名称" class="input-sm form-control" id="passetprs">
+                                                            <span>联系人：</span>
+                                                            <input type="text" placeholder="请输入联系人姓名" class="input-sm form-control" id="passcontact">
+                                                            <span>类型：</span>
+                                                            <select class="form-control inline" id="passtype">
+                                                                <option value="">--请选择--</option>
+                                                                <option value="etprs">企业</option>
+                                                                <option value="team">团队</option>
+                                                                <option value="seated">已入驻项目</option>
+                                                            </select>
+                                                            <button type="button" class="btn btn-primary btn-sm" id="btnpass">
+                                                                <i class="fa fa-search"></i>
+                                                                查询
+                                                            </button>
+                                                        <button type="button" class="btn btn-warning btn-sm ml10" id="btnexportroom" data-url="{:url('/index/Apply/exportRoom')}" table="aplpassTable">
+                                                            <i class="fa fa-share-square-o"></i>
+                                                            导出
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table id="aplpassTable" class="resettable" data-toggle="table" data-url="{:url('/index/Apply/getRoomDitbApl',array('type'=>'pass'))}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                        <thead>
+                                                        <tr>
+                                                            <th data-field="state" data-checkbox="true"></th>
+                                                            <th  data-field="etprsName"> 企业名称</th>
+                                                            <th data-field="apltype" data-formatter="apltype">申请类型</th>
+                                                            <th data-field="contact">联系人</th>
+                                                            <th data-field="mobile">联系电话</th>
+                                                            <th data-field="industryText">行业类型</th>
+                                                            <th data-field="workstyleText">办公方式</th>
+                                                            <th data-field="type" data-formatter="typeFmt">类型</th>
+                                                            <th data-field="roomNos">已分配房间</th>
+                                                        </tr>
+                                                        </thead>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

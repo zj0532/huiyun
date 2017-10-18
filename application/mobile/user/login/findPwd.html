@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>慧云数字化园区管理云平台-找回密码</title>
+<script src="__PUBLIC__/login/js/jquery.min.js"></script>
+<link href="__CSS__/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+<script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+<script src="__JS__/base.js"></script>
+<!-- toastr CSS -->
+<!-- toastr CSS -->
+<link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+<!-- toastr Theme JavaScript -->
+<script src="__PLUG__/toastr/toastr.js"></script>
+<link rel="stylesheet" href="__PUBLIC__/login/css/style.css">
+<style>
+.technology{color:#FFF;text-decoration:none;}
+.technology:hover{text-decoration:underline;}
+</style>
+<script>
+	var countdown = 60;
+	var tt;
+	$(function(){
+		$("#send").click(function(){
+			var isPhone = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
+			var isMob=/^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|15[012356789][0-9]{8}|18[02356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
+			var phone_str=$("#phone").val();
+			if(phone_str==""){
+				$("#msg").html("联系电话必填");
+				return;
+			}else if(!(isPhone.test(phone_str)||isMob.test(phone_str))){
+				$("#msg").html("电话号码格式错误");
+				return;
+			}
+			$("#msg").html("");
+			var url = "{:url('/user/Login/sendPwdCode')}";
+			$.post(url,{mobile:phone_str},function(data){
+				if(data.code ==1){
+					toastr.success(data.data);
+					tt = setInterval(function() {
+						settime();
+					},1000)
+				}else {
+					toastr.error(data.msg);
+				}
+			})
+		});
+		$("#submit").click(function () {
+
+			var isPhone = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
+			var isMob=/^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|15[012356789][0-9]{8}|18[02356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
+			var phone_str=$("#phone").val();
+			if(phone_str==""){
+				$("#msg").html("联系电话必填");
+				return;
+			}else if(!(isPhone.test(phone_str)||isMob.test(phone_str))){
+				$("#msg").html("电话号码格式错误");
+				return;
+			}
+			var code = $('#code').val();
+			if(code ==''){
+				$("#msg").html("验证码必填");
+				return ;
+			}
+			var url = "{:url('/user/Login/checkCode')}";
+			$.post(url, {'phone':phone_str,'code':code}, function (data) {
+				if(data.code ==1){
+					toastr.success('验证成功，请输入新的密码');
+					setInterval(function() {
+						var phone = data.phone;
+						location.href="{:url('/user/Login/newPwd')}?phone="+phone;
+					},2000)
+				}else {
+					toastr.error(data.msg);
+				}
+			});
+
+		});
+
+	});
+
+	function settime() {
+		if (countdown == 0) {
+			$("#send").html("没收到？重新获取");
+			countdown = 60;
+			clearInterval(tt);
+		} else {
+			$("#send").html(countdown);
+			countdown--;
+		}
+	}
+</script>
+<body>
+
+<div class="register-container">
+	<h1>慧云数字化园区管理云平台</h1>
+	
+	<div class="connect">
+		<p>找回密码</p>
+	</div>
+	
+	<form action="" method="post">
+		<div>
+			<input type="text" name="phone"  placeholder="输入手机号码" value="{$phone|default=''}" autocomplete="off" id="phone"/>
+		</div>
+		<div style="width:155px;overflow:hidden;float:left;margin-left:-2px;">
+			<input style="width:140px;border-radius:6px;text-shadow:none" type="text" name="code" class="phone_number" placeholder="验证码" style="width:40%;float:left;" onfocus="this.placeholder=''" onblur="this.placeholder='校验码'" id="code"/>
+		</div>
+		<div style="width:150px;overflow:hidden;float:right;margin-right:2px;">
+			<button style="width:140px;text-shadow:none" id="send" type="button">发送</button>
+		</div>
+		<button id="submit" type="button">找回密码</button>
+		<span style="color: #ff0000;" id="msg">{$msg|default=''}</span>
+	</form>
+
+</div>
+
+</body>
+
+<script src="__PUBLIC__/login/js/common.js"></script>
+<!--背景图片自动更换-->
+<script src="__PUBLIC__/login/js/supersized.3.2.7.min.js"></script>
+<script src="__PUBLIC__/login/js/supersized-init.js"></script>
+
+<div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';">
+<p><a href="http://www.zlhuiyun.com/" class="technology">技术支持 </a>: 青岛中联慧云信息科技有限公司</p>
+<p>服务热线：400-0073-137</p>
+</div>
+</html>

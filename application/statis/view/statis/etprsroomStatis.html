@@ -1,0 +1,310 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__JS__/echarts.min.js"></script>
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet'/>
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datetimepicker({
+            minView: "month",
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: true,//今日按钮
+            forceParse : true,
+            format: "yyyy-mm-dd"
+        });
+        $("input[name='status[]']").attr("checked",true);
+        $("input[name='iqbts[]']").attr("checked",true);
+        initEnterChart();
+        $("#btnchart").click(function () {
+            if($("input[name='status[]']:checked").length==0){
+                toastr.warning("入驻状态必须选择一个");
+                return;
+            }
+            initEnterChart();
+        });
+
+    });
+    function initEnterChart(){
+        var start=$("#starttime").val();
+        var end=$("#endtime").val();
+
+        //入驻情况统计
+        var enterurl="{:url('/statis/Statis/getIqbtRoomStatis')}";
+        var params=$('#search').serialize();
+        var statusobj=new Object();
+        var statusarr=new Array();
+        $.each($("input[name='status[]']:checked"),function(){
+            statusobj[$(this).val()]=$(this).attr("txt");
+            statusarr.push($(this).val());
+        });
+        $.post(enterurl,params, function (data) {
+            if(data['code']==0){
+                toastr.warning(data['msg']);
+            }else {
+                initChart('enterchart', "入驻情况统计报表", data.color, data.legend, data.xaxis, data.yaxis);
+                var xtitle = data.xaxis;
+                $("#enterBody").html("");
+                var legend = data.legend;
+                var hdhtm = "<th>时间</th>";
+                for (var j = 0; j < legend.length; j++) {
+                    hdhtm = hdhtm + "<td>" + legend[j] + "</td>";
+                }
+                $("#hdtr").html(hdhtm);
+                var htm = "";
+                for (var k = 0; k < xtitle.length; k++) {
+                    for (var j = 0; j < data.yaxis.length; j++) {
+                        if (j == 0) {
+                            htm = htm + "<tr><td>" + xtitle[k] + "</td>";
+                        }
+                        htm = htm + "<td>" + data.yaxis[j].data[k] + "</td>";
+                        if (j == data.yaxis.length - 1) {
+                            htm = htm + "<tr>";
+                        }
+                    }
+                }
+                htm += "</tr>";
+                $("#enterBody").append(htm);
+            }
+        });
+    }
+    function arrayIndex(arr,value){
+        for(var i=0;i<arr.length;i++){
+            if(arr[i]==value){
+                return i;
+            }
+        }
+    }
+    //id,title,color,legend,xaxis,data
+    function initChart(id,title,color,legend,xaxis,data){
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById(id));
+
+        option = {
+            color: color,
+
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                }
+            },
+            grid: {
+                right: '320px'
+            },
+            brush: {
+                toolbox: ['rect'],
+                xAxisIndex: 0
+            },
+            /*toolbox: {
+             feature: {
+             saveAsImage: {show: true}
+             }
+             },*/
+            legend: {
+                right: 'right',
+                data:legend,
+                align:'left',
+                orient:'vertical'
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    data: xaxis
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '房间数量',
+                    min: 0,
+                    position: 'left',
+                    axisLine: {
+                        lineStyle: {
+                            color: color[0]
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '{value}个'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '建筑面积',
+                    min: 0,
+                    position: 'right',
+                    axisLine: {
+                        lineStyle: {
+                            color: color[2]
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '{value}㎡'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '比例',
+                    min: 0,
+                    max: 100,
+                    position: 'right',
+                    offset: 80,
+                    axisLine: {
+                        lineStyle: {
+                            color: color[2]
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '{value}%'
+                    }
+                }
+            ],
+            series: data
+        };
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option,true);
+    }
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="panel-body">
+                        <form class="form-horizontal" id="search">
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label">展示方式：</label>
+                                        <div class="radio radio-success radio-inline">
+                                            <input type="radio" id="line" value="line" name="showtype">
+                                            <label for="line" class="text-success"><b>折线图</b></label>
+                                        </div>
+                                        <div class="radio radio-success radio-inline">
+                                            <input type="radio" id="bar" value="bar" name="showtype" checked>
+                                            <label for="bar" class="text-success"><b>柱形图(推荐)</b></label>
+                                        </div>
+                                        <!--<label class="control-label" style="margin-left:20px;">展示分类：</label>
+                                        <div class="radio radio-success radio-inline">
+                                            <input type="radio" id="showcate" value="totaldata" name="showcate" checked>
+                                            <label for="showcate" class="text-success"><b>展示综合数据</b></label>
+                                        </div>
+                                        <div class="radio radio-success radio-inline">
+                                            <input type="radio" id="showcate2" value="iqbtdata" name="showcate">
+                                            <label for="showcate2" class="text-success"><b>按孵化器展示</b></label>
+                                        </div>-->
+                                        <div class="radio radio-success radio-inline">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v2" id="btnasch"><!--高级搜索点击展开按钮-->
+                                                <button type="button" class="btn btn-info btn-sm">&nbsp;&nbsp;<i class="fa fa-search"></i>&nbsp;&nbsp;高级搜索&nbsp;&nbsp;</button>
+                                            </a>
+                                            <button type="button" class="btn btn-warning btn-sm" id="btnchart">&nbsp;&nbsp;<i class="fa fa-bar-chart"></i>&nbsp;&nbsp;统计</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="ibox float-e-margins" style="margin-bottom:0;">
+                                        <div id="v2" class="panel-collapse collapse ibox-content" style="border: none;">
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">选择时间：</label>
+                                                <div class="col-sm-10">
+                                                    <div class="col-sm-4">
+                                                        <input type="text"  placeholder="开始时间" class="form-control datepicker"  name="starttime">
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <input type="text" placeholder="结束时间" class="form-control datepicker" name="endtime" >
+                                                    </div>
+                                                    <div class="col-sm-4"></div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">统计方式：</label>
+                                                <div class="col-sm-10">
+                                                    <div class="col-sm-4">
+                                                        <div class="checkbox checkbox-success checkbox-inline">
+                                                            <input type="checkbox" value="roomnum" id="roomnum" name="status[]" txt="房间数量">
+                                                            <label for="roomnum" title=""> 房间数量 </label>
+                                                        </div>
+                                                        <div class="checkbox checkbox-success checkbox-inline">
+                                                            <input type="checkbox" value="roomarea" id="roomarea" name="status[]" txt="建筑面积">
+                                                            <label for="roomarea" title=""> 建筑面积 </label>
+                                                        </div>
+                                                        <div class="checkbox checkbox-success checkbox-inline">
+                                                            <input type="checkbox" value="roomunit" id="unit" name="status[]" txt="工位数">
+                                                            <label for="unit" title=""> 工位数 </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4"></div>
+                                                    <div class="col-sm-4"></div>
+                                                    <div class="clearfix"></div>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">统计方式：</label>
+                                                <div class="col-sm-10">
+                                                    <div class="col-sm-4">
+                                                        <div class="radio radio-success radio-inline">
+                                                            <input type="radio" id="total" value="total" name="statistype" checked>
+                                                            <label for="total" class="text-success"><b>总数</b></label>
+                                                        </div>
+                                                        <div class="radio radio-success radio-inline">
+                                                            <input type="radio" id="months" value="months" name="statistype">
+                                                            <label for="months" class="text-success"><b>按月</b></label>
+                                                        </div>
+                                                        <div class="radio radio-success radio-inline">
+                                                            <input type="radio" id="day" value="day" name="statistype">
+                                                            <label for="day" class="text-success"><b>按天</b></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4"></div>
+                                                    <div class="col-sm-4"></div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--图表-->
+                                <div class="col-sm-12">
+                                    <div id="enterchart"  style="height:500px;"></div>
+                                </div>
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-content" style="border:none;">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover">
+                                                <thead>
+                                                <tr id="hdtr">
+                                                </tr>
+                                                </thead>
+                                                <tbody id="enterBody">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

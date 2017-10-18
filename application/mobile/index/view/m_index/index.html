@@ -1,0 +1,190 @@
+{include file="index@index/header" /}
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div class="row">
+            {include file="index@index/nav" /}
+        </div>
+        <div class="row">
+            {if condition="$data.apl.status eq 1 || $data.reapl.status eq 1 || $data.room.status eq 1 || $data.roomin.status eq 1"}
+            <div class="col-md-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-info pull-right">{$data.time|default=time()|date="Y-m-d",###}</span>
+                        <h3>企业入驻</h3>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            {if condition="$data.apl.status eq 1"}                           
+                                <a href="{:url('/index/Apply/apllist')}">                          
+                                <div class="col-sm-3" style="-webkit-animation:bounceIn 1s;">
+                                        <div class="widget navy-bg p-lg text-center">
+                                            <div class="m-b-md">
+                                                <i class="fa fa-file fa-4x"></i>
+                                                <h1 class="m-xs">{$data.apl.num}</h1>
+                                                <h3 class="font-bold no-margins">待审核</h3>
+                                            </div>
+                                        </div>
+                                </div>
+                                </a>
+                            {/if}
+                            {if condition="$data.reapl.status eq 1"}
+                                
+                            <a href="{:url('/index/Apply/retrialapl')}">
+                            
+                            <div class="col-sm-3" style="-webkit-animation:bounceIn 1s;">
+                                <div class="widget lazur-bg p-lg text-center">
+                                    <div class="m-b-md">
+                                        <i class="fa fa-file fa-4x"></i>
+                                        <h1 class="m-xs">{$data.reapl.num}</h1>
+                                        <h3 class="font-bold no-margins">待复审</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                            {/if}
+                            {if condition="$data.room.status eq 1"}
+                               
+                            <a href="{:url('/index/Apply/roomdstb')}">                           
+
+                            <div class="col-sm-3" style="-webkit-animation:bounceIn 1s;">
+                                <div class="widget yellow-bg p-lg text-center">
+                                    <div class="m-b-md">
+                                        <i class="fa fa-file fa-4x"></i>
+                                        <h1 class="m-xs">{$data.room.num}</h1>
+                                        <h3 class="font-bold no-margins">待分配房间</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                            {/if}
+                            {if condition="$data.roomin.status eq 1"}
+                               
+                            <a href="{:url('/index/Apply/enteriqbt')}">
+                            
+                            <div class="col-sm-3" style="-webkit-animation:bounceIn 1s;">
+                                <div class="widget red-bg p-lg text-center">
+                                    <div class="m-b-md">
+                                        <i class="fa fa-file fa-4x"></i>
+                                        <h1 class="m-xs">{$data.roomin.num}</h1>
+                                        <h3 class="font-bold no-margins">待入驻</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/if}
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-info pull-right">{$data.time|date="Y-m-d",###}</span>
+                        <h3>日程安排</h3>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                           {if condition="$data.sch_com.status eq 1"}
+                            <a href="{:url('/index/index/schedule')}">
+                            
+                            <div class="col-sm-4" style="-webkit-animation:rotateIn 1s;">
+                                <div class="widget navy-bg p-lg text-center">
+                                    <div class="m-b-md">
+                                        <i class="fa fa-table fa-4x"></i>
+                                        <h1 class="m-xs">{$data.sch_com.num}</h1>
+                                        <h3 class="font-bold no-margins">普通日程</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                            {/if}
+                             {if condition="$data.sch_imp.status eq 1"}
+                            <a href="{:url('/index/index/schedule')}">                         
+                            <div class="col-sm-4" style="-webkit-animation:rotateIn 1s;">
+                                <div class="widget yellow-bg p-lg text-center">
+                                    <div class="m-b-md">
+                                        <i class="fa fa-table fa-4x"></i>
+                                        <h1 class="m-xs">{$data.sch_imp.num}</h1>
+                                        <h3 class="font-bold no-margins">重要日程</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                            {/if}
+                             {if condition="$data.sch_dan.status eq 1"}
+                            <a href="{:url('/index/index/schedule')}">
+                             
+                            <div class="col-sm-4" style="-webkit-animation:rotateIn 1s;">
+                                <div class="widget red-bg p-lg text-center">
+                                    <div class="m-b-md">
+                                        <i class="fa fa-table fa-4x"></i>
+                                        <h1 class="m-xs">{$data.sch_dan.num}</h1>
+                                        <h3 class="font-bold no-margins">紧急日程</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-info pull-right">{$data.time|date="Y-m-d",###}</span>
+                        <h3>消息提醒</h3>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            {if condition="$data.notice_estate.status eq 1"}
+                            <a href="{:url('/index/index/msg')}">
+                            <div class="col-sm-4" style="-webkit-animation:rotateIn 1s;">
+                                <div class="widget yellow-bg p-lg text-center">
+                                    <div class="m-b-md">
+                                        <i class="fa fa-bell fa-4x"></i>
+                                        <h1 class="m-xs">{$data.notice_estate.num}</h1>
+                                        <h3 class="font-bold no-margins">会议室申请</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                            {/if}
+                             {if condition="$data.notice_work.status eq 1"}
+                            <a href="{:url('/index/index/msg')}">
+                        
+                            <div class="col-sm-4" style="-webkit-animation:rotateIn 1s;">
+                                <div class="widget lazur-bg p-lg text-center">
+                                    <div class="m-b-md">
+                                        <i class="fa fa-bell fa-4x"></i>
+                                        <h1 class="m-xs">{$data.notice_work.num}</h1>
+                                        <h3 class="font-bold no-margins">内部资源通知</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            {/if}
+                             {if condition="$data.notice_other.status eq 1"}
+                            <a href="{:url('/index/index/msg')}">
+                       
+                            <div class="col-sm-4" style="-webkit-animation:rotateIn 1s;">
+                                <div class="widget navy-bg p-lg text-center">
+                                    <div class="m-b-md">
+                                        <i class="fa fa-bell fa-4x"></i>
+                                        <h1 class="m-xs">{$data.notice_other.num}</h1>
+                                        <h3 class="font-bold no-margins">其它提醒</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--右侧部分结束-->
+{include file="index@index/footer" /}

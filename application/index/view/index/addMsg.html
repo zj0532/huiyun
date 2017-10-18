@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>慧云孵化器管理系统</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link href="__CSS__/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+    <link href="__CSS__/font-awesome.min.css?v=4.3.0" rel="stylesheet">
+    <link href="__PLUG__/summernote/summernote.css" rel="stylesheet">
+    <link href="__CSS__/animate.min.css" rel="stylesheet">
+    <link href="__CSS__/style.min.css?v=3.0.0" rel="stylesheet">
+    <link rel="shortcut icon" href="__PUBLIC__/favicon.ico" type="image/x-icon" />
+    <!--[if lt IE 8]>
+    <script>
+        alert('本系统不支持IE浏览器，请使用谷歌、火狐等浏览器\n或360、QQ等国产浏览器的极速模式浏览本页面！');
+    </script>
+    <![endif]-->
+    <!-- 全局js -->
+
+
+    <!-- SUMMERNOTE -->
+    <script src="__JS__/jquery-2.1.1.min.js"></script>
+    <script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+    <script src="__JS__/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="__JS__/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="__JS__/plugins/layer/layer.min.js"></script>
+    <!-- 自定义js -->
+    <script src="__JS__/hplus.min.js?v=3.0.0"></script>
+    <script src="__JS__/contabs.min.js"></script>
+    <!-- 第三方插件 -->
+    <script src="__JS__/plugins/pace/pace.min.js"></script>
+    <!-- toastr CSS -->
+    <link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+    <!-- toastr Theme JavaScript -->
+    <script src="__PLUG__/toastr/toastr.js"></script>
+
+
+    <script src="__JS__/base.js"></script>
+    <script src="__PLUG__/summernote/summernote.min.js"></script>
+    <style type="text/css">
+        .animated {
+            -webkit-animation-fill-mode: none;
+            animation-fill-mode: none;
+            z-index:;
+        }
+    </style>
+
+
+</head>
+<body class="fixed-sidebar full-height-layout gray-bg">
+<input type="hidden" id="tags" value="{$tags|default=''}">
+<div id="wrapper">
+    <!--左侧导航开始-->
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="nav-close"><i class="fa fa-times-circle"></i></div>
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="nav-header" style="-webkit-animation:bounceIn 1s;">
+                    <div class="dropdown profile-element" style="text-align:center;margin-right:4px;line-height:20px;">
+                        <span class="img-circle"  style="width:95px;height:95px;display:inline-block;background:#FFF;">
+                            <img alt="image" src="__PUBLIC__{$Think.session.logo|default='/img/hylogo.png'}" style="width:65px;height:65px;margin:15px auto;" />
+                        </span>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                                   <span class="block m-t-xs"><strong class="font-bold">{$Think.session.sysName|default='慧云孵化器管理系统'}</strong></span>
+                                </span>
+                        </a>
+                    </div>
+                    <div class="logo-element">HY</div>
+                </li>
+                <li  {if condition="$url=='/index/Index/index'"}class="active"{/if}>
+                {if condition="$Think.session.user.userCate neq 1011002 and $Think.session.user.userCate neq 1011005"}
+                {if condition="$Think.session.user.userCate eq 1011004 or $Think.session.user.roleIds eq '1'"}
+                <a href="{:url('/index/Index/etprsIqbtIndex')}">
+                    {else/}
+                    <a href="{:url('/index/Index/index')}">
+                        {/if}
+                        <i class="fa fa-home"></i>
+                        <span class="nav-label">首页</span>
+                    </a>
+                    {/if}
+                    </li>
+                    {if condition="!empty($menus)"}
+                    {volist name="menus" id="menu"}
+                    {if condition="isset($menu.sub)||!empty($menu.url)"}
+                    <li {if condition="$menu.act==1"}class="active"{/if}>
+                    <a href="{if condition='!empty($menu.url)'}{:url($menu['url'])}{else/}#{/if}">
+                        <i class="fa fa-{$menu.icon}"></i>
+                        <span class="nav-label">{$menu.name}</span>
+                        {if condition="!empty($menu.sub)||empty($menu.url)"}
+                        {eq name="menu.noticenum" value="0"}
+                        <span class="fa arrow"></span>
+                        {else/}
+                        <span class="label label-danger pull-right">{$menu.noticenum}</span>
+                        {/eq}
+
+                        {/if}
+                    </a>
+                    {if condition="isset($menu.sub)"}
+                    <ul class="nav nav-second-level">
+                        {volist name="menu.sub" id="sub"}
+                        <li  {if condition="isset($sub.act)&&$sub.act==1"}class="active"{/if}>
+                        <a class="" href="{:url($sub['url'])}">{$sub.name}
+                            {neq name="sub.noticenum" value="0"}
+                            <span class="label label-danger pull-right">{$sub.noticenum}</span>
+                            {/neq}
+                        </a>
+                        </li>
+                        {/volist}
+                    </ul>
+                    {/if}
+                    </li>
+
+
+                    {/if}
+                    {/volist}
+                    {/if}
+
+            </ul>
+        </div>
+    </nav>
+    <!--左侧导航结束-->
+
+<script type="text/javascript">
+
+    $(function(){
+
+        initManage('manage');
+        initManage('etprs');
+        initManage('tutor');
+        //管理员
+        $('#top-manage').change(function(){
+             $("input[id^='manage']").prop("checked", $("#top-manage").prop("checked"));
+             $("input[id^='manage']").each(function(){
+                 var id=$(this).attr("id");
+                    var value = $(this).attr('value');
+                    var name= $.trim($(this).siblings('label').text());
+
+                    if($(this).is(':checked')){
+                        $('#toUserId').append('<label for="send-'+id+'"><input type="checkbox" value="'+value+'" data-name="'+name+'" class="i-checks" checked id="send-'+id+'">'+name+'，</label>');
+                    }else{
+                        $('#toUserId').find('#send-'+id).parent().remove();
+                    }
+             })
+          });
+        //企业
+        $('#top-etprs').change(function(){
+            $("input[id^='etprs']").prop("checked", $("#top-etprs").prop("checked"));
+             $("input[id^='etprs']").each(function(){
+                 var id=$(this).attr("id");
+                    var value = $(this).attr('value');
+                    var name= $(this).siblings('label').text();
+
+                    if($(this).is(':checked')){
+                        $('#toUserId').append('<label for="send-'+id+'"><input type="checkbox" value="'+value+'"  data-name="'+name+'" class="i-checks" checked id="send-'+id+'">'+name+'，</label>');
+                    }else{
+                        $('#toUserId').find('#send-'+id).parent().remove();
+                    }
+             })
+        });
+
+        //导师
+        $('#top-tutor').change(function(){
+            $("input[id^='tutor']").prop("checked", $("#top-tutor").prop("checked"));
+             $("input[id^='tutor']").each(function(){
+                 var id=$(this).attr("id");
+                    var value = $(this).attr('value');
+                    var name= $(this).siblings('label').text();
+
+                    if($(this).is(':checked')){
+                        $('#toUserId').append('<label for="send-'+id+'"><input type="checkbox" value="'+value+'" data-name="'+name+'" class="i-checks" checked id="send-'+id+'">'+name+'，</label>');
+                    }else{
+                        $('#toUserId').find('#send-'+id).parent().remove();
+                    }
+             })
+        });
+        //搜索
+        $('#top-search').change(function(){
+            $("input[id^='search']").prop("checked", $("#top-search").prop("checked"));
+             $("input[id^='search']").each(function(){
+                 var id=$(this).attr("id");
+                    var value = $(this).attr('value');
+                    var name= $(this).siblings('label').text();
+
+                    if($(this).is(':checked')){
+                        $('#toUserId').append('<label for="send-'+id+'"><input type="checkbox" value="'+value+'" data-name="'+name+'" class="i-checks" checked id="send-'+id+'">'+name+'，</label>');
+                    }else{
+                        $('#toUserId').find('#send-'+id).parent().remove();
+                    }
+             })
+        });
+
+        jQuery(document.body).on('change','.usercbx',function(){
+            var id=$(this).attr("id");
+            var value = $(this).attr('value');
+            var name= $(this).siblings('label').text();
+
+            if($(this).is(':checked')){
+                $('#toUserId').append('<label for="send-'+id+'"><input type="checkbox" value="'+value+'" data-name="'+name+'" class="i-checks" checked id="send-'+id+'">'+name+'，</label>');
+            }else{
+                $('#toUserId').find('#send-'+id).parent().remove();
+            }
+            var rootId="top-manage";
+            var le = $("input[id^='manage']:checked").length;
+            $("#"+rootId).prop("checked",le>0);
+            var rootId2="top-etprs";
+            var le2 = $("input[id^='etprs']:checked").length;
+            $("#"+rootId2).prop("checked",le2>0);
+            var rootId3="top-tutor";
+            var le3 = $("input[id^='tutor']:checked").length;
+            $("#"+rootId3).prop("checked",le3>0);
+
+            var le4 = $("input[id^='search']:checked").length;
+            var rootId4="top-search";
+            $("#"+rootId4).prop("checked",le4>0);
+        });
+
+
+        $('#btndrop').click(function(){
+            var url ="{:url('/index/Index/msg')}";
+            location.href = url;
+        });
+        $('#btnsend').click(function(){
+            saveMsg(1);
+        })
+        $('#btndraft').click(function(){
+            saveMsg('0');
+        })
+
+        $('#btnsearch').click(function(){
+            var name = $('#search').val();
+            name = $.trim(name);
+            if(name ==""){
+                alert('请输入要搜索的联系人名称');
+                return false;
+            }
+            var url = "{:url('/index/Index/getSearchMange')}";
+            $.post(url,{"name":name},function(data){
+                if(data.code =='1'){
+                    $('#panel-search').css('display','block');
+                    $('#panel-manage').css('display','none');
+                    $('#panel-etprs').css('display','none');
+                    $('#panel-tutor').css('display','none');
+                    for(var i=0;i<data.data.length;i++){       
+                        $('#searchlist').append(' <li><input type="checkbox" value="'+data.data[i].id+'" class="i-checks usercbx" id="search'+i+'" ><label for="search'+i+'">&nbsp;&nbsp;'+data.data[i].realname+'('+data.data[i].realname+')</label></li>');
+                    }
+                }
+            })
+        })
+
+    });
+
+    function saveMsg(type){
+        var title = $('#title').val();
+        var msgId = $('#msgId').val();
+        var sms = 0;
+        if($("#sms").is(':checked')){
+            sms = 1;
+        }
+        var toUserId = '';
+        var toUsername = '';
+        $('#toUserId').find("input[id^='send']").each(function(){
+            if($(this).is(':checked')) {
+                toUserId += $(this).val() + ',';
+                toUsername += $(this).attr('data-name')+',';
+            }
+        });
+        if(type ==1){
+            if(toUserId ==""){
+                alert('请在右边选择要发送给的联系人');
+                return false;
+            }
+        }
+
+     //  var content = $('#content').summernote('code');
+        var content = $('#content').summernote('code');
+            content = $.trim(content);
+        var url = "{:url('/index/Index/saveMsg')}";
+        $("#btndraft").attr('disabled','true');
+        $("#btnsend").attr('disabled','true');
+        $.post(url,{'title':title,'toUserId':toUserId,'content':content,'status':type,'toUserName':toUsername,'id':msgId,'sms':sms},function(data){
+            if(data.code ==1){
+                $("#btndraft").attr('disabled','false');
+                $("#btnsend").attr('disabled','false');
+                if(type ==1){
+                    toastr.success("发送成功");
+                    setTimeout("jump(1)",2000);
+                }else{
+                    toastr.success("保存草稿成功");
+                    setTimeout("jump(0)",2000);
+                }
+
+            }else{
+                $("#btndraft").attr('disabled','false');
+                $("#btnsend").attr('disabled','false');
+                toastr.error(data.msg);
+            }
+        })
+    }
+    function jump(type){
+        var url = "{:url('index/Index/outMsg')}?status="+type;
+        location.href = url;
+    }
+    function initManage(type){
+        var url = "{:url('/index/Index/getManage');}";
+        $.post(url,{"type":type},function(data){
+            if(data.code =="1"){
+                for(var i=0;i<data.data.length;i++){
+                   $('#'+type).append(' <li><input type="checkbox" value="'+data.data[i].id+'" class="i-checks usercbx" id="'+type+i+'" ><label for="'+type+i+'">&nbsp;&nbsp;'+data.data[i].name+'('+data.data[i].realname+')</label></li>');
+                }
+            }
+        })
+    }
+
+</script>
+ <script>
+    $(document).ready(function(){
+        var smnturl="{:url('/index/Index/smntUpload',array('dir'=>'notice'))}";
+        var smnt = $('#content');
+        $(".summernote").summernote({
+            lang:"zh-CN",
+            height: 400,
+            callbacks:{
+                 onImageUpload:function (files) {
+                   smntUploadFile(files, smnt, smnturl, "__PUBLIC__");
+                }
+            }
+        });
+    });
+
+        
+
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+                <div class="col-md-12">
+                    <div class="wrapper wrapper-content">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-content mailbox-content">
+                                        <div class="file-manager">
+                                            <a class="btn btn-block btn-primary compose-mail" href="#" onclick="history.go(-1)">返回</a>
+                                            <div class="space-25"></div>
+                                            <h5>文件夹</h5>
+                                            <ul class="folder-list m-b-md" style="padding: 0">
+                                              
+                                                <li><a href="{:url('index/Index/outMsg',array('status'=>1))}"><i class="fa fa-envelope-o"></i> 发件箱<span class="label label-primary pull-right">{$out_send}</span></a></li>
+                                            
+                                                <li><a href="{:url('index/Index/outMsg',array('status'=>0))}"><i class="fa fa-file-text-o"></i> 草稿箱 <span class="label label-danger pull-right">{$out_draft}</span></a></li>
+                                                 <li><a href="{:url('index/Index/msg')}"><i class="fa fa-file-text-o"></i> 收件箱 <span class="label label-info pull-right">{$in_all}</span></a></li>
+                                            </ul>
+                                        
+                                        
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-7 animated fadeInRight">
+                                <div class="mail-box-header">
+                                  <!--  <div class="pull-right tooltip-demo">
+                                        <a href="" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="存为草稿"><i class="fa fa-pencil"></i> 存为草稿</a>
+                                        <a href="" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="放弃"><i class="fa fa-times"></i> 放弃</a>
+                                    </div>
+                                    -->
+                                    <h2> 写信</h2>
+                                </div>
+                                <div class="mail-box">
+                                    <div class="mail-body">
+                                        <form class="form-horizontal" method="get">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">发送到：</label>
+                                                <div class="col-sm-10" id="toUserId">
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">主题：</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" value="{$info.title|default=''}" id='title'>
+                                                </div>
+                                            </div>
+                                          <!--  <div class="form-group">
+                                                <label class="col-sm-2 control-label"></label>
+                                                <div class="col-sm-10" style="cursor: pointer;">
+                                                    <input  type="file"  name="file" style="opacity: 0;position:absolute;">
+                                                    <a href="javascript:void(0);">
+                                                        &nbsp;<i class="fa fa-paperclip"></i>&nbsp;
+                                                        <span>添加附件</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            -->
+                                        </form>
+                                    </div>
+                                    <div class="mail-text h-200">
+                                        <div class="summernote" id="content" name="content">
+                                            {$info.content|default=""}
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <input type="hidden" name="msgId" id="msgId" value="{$info.id|default='0'}">
+                                    <div class="mail-body text-right tooltip-demo">
+                                        <input type="checkbox" name="sms" id="sms" value="1" ><label for="sms">&nbsp;&nbsp;短信通知</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <a href="javascript:void(0)" id="btnsend" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Send"><i class="fa fa-reply"></i> 发送</a>
+                                        <a href="javascript:void(0)" id='btndrop' class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Discard email"><i class="fa fa-times"></i> 放弃</a>
+                                        <a href="javascript:void(0)" id="btndraft" class="btn btn-white btn-sm" data-toggle="tooltip" data-placement="top" title="Move to draft folder"><i class="fa fa-pencil"></i> 存为草稿</a>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="mail-box-header">
+                                    <h2>选择收信人</h2>
+                                </div>
+                                <div class="mail-box">
+                                    <div class="mail-body">
+                                       
+                                            <div class="input-group" style="width:100%;margin-bottom:20px;">
+                                                <input type="text" class="form-control input-sm" name="search" placeholder="搜索联系人" id="search">
+                                                <div class="input-group-btn">
+                                                    <button type="submit" class="btn btn-sm btn-primary" id="btnsearch">搜索</button>
+                                                </div>
+                                            </div>
+                                       
+                                        <div class="panel-group" id="version">
+                                            <div class="panel panel-default" id="panel-manage">
+                                                <div class="panel-heading">
+                                                    <h5 class="panel-title">
+                                                       
+                                                        <input type="checkbox" class="i-checks" id="top-manage">
+                                                        <a data-toggle="collapse" data-parent="#version" href="#v30">&nbsp;&nbsp;管理员联系人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        </a>
+                                                    </h5>
+                                                </div>
+                                                <div id="v30" class="panel-collapse collapse in">
+                                                    <div class="panel-body">
+                                                        <ul style="list-style: none;" id="manage">
+                                                         
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {if condition="$Think.session.user.roleIds neq '1' and $Think.session.user.roleIds neq '3'"}
+                                            <div class="panel panel-default" id='panel-etprs'>
+                                                <div class="panel-heading">
+                                                    <h5 class="panel-title">
+                                                        
+                                                            <input type="checkbox" class="i-checks" id='top-etprs'>
+                                                        <a data-toggle="collapse" data-parent="#version" href="#v22">&nbsp;&nbsp;企业联系人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        </a>
+                                                    </h5>
+                                                </div>
+                                                <div id="v22" class="panel-collapse collapse">
+                                                    <div class="panel-body">
+                                                        <ul style="list-style: none;" id="etprs">
+                                                          <!--  <li><input type="checkbox" class="i-checks" checked>&nbsp;&nbsp;企业1</li>
+                                                            <li><input type="checkbox" class="i-checks" checked>&nbsp;&nbsp;企业2</li> -->
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default" id="panel-tutor">
+                                                <div class="panel-heading">
+                                                    <h5 class="panel-title">
+                                                       
+                                                            <input type="checkbox" class="i-checks" id="top-tutor">
+                                                         <a data-toggle="collapse" data-parent="#version" href="#v21">&nbsp;&nbsp;导师联系人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                        </a>
+                                                    </h5>
+                                                </div>
+                                                <div id="v21" class="panel-collapse collapse">
+                                                    <div class="panel-body">
+                                                        <ul style="list-style: none;" id="tutor">
+                                                          <!--  <li><input type="checkbox" class="i-checks" checked>&nbsp;&nbsp;导师1</li>
+                                                            <li><input type="checkbox" class="i-checks" checked>&nbsp;&nbsp;导师2</li>  -->
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>  {/if}
+                                            <!--搜索结果-->
+                                            <div class="panel panel-default" style="display:none;" id="panel-search">
+                                                <div class="panel-heading">
+                                                    <h5 class="panel-title">
+                                                        <input type="checkbox" class="i-checks" id="top-search">
+                                                            <a data-toggle="collapse" data-parent="#version" href="#v36">&nbsp;&nbsp;搜索结果&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a><code class="pull-right"></code>
+                                                        </h5>
+                                                </div>
+                                                <div id="v36" class="panel-collapse collapse in">
+                                                    <div class="panel-body">
+                                                        <ul style="list-style: none;" id="searchlist">
+                                                           
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

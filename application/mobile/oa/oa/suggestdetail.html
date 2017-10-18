@@ -1,0 +1,105 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+    });
+
+    function actFmt(value, row, index) {
+        var html='<a class="visit" href="javascript:void(0)">详情</a>';
+        return html;
+    }
+    function addSchedule(etprsId){
+        var url="{:url('/index/index/addEtprsSchedule')}";
+        $.post(url,{etprsId:etprsId}, function(data) {
+            show_modal("添加企业拜访日程",data,"");
+        });
+    }
+    function statusFmt(value, row, index) {
+        switch (value){
+            case 0:
+                return "已提交";
+                break;
+            case 1:
+                return "已回复";
+                break;
+            default :
+                return "";
+        }
+    }
+
+    function reply(id) {
+        var url="{:url('/oa/Oa/sgstReply/id/"+id+"')}";
+        $.post(url, function(data) {
+            show_modal("意见建议回复",data,"");
+        });
+    }
+    function detailView(index, row){
+        var tb1="apl_record"+row.id;
+        var tb2="act_detl"+row.id;
+        var html='<div class="tabs-container"> <div class="tabs-left"> <ul class="nav nav-tabs"> ' +
+                '<li class="active"><a data-toggle="tab" href="#'+tb1+'"> 详情</a> </li> ' +
+                '<li class=""><a data-toggle="tab" href="#'+tb2+'"> 回复</a> </li>' +
+                ' </ul>' +
+                ' <div class="tab-content "> <div id="'+tb1+'" class="tab-pane active"><div class="panel-body"> '+row.content+' </div> </div>' +
+                ' <div id="'+tb2+'" class="tab-pane"> <div class="panel-body" id="act-desc"> '+row.desc+' </div></div>' +
+                '  </div> </div> </div>';
+
+        return html;
+    }
+
+
+</script>
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:92%;margin:20px auto;padding:0;}
+    .user_com .row .col-xs-6{padding-left:10px;padding-right:10px;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<body>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">园企互动详情</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                <tr>
+                    <td>企业名称</td>
+                    <td>{$data.etprsname}</td>
+                </tr>
+                <tr>
+                    <td>标题</td>
+                    <td>{$data.title}</td>
+                </tr>
+                <tr>
+                    <td>添加时间</td>
+                    <td>{$data.addtime|default=''|date="Y-m-d",###}</td>
+                </tr>
+                <tr>
+                    <td>状态</td>
+                    <td>{$data.status=='0'?"待回复":"已回复"}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="word">
+            <p><strong>详情</strong></p>
+            <p>{$data.content}</p>
+        </div>
+        <br>
+        <div class="form-group" style="text-align:center;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="addSchedule({$data.etprsId})">&nbsp;&nbsp;<i class="fa fa-car">&nbsp;&nbsp;拜访&nbsp;&nbsp;</i></button>
+            <button type="button" class="btn btn-warning btn-sm" onclick="reply({$data.id})">&nbsp;&nbsp;<i class="fa fa-reply">&nbsp;&nbsp;回复&nbsp;&nbsp;</i></button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btn-save1").on("click", function () {
+            var form = $(this).closest("form");
+            var url = form.prop("action");
+            var tableId = form.attr("tableId");
+            var data=form.serializeArray();
+            var thisobj = $(this);
+            thisobj.attr("disabled","true");
+            $.post(url, serializeJson(data), function (data) {
+                thisobj.removeAttr("disabled");
+                if (data.code == 1) {
+
+                    if(data.status ==0){
+                        alert(data.msg);
+                    }
+                    toastr.success('发送成功');
+                    if(tableId!=undefined){
+                        $("#" + tableId).bootstrapTable('refresh');
+                    }
+
+                    $('#myModal').modal('hide');
+
+                    try {
+                        if (typeof(eval("initOther")) == "function") {
+                            initOther();
+                        }
+                    } catch(e) {}
+                } else {
+                    toastr.error(data.msg);
+                }
+            });
+        });
+    })
+</script>
+
+<form id="stateform" action="{:url('/service/Service/saveMsg')}" method="post" tableId="stateTable" class="form-horizontal">
+    <div class="modal-body">
+
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="desc">消息内容</label>
+            <div class="col-sm-8">
+                <textarea name="desc" rows="5" id="desc" class="form-control"></textarea>
+            </div></span>
+        </div>
+    </div>
+    <p style="text-align:right;margin-right:25%;"> <input type="checkbox" name="sms" value="1"  id="sms"><label for="sms">&nbsp;&nbsp;&nbsp;短信通知</label></p>
+    <div class="modal-footer">
+        <input type="hidden" id="etprsId" name="etprsId" value="{$etprsId|default=''}">
+        <input type="hidden" id="years" name="years" value="{$years|default=''}">
+        <input type="hidden" id="months" name="months" value="{$months|default=''}">
+        <button type="button" class="btn btn-primary " id="btn-save1"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

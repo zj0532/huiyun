@@ -1,0 +1,711 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnpact").click(function () {
+            var url="{:url('/index/Apply/addPact')}";
+            $.post(url,function(data) {
+                show_modal("添加合同",data,"");
+            });
+        });
+
+        var param = new Object();
+        var etprsId = $("#etprsId").val();
+
+        if (etprsId != "") {
+            param.etprsId = etprsId;
+            var url = "{:url('/fice/Fice/getEtprsRcdlist')}";
+            $('#feeTable').bootstrapTable('refresh', {'url': url, query: param});
+        }
+    });
+    function fileFmt(value, row, index) {
+        var data=row.files;
+        var html="";
+        for(var i=0;i<data.length;i++){
+            html=html+"<a href='__PUBLIC__/"+data[0]["savePath"]+"' target='blank'>"+data[0]["fileName"]+"</a>&nbsp;&nbsp;"
+        }
+        return html;
+    }
+
+    function pactFmt(value, row, index) {
+        return [
+            '<a href="javascript:void(0)" class="edit ml10"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;',
+            '<a class="remove ml10" href="javascript:void(0)" title="删除" onclick="deltPact(' + row.id + ')"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;'
+        ].join('');
+    }
+    function deltPact(id) {
+        var url = "{:url('/index/Apply/deltPact')}";
+        basedelete("pactTable", url, id);
+    }
+    window.pactEvt = {
+        'click .edit': function (e, value, row, index) {
+            var id=row.id;
+            var url="{:url('/index/Apply/addPact')}";
+            $.post(url,{"id":id},function(data) {
+                show_modal("编辑合同",data,"");
+            });
+        }
+    };
+
+
+
+</script>
+
+<input type="hidden" name="etprsId" id="etprsId" value="{$etprsId|default='0'}">
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="row">
+
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">基本信息&nbsp;&nbsp;<i class="fa fa-edit"></i></a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">扩展信息&nbsp;&nbsp;<i class="fa fa-edit"></i></a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">入孵申请信息</a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">申请记录</a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-5" aria-expanded="false">缴费记录</a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-6" aria-expanded="false">合同记录</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div id="tab-1" class="tab-pane active">
+                                <div class="panel-body">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content" style="border:none;">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-hover">
+                                                    <tr>
+                                                        <th>企业名称</th>
+                                                        <td>{$base["name"]}</td>
+                                                        <th>入驻状态</th>
+                                                        <td>{$base["statusText"]}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>联系人</th>
+                                                        <td>{$base["lealPerson"]}</td>
+                                                        <th>联系电话</th>
+                                                        <td>{$base["mobile"]}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>人数</th>
+                                                        <td>{$base["total"]}</td>
+                                                        <th>地址</th>
+                                                        <td>{$base["address"]}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>对应导师</th>
+                                                        <td>{$base["tutors"]}</td>
+                                                        <th>已分配房间</th>
+                                                        <td>{$base["roomNos"]}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tab-2" class="tab-pane">
+                                    <div class="ibox-content">
+                                        <div class="form-group">
+                                            <table class="table table-bordered table-hover">
+                                                <tbody>
+                                                <tr>
+                                                    <th colspan="5"><h3>一、企业基本情况（一）</h3></th><!-- style="color:#15b697"-->
+                                                </tr>
+                                                <tr>
+                                                    <th>企业名称</th>
+                                                    <td colspan="2">青岛新视界网络科技有限公司</td>
+                                                    <th>组织机构代码或<br>统一社会信用代码</th>
+                                                    <td>TDF7L120</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>企业成立时间</th>
+                                                    <td colspan="2">2015-12-20</td>
+                                                    <th>企业入驻时间</th>
+                                                    <td>2017-3-29</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>企业登记注册类型</th>
+                                                    <td colspan="2">创业公司</td>
+                                                    <th>行业类型</th>
+                                                    <td>网络公司</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>企业所属技术领域</th>
+                                                    <td colspan="2">网络科技</td>
+                                                    <th>企业纳税人类型</th>
+                                                    <td>小规模纳税人</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>与创业导师建立<br>辅导关系</th>
+                                                    <td colspan="2">是</td>
+                                                    <th>毕业企业</th>
+                                                    <td>是</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>是否高新技术企业</th>
+                                                    <td colspan="2">是</td>
+                                                    <th>企业主要负责人<br>创业特征</th>
+                                                    <td>大学生创业</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>企业主要负责人是否为连续创业者</th>
+                                                    <td colspan="2">是</td>
+                                                    <th></th>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">指标名称</th>
+                                                    <th>计量单位</th>
+                                                    <th>代码</th>
+                                                    <th>数量</th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">甲</th>
+                                                    <th>乙</th>
+                                                    <th>丙</th>
+                                                    <th>1</th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2"><h3>企业基本情况（二）</h3></th>
+                                                    <th>-</th>
+                                                    <th>-</th>
+                                                    <th>-</th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">获天使或风险投资额</th>
+                                                    <td>千元</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">占用孵化场地面积</th>
+                                                    <td>平方米</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">企业成立时注册资本</th>
+                                                    <td>千元</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2"><h3>二、企业经济概况</h3></th>
+                                                    <th>-</th>
+                                                    <th>-</th>
+                                                    <th>-</th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">总收入</th>
+                                                    <td>千元</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">净利润</th>
+                                                    <td>千元</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">企业出口创汇</th>
+                                                    <td>千元</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">R&D投入</th>
+                                                    <td>千元</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">实际上缴税费</th>
+                                                    <td>千元</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2"><h3>三、企业从业人员情况</h3></th>
+                                                    <th>-</th>
+                                                    <th>-</th>
+                                                    <th>-</th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">从业人员</th>
+                                                    <td>人</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">其中：博士</th>
+                                                    <td>人</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">其中：大专以上</th>
+                                                    <td>人</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">其中：留学人员</th>
+                                                    <td>人</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">其中：千人计划人数</th>
+                                                    <td>人</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">其中：吸纳大学应届毕业生</th>
+                                                    <td>人</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2"><h3>四、企业知识产权情况</h3></th>
+                                                    <th>-</th>
+                                                    <th>-</th>
+                                                    <th>-</th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">当年知识产权申请数</th>
+                                                    <td>件</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">当年知识产权授权数</th>
+                                                    <td>件</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">其中：软件著作权</th>
+                                                    <td>件</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">其中：植物新品种</th>
+                                                    <td>个</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">其中：集成电路布局</th>
+                                                    <td>个</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">其中：拥有知识产权数</th>
+                                                    <td>件</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">购买国外专利</th>
+                                                    <td>件</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">技术合同交易数量</th>
+                                                    <td>项</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">技术合同交易额</th>
+                                                    <td>千元</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">当年承担国家级科技计划项目数</th>
+                                                    <td>项</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="2">当年获得省级以上奖励</th>
+                                                    <td>项</td>
+                                                    <td>TDF7L120</td>
+                                                    <td></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div id="tab-3" class="tab-pane">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="ibox float-e-margins">
+                                                <div class="ibox-content" style="border:none;">
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>申请企业名称：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.etprsname|default=''}</span>
+                                                                </div>
+                                                                <label class="col-sm-2 control-label"><p>希望入驻时间：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.planintime|default=''}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>入驻期限(年)：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.timeline|default=''}</span>
+                                                                </div>
+                                                                <label class="col-sm-2 control-label"><p>需求面积（㎡）：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.area|default=''}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>需求办公方式：</p></label>
+                                                                <div class="col-sm-10">
+                                                                    <span>{$apl.workstyleText|default=''}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            {if condition="$type=='etprs'"}
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>法人代表：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.lealPerson|default=''}</span>
+                                                                </div>
+                                                                <label class="col-sm-2 control-label"><p>成立时间：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.createdate|default=''}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>注册资本(万元)：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.capital|default=''}</span>
+                                                                </div>
+                                                                <label class="col-sm-2 control-label"><p>纳税人类型：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.taxpayertypeText|default=''}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>上传营业执照：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span id="charter"></span>
+                                                                    <span id="charter"></span>
+                                                                    <input type="hidden" name="charter" id="hcharter"
+                                                                           value="{$apl.charter|default=''}">
+                                                                </div>
+                                                                <label class="col-sm-2 control-label"><p>上一年度财务报表：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span id="lastficereport"></span>
+                                                                    <input type="hidden" name="lastficereport"
+                                                                           id="hlastficereport"
+                                                                           value="{$apl.lastficereport|default=''}">
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>是否高新企业：</p></label>
+                                                                <div class="col-sm-10">
+                                                                    <span>{if condition="$apl.highetprs==1"}是{else/}否{/if}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>高新企业认定时间：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.highetprstime|default=''}</span>
+                                                                </div>
+                                                                <label class="col-sm-2 control-label"><p>高新企业认定证书：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span id="highetprscert"></span>
+                                                                    <input type="hidden" name="highetprscert"
+                                                                           id="hhighetprscert"
+                                                                           value="{$apl.highetprscert|default=''}">
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            {/if}
+                                                            {if condition="$type=='team'"}
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>计划何时注册企业</p></label>
+                                                                <div class="col-sm-10">
+                                                                    <span>{$apl.planintime|default=''}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            {/if}
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>行业类型：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.industryText|default=''}</span>
+                                                                </div>
+                                                                <label class="col-sm-2 control-label"><p>技术领域：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.technicalText|default=''}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>负责人：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.leader|default=''}</span>
+                                                                </div>
+                                                                <label class="col-sm-2 control-label"><p>性别：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.sexText|default=''}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>联系方式:</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.mobile|default=''}</span>
+                                                                </div>
+                                                                <label class="col-sm-2 control-label"><p>邮箱：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.email|default=''}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>身份证号：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.idcard|default=''}</span>
+                                                                </div>
+                                                                <label class="col-sm-2 control-label"><p>最高学历：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span>{$apl.eduText|default=''}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>上传身份证：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span id="idcartfile"></span>
+                                                                    <input type="hidden" name="idcartfile" id="hidcartfile"
+                                                                           value="{$apl.idcartfile|default=''}">
+                                                                </div>
+                                                                <label class="col-sm-2 control-label"><p>上传学历证：</p></label>
+                                                                <div class="col-sm-4">
+                                                                    <span id="edufile"></span>
+                                                                    <input type="hidden" name="edufile" id="hedufile"
+                                                                           value="{$apl.edufile|default=''}">
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>主要负责人创业特征：</p></label>
+                                                                <div class="col-sm-10">
+                                                                    <span>{$apl.worktypeText|default=''}</span>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>人员情况：</p></label>
+                                                                <div class="col-sm-10">
+                                                                    <table class="basic table table-bordered table-hover">
+                                                                        <tbody>
+                                                                        <tr>
+                                                                            <td>人员数量</td>
+                                                                            <td>博士</td>
+                                                                            <td>大专以上</td>
+                                                                            <td>千人计划</td>
+                                                                            <td>吸纳应届大学生</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>{$apl.total|default=''}</td>
+                                                                            <td>{$apl.doctor|default=''}</td>
+                                                                            <td>{$apl.junior|default=''}</td>
+                                                                            <td>{$apl.thousand|default=''}</td>
+                                                                            <td>{$apl.student|default=''}</td>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-sm-2 control-label"><p>主要产品及服务：</p></label>
+                                                                <div class="col-sm-10">
+                                                                    <table id="aplpdtId" class="resettable" data-toggle="table"
+                                                                           data-url="{:url('/index/Apply/getPdts')}"
+                                                                           data-search="false"
+                                                                           data-show-refresh="false"
+                                                                           data-page-list="[5, 10, 20, 50, 100, 200]"
+                                                                           data-striped="true" data-detail-view="false">
+                                                                        <thead>
+                                                                        <tr>
+                                                                            <th data-field="pdtname">名称</th>
+                                                                            <th data-field="pdtdesc">说明</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                            </div>
+                                                    <div class="form-group">
+                                                        <label class="col-sm-2 control-label"><p>项目计划书：</p></label>
+                                                        <div class="col-sm-4">
+                                                            <span id="projectdesc"></span>
+                                                            <input type="hidden" name="projectdesc"
+                                                                   id="hprojectdesc"
+                                                                   value="{$apl.projectdesc|default=''}">
+                                                        </div>
+                                                        <label class="col-sm-2 control-label"><p>知识产权情况：</p></label>
+                                                        <div class="col-sm-4">
+                                                            <span id="patent"></span>
+                                                            <input type="hidden" name="patent" id="hpatent"
+                                                                   value="{$apl.patent|default=''}">
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="col-sm-2 control-label"><p>其它未尽事项说明：</p></label>
+                                                        <div class="col-sm-10">
+                                                            <span style="padding-left:4px;line-height:30px;">{$apl.desc|default=''}</span>
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tab-4" class="tab-pane">
+                                <div class="panel-body">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content" style="border:none;">
+                                            <div class="table-responsive">
+                                                <h3>新增房间申请</h3>
+                                                <table id="roomAplTable" class="resettable" data-toggle="table" data-url="{:url('/index/Apply/getEtprsRoomApl')}" data-search="false"
+                                                       data-show-refresh="false" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                    <thead>
+                                                    <tr>
+                                                        <th data-field="etprsName">企业名称</th>
+                                                        <th data-field="roomNo">申请房间号</th>
+                                                        <th data-field="plusarea">申请面积</th>
+                                                        <th data-field="addtime">申请时间</th>
+                                                        <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                    </tr>
+                                                    </thead>
+                                                </table>
+                                                <hr />
+                                                <h3>续约申请</h3>
+                                                <table id="renewAplTable" class="resettable" data-toggle="table" data-url="{:url('/index/Apply/getEtprsRenewApl')}" data-search="false"
+                                                       data-show-refresh="false" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                    <thead>
+                                                    <tr>
+                                                        <th data-field="etprsName">企业名称</th>
+                                                        <th data-field="roomNo">申请房间号</th>
+                                                        <th data-field="mobile">联系电话</th>
+                                                        <th data-field="settled">入驻时间</th>
+                                                        <th data-field="rgsttime">工商注册时间</th>
+                                                        <th data-field="addtime">申请时间</th>
+                                                        <th data-field="statusText">状态</th>
+                                                        <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                    </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tab-5" class="tab-pane">
+                                <div class="panel-body">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content" style="border:none;">
+                                            <div class="table-responsive">
+                                                <table id="feeTable" class="resettable" data-toggle="table"
+                                                       data-search="false" data-show-refresh="false" data-pagination="true"
+                                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                    <thead>
+                                                    <tr>
+                                                        <th data-field="state" data-checkbox="true"></th>
+                                                        <th data-field="itemName" data-sortable="true"> 项目名称</th>
+                                                        <th data-field="optName" data-sortable="true">缴费标准</th>
+                                                        <th data-field="feestyle" data-sortable="true" data-formatter="feeFmt">收费方式</th>
+                                                        <th data-field="startTime" data-sortable="true">开始时间</th>
+                                                        <th data-field="endTime" data-sortable="true">结束时间</th>
+                                                        <th data-field="start" data-sortable="true">起始值</th>
+                                                        <th data-field="end" data-sortable="true">结束值</th>
+                                                        <th data-field="num" data-sortable="true">数量</th>
+                                                        <th data-field="total" data-sortable="true">金额</th>
+                                                        <!--<th data-field="action" data-formatter="actFmt"
+                                                            data-events="actEvt">操作
+                                                        </th>-->
+                                                    </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tab-6" class="tab-pane">
+                                <div class="panel-body">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content" style="border:none;">
+                                            <div class="table-responsive">
+                                                <div class="row">
+                                                    <div class="col-sm-12 m-b-xs">
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnpact">&nbsp;&nbsp;<i
+                                                                class="fa fa-plus"></i>&nbsp;&nbsp;新增合同&nbsp;&nbsp;</button>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table id="pactTable" class="resettable" data-toggle="table" data-url="{:url('/index/Apply/getEtprsPact')}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="false" data-striped="true" data-detail-view="false">
+                                                        <thead>
+                                                        <tr>
+                                                            <th  data-field="name"> 合同名称</th>
+                                                            <th data-field="addtime">添加时间</th>
+                                                            <th data-field="desc">合同说明</th>
+                                                            <th data-field="files" data-formatter="fileFmt">附件</th>
+                                                            <th data-field="action" data-formatter="pactFmt" data-events="pactEvt">操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

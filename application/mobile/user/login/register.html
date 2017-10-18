@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>慧云数字化园区管理云平台-注册</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection"content="telephone=no, email=no" />
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/css/public.css"/>
+    <script src="__PUBLIC__/login/js/jquery.min.js"></script>
+    <script>
+        var countdown = 60;
+        var tt;
+        $(function () {
+            /*  $("#sms").click(function(){
+             var isPhone = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
+             var isMob=/^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|15[012356789][0-9]{8}|18[02356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
+             var phone_str=$("#mobile").val();
+             if(phone_str==""){
+             $("#msg").html("联系电话必填");
+             return;
+             }else if(!(isPhone.test(phone_str)||isMob.test(phone_str))){
+             $("#msg").html("电话号码格式错误");
+             return;
+             }
+
+             $("#msg").html("");
+             var url = "{:url('user/Login/sendSmsCode')}";
+             $.post(url,{mobile:phone_str},function(data){
+             if(data.code ==1){
+             toastr.success(data.data);
+             tt = setInterval(function() {
+             settime();
+             },1000)
+             }else {
+             toastr.error(data.msg);
+             }
+             })
+             });
+             */
+
+            $("#btnrgst").click(function () {
+
+                var isPhone = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
+                var isMob=/^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|15[012356789][0-9]{8}|18[02356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
+                var phone_str=$("#mobile").val();
+                if(phone_str==""){
+                    $("#msg").html("联系电话必填");
+                    return;
+                }else if(!(isPhone.test(phone_str)||isMob.test(phone_str))){
+                    $("#msg").html("电话号码格式错误");
+                    return;
+                }
+                if($("#password").val()==""){
+                    $("#msg").html("密码必填");
+                    return;
+                }
+                if($("#password").val()!=$("#cfmpassword").val()){
+                    $("#msg").html("密码不一致");
+                    return;
+                }
+                var regExp=/^(?![\d]+$)(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{6,20}$/;
+                if(!regExp.test($("#password").val())){
+                    $("#msg").html("密码必须为6-20位字母、数字或符号组合");
+                    return;
+                }
+                var form = $("#rgst");
+                var url = form.prop("action");
+                var formId = form.attr("id");
+                var data=form.serialize();
+                $.post(url, data, function (data) {
+                    if (data.code == 1) {
+                        var iqbtId=$("#iqbtId").val();
+                        var etprsIqbtId=$("#etprsIqbtId").val();
+                        location.href="{:url('/index/Apply/checkApl')}?iqbtId="+iqbtId+"&etprsIqbtId="+etprsIqbtId;
+                    } else {
+                        toastr.error(data.msg);
+                    }
+
+
+                });
+
+            });
+        });
+
+    </script>
+</head>
+<body>
+<div class="login">
+    <div id="Layer1">
+        <img src="__PUBLIC__/mobile/images/bg.jpg" />
+    </div>
+    <div class="login1">
+        <form action="{:url('/user/Login/saveUser')}" method="post" id="rgst">
+            <img class="logo" src="__PUBLIC__/mobile/images/logo.png">
+            <div class="sr">
+                <div class="lefticon"><img src="__PUBLIC__/mobile/images/users.png"></div>
+                <div class="rightinput"><input type="text" name="mobile" id="mobile" placeholder="手机号（登录名必填）" onfocus="this.placeholder=''" onblur="this.placeholder='手机号（登录名必填）'"></div>
+            </div>
+            <div class="sr">
+                <div class="lefticon"><img src="__PUBLIC__/mobile/images/password.png"></div>
+                <div class="rightinput"><input type="password" name="password" id="password"  placeholder="密码：必须为6-20位字母、数字或符号组合" onfocus="this.placeholder=''" onblur="this.placeholder='新密码：必须为6-20位字母、数字或符号组合'" ></div>
+            </div>
+            <div class="sr">
+                <div class="lefticon"><img src="__PUBLIC__/mobile/images/password.png"></div>
+                <div class="rightinput"><input  type="password"  name="cfmpassword" id="cfmpassword" placeholder="再次输入密码" onfocus="this.placeholder=''" onblur="this.placeholder='再次输入密码'"></div>
+            </div>
+            <input type="hidden" id="etprsIqbtId" name="etprsIqbtId" value="{$etprsIqbtId|default=0}">
+            <input type="hidden" id="iqbtId" name="iqbtId" value="{$iqbtId|default=0}">
+            <div class="loginbtn" id="btnrgst"><span>注册</span></div>
+            <span style="color: #ff0000;" id="msg">{$msg|default=''}</span>
+        </form>
+        <!--<div class="loginbtn signbtn"><a href="sign.html"><span>注册</span></a></div>-->
+        <p class="technology">技术支持 : 青岛中联慧云信息科技有限公司<br>服务热线：400-0073-137</p>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+
+    });
+    function actFmt(value, row, index) {
+        var html='<a class="detail ml10" href="javascript:void(0)" title="详情" onclick="deltQuitApl('+row.id+')"><i class="fa fa-file"></i>&nbsp;详情</a>&nbsp;&nbsp;';
+        if(row.status=="1027001"){
+            html+='<a class="pass ml10" href="javascript:void(0)" title="通过"><i class="fa fa-check text-navy"></i>&nbsp;通过</a>&nbsp;&nbsp;' +
+            '<a class="back ml10" href="javascript:void(0)" title="退回"><i class="fa fa-times text-danger"></i>&nbsp;退回</a>&nbsp;&nbsp;';
+        }
+        return html;
+    }
+
+    window.actEvt = {
+        'click .detail': function (e, value, row, index) {
+            var url="{:url('/index/Apply/quitdetail/id/"+row.id+"')}";
+            location.href=url;
+        },
+        'click .pass': function (e, value, row, index) {
+            var table="etprsAplQuit";
+            $(".btn-sure").attr('disabled',false);
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                    '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定通过么？</div>' +
+                    '<div class="modal-footer"><button class="btn btn-primary btn-sure" onclick="setAplStatus(\''+table+'\',\''+row.id+'\',\'1027002\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        },
+        'click .back': function (e, value, row, index) {
+            var table="etprsAplQuit";
+            $(".btn-sure").attr('disabled',false);
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                    '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要退回申请么？</div>' +
+                    '<div class="modal-footer"><button class="btn btn-primary btn-sure" onclick="setAplStatus(\''+table+'\',\''+row.id+'\',\'1027000\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        }
+    };
+    function setAplStatus(table,id,status){
+        var url = "{:url('/index/Apply/setAplStatus')}";
+        $(".btn-sure").attr('disabled',true);
+        $.post(url,{"table":table,"id":id,"status":status},function(data) {
+            $('#myModal').modal('hide');
+            if(data.code==1){
+                toastr.success("设置成功");
+                $("#quitAplTable").bootstrapTable('refresh');
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-content" style="border:none;">
+                                    <div class="row">
+                                        <div class="col-sm-12 m-b-xs">
+
+                                            <a class="btn btn-primary btn-sm" href="{:url('/index/Apply/addquitapl')}">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增&nbsp;&nbsp;</a>
+                                            <span style="color: #ff0000;" id="msg">{$msg|default=''}</span>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table id="quitAplTable" class="resettable" data-toggle="table" data-url="{:url('/index/Apply/getEtprsQuitApl')}" data-search="false"
+                                               data-show-refresh="false" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                            <thead>
+                                            <tr>
+                                                <th data-field="etprsName">企业名称</th>
+                                                <th data-field="roomNo">申请房间号</th>
+                                                <th data-field="mobile">联系电话</th>
+                                                <th data-field="entertime">入驻时间</th>
+                                                <th data-field="rgsttime">工商注册时间</th>
+                                                <th data-field="addtime">申请时间</th>
+                                                <th data-field="statusText">状态</th>
+                                                <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

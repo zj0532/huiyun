@@ -1,0 +1,133 @@
+[33md9a4504b4ca935c34cf1a3787729dc44aa7b3d84[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m 1017解决冲突
+[33m840153542a7e0a790f2c1eb30379120f54029209[m baseappy.php 文件冲突解决
+[33m507cd645dfcc4d6131e9388b72108554ad904ce7[m 1017 bug修复提交
+[33mac6d6ec5e8f3fe16fb0c098381c2e26660865814[m test
+[33mdf12b1fe012f7570f7eef147ba7e44ecf444946d[m test
+[33m11c00e72264b9fafe57ad4d36771fc8ed48d2a0b[m 123
+[33me9b1e33e74df1ffe2b2502661fe5e85e7638dd21[m zj files
+[33mce3e53c820545c4d0918081ad361c4deda684971[m 123
+[33m354e0722f46cc5a4cdaa9d982447ff5573f15719[m 123
+[33mfd60b50333ff511775ebf70eaed17da0073e12e1[m 123
+[33mcc2a23df99c366c135222abb1f45d81fd28265d8[m up
+[33m3703ed271e49b2db646566c6bcf58197e83cb11f[m 1017 init
+[33m6b3018bae9c018556001b6578f107e4c19388b03[m 1016 code add
+[33ma55746a53127f378c5213f909c026833942926e2[m 1016 code add
+[33m2434d197b4693d2079eebe6c23a4fdb8b6bb8cb3[m 修改一些按钮锁定的问题
+[33mb69baa65bbec89ccbbb5f1d7ffc3304ea2d6f7b9[m 20171016
+[33m545291a96265973d5f82deba7b85e326789e1356[m 孵化器修改小问题20171014
+[33m4f036ac042682d1cac2094d569a6ab29cb37d5bb[m 1014测试前备份
+[33mcd3c908f7d5d84413f227cf9e53b80c51f22e63c[m edit
+[33m80558eef353403c989d72c4e137432e81ffc31cd[m 添加消息接口20171013
+[33mb18aff4bbf7f2704516ce83d3143987b42d75966[m 20171013 添加孵化管理消息接口
+[33m8203be414624ba4e8ed1f61e538d58b56f54316f[m 20171011 修改保存导师接口
+[33me94e964e637111d6ec5ebb69993540da268cfd96[m 修改房间分配空房间接口
+[33m9c4bf024c99921e372b323d4c63f2a9a41072feb[m dlt
+[33m21d52f5b07c04248f76f32dea8a793fb3bba86a7[m delete fst
+[33ma7100b4401ef23055781736a13fea6a6f1a56ec0[m 20170930 基本所有的手机接口
+[33m643b7ec981b5861a75ded9fe156fcb6df08d1f01[m 孵化流程已经写完了
+[33m93837ea3476bc4c0c9b41dc5d4749521586e6e3c[m git push
+[33mddc6a1dd19f7d69f663cbfcd4113471c74476966[m init mobile
+[33m9bb432d35e640c35b988cb69aef6e2278cbba562[m 修改message.php
+[33ma2f1214226c6f81f397e892be71f33858f60baeb[m 29号十点
+[33ma268425ffaa3020eb6594fc8105140dd3ab34418[m 20170929 早晨
+[33m6b2620d6a17e7a65fb2985a00b54ee48b01a9f15[m 20170926 重新修改了消息接口
+[33mca92d98e552538804d3e4605e6085c5dad8a7c09[m 20170926
+[33m131a9578b2dba0f84918505a0900cded899e0065[m init ins
+[33mbb655afa3552ae861e00c7129cc2f789362b2670[m pull ins
+[33mf80f037d3d4dffb0ba06a9d427cd69908938260c[m Merge branch 'master' of 115.28.157.93:/data/gitserver/iqbt
+[33mbfc5d4460cdd219c8007c41ead1aa1e568f389e9[m 添加了app消息接口
+[33m0c68727372e27df752240d6564fbd85110eaa172[m Merge branch 'master' of 115.28.157.93:/data/gitserver/iqbt
+[33m9de753f3161f4ae99443dde528a5a047f5a7652b[m waitting model
+[33mbedc3a0b9a53c86fbab84064354f1ab8205e48eb[m 添加日程消息，app接口
+[33m828870c5b4cf38788d60dcd6cbcac3a72afe4153[m app init
+[33m149982cae46c7c9d6a90590bab128da3ae38c837[m init mobile
+[33m5783f9417a78fb19f4494e0ced328341a6ef62c1[m 20170921 更改消息接口和添加工作日志
+[33me0473f61a5944f67b894b802150186e6ccf96f71[m 20170908
+[33m7114d99c319b08cddc92b94b34fc66aa3ed57edc[m 20170906
+[33m41ff2ee40f43e1836caaad6a051dbc63e4994f04[m 20170905
+[33meac50512bfca1b83324779ce278dca9ba98e77f9[m 20170904
+[33m2d5764ede368905b0f99e2fc9e713c2611165ed5[m 20170830
+[33m5fc53baae3d62ac2bec3878cdabb92c3969a40a7[m add cron.php 定时任务
+[33m264c882bbf7f3e77edd2f7bc6006ba298be65ab2[m 20170829
+[33m40c8917ad1ba7d63186184c80a8b9c9fee68806c[m 添加微信提醒
+[33m20a8a68645d915cfeafc457f16ad8ee8261e41a0[m Merge branch 'master' of 115.28.157.93:/data/gitserver/iqbt
+[33meef39a75d399ddb9c04dcb0c7dbc1b2bc42743c2[m del
+[33mdc13c4200b45aa06f43b731858eb2a52ca7f3e3d[m unknow change
+[33md0dd9e72a727fbed182b5a07cf434db5afd41562[m init config
+[33m820760a7504a8737e4de00e3d429b0e3863dfc47[m config.php
+[33mf721210596b861449e211543d69b927d9d599d75[m 20170822
+[33m64499e1fc5f6c2c6a56c5b056a2d3cac785f277e[m 缴费15天前生成缴费记录，并通知
+[33mbd1a99a48ae36b2cca99f5c4cdd31f5b7a5dd2a7[m 备份
+[33m524db402b30b85c6cf565ad216945d8d4c9baa19[m 818修改
+[33me6b8d7adb57f184e402e256c3d81f344bd99cb92[m 20170818
+[33mb3787ef02162a2c46ba850a28a6ced67e6d20e71[m Merge branch 'master' of 115.28.157.93:/data/gitserver/iqbt
+[33m381e3b8e6a8aff17715a7f131a4f1185c3e86bc3[m 817字段唯一，区域查询
+[33m824913f7997858d27a4d496b610bda91c24e0b7c[m edit addIqbt.html
+[33m1dd3c3327e478bd611962d497a336f2d7ff00730[m 8-16孵化器错误修改
+[33m7b4271b32c5e4915f7391a63efa3ee8fcbdb6aa7[m 20170816
+[33m963ff245dcf3b8fc329134ea737441df50028220[m 20170816
+[33m4d1bbda66c1523dca88536337cc2f44c20d7191d[m edit login
+[33m51502acc8b646c2ec5adafc07be1a765f2c45841[m 登录页错误提示
+[33mc3a41277935373a4611f458f9b5f7c92802598cf[m 8-15大修改
+[33mdae4f04b3ad91b6e9279b2af2bc744cb1d0d3afb[m 8-15大更新
+[33m838710195ac75fb2338e7a2c8be52feaaf45c3de[m 20170815
+[33m328cc9b2b3e18e060ca67ae4dca7f658870f1ed5[m 20170815
+[33md90e6bad9737080d61a93c1aa283239ea3ec37c3[m 8yue7hao部分内容修改
+[33m30835879848daaca524327d91a221a1e01f2164f[m 复制申请入驻链接，登录优化--完善
+[33m2d875b0dea3439cc2ca10f7cec0a6b475fc412a6[m 复制申请入驻链接，登录优化
+[33ma7384a246f3c551bd6e279d925161920d1c7eef2[m 高级查询 放假号问题
+[33m25ac438b030acfcbf01a2af9fa207a82d6937cfc[m Merge branch 'master' of 115.28.157.93:/data/gitserver/iqbt
+[33m62929125c9a04e904fd3bc60d22ae08b6f724c2c[m 企业高级搜索报错解决
+[33m71bd943371b7b486b19aeb742a4f0d2007c3abf8[m Merge branch 'master' of 115.28.157.93:/data/gitserver/iqbt
+[33m5ee827ccf0fcfd51a7bf354af0f4f8842ed9cb5d[m 20170807
+[33m48b171813b19dd7c56ca3bdef4dc54695e3decce[m Merge branch 'master' of 115.28.157.93:/data/gitserver/iqbt
+[33m7c70ad6f5ffaf548356fa8ebbbab85e47c5298e2[m 入驻时间
+[33mc1c9943250b365bf6df0fc10c7b154b7db6e2362[m 修改密码的提示
+[33ma24e1e24e8a4dc60bd66d81f76cb21f8951b039a[m array_diff_fun
+[33ma6d2e5b8416a4160ee60253d2b291f24c63f6854[m 修改小问题
+[33m61d9a4ca4d807dfa2de71178cc1714af11980b3d[m Merge branch 'master' of 115.28.157.93:/data/gitserver/iqbt
+[33me51dd308e624122281e883e1faa86fa692d43525[m 密码必须为数字，字母，字符组合
+[33mcd57e4da8b4490d731106b6dffba7c75b791cd4d[m edit
+[33mdedcbb8a2807eb529e3635dee3364376c872ed1f[m 20170804
+[33m2df145506f5c38ca728e9cfef8b952d6dde439f9[m repot 列表增加时间
+[33m1d84bfab33c48d8d6bf6fca517b628b9c314fe15[m 上传文件自动上传
+[33md601f80fd72027cbf709a952ad37536f815837c6[m Merge branch 'master' of 115.28.157.93:/data/gitserver/iqbt
+[33m8c5485fdc2f6b0c1fb42af7a3d1213488d1713b2[m 83..
+[33m67efe079b7a5537dd8097600a709960964a32d12[m 修改小的问题
+[33mc83d65840a4742489084fba1a5d185fcb71618f4[m report 去掉添加功能
+[33m0a2a6d7b6b8b89148b1dd600b9237274842770fe[m Merge branch 'dev'
+[33me4b395d71953b7640d0288576e379ce0a1ac22a4[m 20170803
+[33mb604946b05429541b737495cc94abd4ee0ece14a[m report完成
+[33m2d994a7bd03a08d738c61033e6fc3fb076054d74[m report 完成
+[33m6183c50eb79ac3006e01c1d80fdf84f45601d3a0[m Merge branch 'master' of 115.28.157.93:/data/gitserver/iqbt
+[33m31d306bb004b912949af4aec5fef375823d72198[m 添加部门介绍、修复用户无法修改bug
+[33m266030c87ab7019e90ffc70888837faf93de4496[m etprs report init
+[33m9de32822ee1f3cb60f620c08987270733a357742[m report 详情页面
+[33m2f32911ff4acb75360a2f4840c2f4a67a062fa5e[m Merge branch 'master' of 115.28.157.93:/data/gitserver/iqbt
+[33m6c2b9bb3cd69b5d07caf8b2297d985dc24f10440[m 添加登录页面默认名字';
+[33m7c3509914c654ccb5b14220f0fa2f3c0d6f7c825[m 731 up
+[33m03fb82faf271375d1011ba98bcbf9e097fc2ccb0[m ignore
+[33mdff2b68abf4c9a5183fd6462b135cb87bb4d4711[m dd
+[33m080233a83dee31dabe9bd61386ae682ea2aa62eb[m merge report
+[33m1305711ab0cff8ca82900f6e84badd6254261a88[m delete database
+[33mcd26e6d8b9a978f0ddc14e61549b70c98a99f217[m test database.php
+[33m20fa145495a62dad88d22ef8b7e7ab51e86fe3d6[m ignore 2
+[33m4da16f7ad09c4b9d5d1b7976e1f3159a65c6d0bb[m ignore 1
+[33m066a5cce8e79c8737f39a2676a24d89a267e7ce7[m edit gitignore
+[33mfd38671c895ee81f04cf19f269ef34202174133f[m 731-2
+[33me42c70da9f43786ce668c3d238a22ec894839044[m test database.php
+[33mc6aafcd4dc1cbde4424f8d360d4b199c3f94ecf7[m 731-1
+[33mce7798780c5f81829e672cfc7e68d172285d442a[m test report by jiangchengzi
+[33mbe4d24aae26ca6eda93d8409915c8a48787d4364[m by lippor
+[33m27a3c31bc83b083b5cf6a5baae38bc09b80f0e97[m test report
+[33m7d21990ef4e3656ba2dd91fdbd740d3f91d5925f[m test report
+[33m302fa1286986312abe3618081db75bc6fcc16301[m test index
+[33m822f7fa9be68df8ddf1d8d7ea5841d871741c7a4[m report v
+[33m05c4dd8eac0517496e6827ce6a46abd2157fc56f[m report
+[33m5e4c80683b6e5fc8f59ef78250d768d59bb00ac2[m 卢君伟修改的内容
+[33mf27eb0610b0f6bd688a5a360fb04e29bd9add978[m report
+[33m933597392a27c9a5480d6ca5ebc61d9f76e0da1b[m report init
+[33md4e040322ba15535bed45dfee65ee6a31ed2f5e6[m 7-27 commit
+[33m31799f8f26dccf46e8b349e1477cbc3734a7eb5b[m 7-26 commit
+[33m154926c4c522cec270558cfdc8baba6999bf0009[m 缴费提示
+[33md4f1d8fc9d70f5d9a532d2dd955ad1128b93a057[m init project

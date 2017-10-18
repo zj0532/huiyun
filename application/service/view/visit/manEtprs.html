@@ -1,0 +1,150 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+
+    $(function(){
+        //时间初始化
+        $(".datepicker").datetimepicker({minView:"month",autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd"});
+
+        $("#btnsearch").click(function(){
+            var name=$("#name").val();
+            var username = $("#username").val();
+            var time_start = $('#time_start').val();
+            var time_end = $('#time_end').val();
+            var param=new Object();
+            if(name!=""){
+                param.name=name;
+            }
+            if(username !=""){
+                param.username = username;
+            }
+            if(time_start !=""){
+                param.time_start = time_start;
+            }
+            if(time_end !=""){
+                param.time_end = time_end;
+            }
+            $('#visitTable').bootstrapTable('refresh',{query: param});
+        });
+
+
+    });
+
+    function actFmt(value, row, index) {
+
+        return '<a href="javascript:void(0)" class="info ml10" title="拜访记录"><i class="fa fa-plus text-navy"></i>&nbsp;拜访记录</a>&nbsp;&nbsp;';
+    }
+
+
+    function add0(m){return m<10?'0'+m:m }
+    function format(time,type)
+    {
+//shijianchuo是整数，否则要parseInt转换
+        var time = new Date(time*1000);
+        var y = time.getFullYear();
+        var m = time.getMonth()+1;
+        var d = time.getDate();
+        // var h = time.getHours();
+        //  var mm = time.getMinutes();
+        //  var s = time.getSeconds();
+        // return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+        if(type ==1){
+            return y+'-'+add0(m);
+        }
+        return y+'-'+add0(m)+'-'+add0(d);
+    }
+    function timeFmt(value,row,index){
+        if(value!=null){
+            return format(parseInt(value));
+        }
+    }
+
+
+    window.actEvt = {
+        'click .info': function (e, value, row, index) {
+            var url="{:url('/service/Visit/manEtprsVisit/etprsId/"+row.id+"/uid/"+row.adduserId+"')}";
+            location.href = url;
+        },
+
+    };
+    function recordFmt(value, row, index){
+
+        var url="{:url('/service/Service/etprsInfo/etprsId/" + row.id + "')}";
+        return '<a href="'+url+'"  style="padding:8px;margin-left:-1em;" >&nbsp;'+value+'</a>&nbsp;&nbsp;';
+
+    }
+
+
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="row">
+                                                    <div class="col-sm-12 m-b-xs">
+                                                        <span>企业名称：</span>
+                                                        <input type="text" placeholder="请输入企业名称" class="input-sm form-control" id="name">
+                                                        <span>管理员：</span>
+                                                        <input type="text" placeholder="请输入管理员名字" class="input-sm form-control" id="username">
+                                                        <span>拜访时间：</span>
+                                                        <input type="text"  placeholder="开始时间" class="form-control datepicker"  name="time_start" id="time_start">
+                                                        <input type="text" placeholder="结束时间" class="form-control datepicker " name="time_end" id="time_end">
+
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnsearch">
+                                                            <i class="fa fa-search"></i>
+                                                            查询
+                                                        </button>
+
+
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table id="visitTable" class="resettable" data-toggle="table" data-url="{:url('/service/Visit/getManEtprs')}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" >
+                                                        <thead>
+                                                        <tr>
+                                                            <th data-field="state" data-checkbox="true"></th>
+                                                            <th  data-field="name" data-formatter="recordFmt">企业名称</th>
+                                                            <th data-field="contact" >联系人</th>
+                                                            <th data-field="mobile">联系电话</th>
+                                                            <th data-field="sum" >拜访次数</th>
+                                                            <th data-field="username">拜访管理员</th>
+                                                            <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                        </tr>
+                                                        </thead>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

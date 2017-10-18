@@ -1,0 +1,186 @@
+{include file="index@index/header" /}
+    <!--右侧部分开始-->
+    <link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+    <script type="text/javascript">
+    $(function () {
+
+    });
+    function actFmt(value, row, index) {
+        return '<a href="javascript:void(0)" class="rapass ml10"><i class="fa fa-check text-navy"></i>&nbsp;通过</a>&nbsp;&nbsp;'+
+                '<a class="raback ml10" href="javascript:void(0)" title="退回"><i class="fa fa-times text-danger"></i>&nbsp;退回</a>&nbsp;&nbsp;';
+    }
+    window.actEvt = {
+        'click .rapass': function (e, value, row, index){
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                    '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body"><p>请确认好申请信息，通过后将不能撤销，确定操作么？</p>'+
+                    '<div class="modal-footer"><button class="btn btn-primary" onclick="setAplStatus(\''+row.iqbtId+'\',\'1\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        },
+        'click .raback': function (e, value, row, index) {
+            var table="EtprsAplRoom";
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                    '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body"><p>退回后将不能取消，确定操作么？</p>'+
+                    '<div class="modal-footer"><button class="btn btn-primary" onclick="setAplStatus(\''+row.iqbtId+'\',\'2\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        }
+    };
+    function setAplStatus(id,status){
+        var url = "{:url('/index/Iqbt/setAplStatus')}";
+        $.post(url,{"id":id,"status":status},function(data) {
+            $('#myModal').modal('hide');
+            if(data.code==1){
+                toastr.success("设置成功");
+                $("#aplTable").bootstrapTable('refresh');
+                $("#aplpassTable").bootstrapTable('refresh');
+                $("#aplbackTable").bootstrapTable('refresh');
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">待审核</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">已通过</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">未通过</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+
+                                                <div class="table-responsive">
+                                                    <table id="aplTable" class="resettable" data-toggle="table" data-url="{:url('/index/Iqbt/getIqbtApls',array('status'=>'0'))}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                        <thead>
+                                                        <tr>
+                                                            <th data-field="state" data-checkbox="true"></th>
+                                                            <th  data-field="name"> 孵化器名称</th>
+                                                            <th data-field="districtName">地区</th>
+                                                            <th data-field="address">地址</th>
+                                                            <th data-field="contact">联系人</th>
+                                                            <th data-field="mobile">联系电话</th>
+                                                            <th data-field="email">电子邮件</th>
+                                                            <th data-field="typeText">孵化器分类</th>
+                                                            <th data-field="levelText">级别</th>
+                                                            <th data-field="area">占地面积</th>
+                                                            <th data-field="roomnum">办公室个数</th>
+                                                            <th data-field="roomarea">办公区域面积</th>
+                                                            <th data-field="unitnum">工位数</th>
+                                                            <th data-field="servicesText">提供服务</th>
+                                                            <th data-field="facilityText">配套服务</th>
+                                                            <th data-field="action" data-formatter="actFmt" data-events="actEvt">
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;操作
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+
+                                                <div class="table-responsive">
+                                                    <table id="aplpassTable" class="resettable" data-toggle="table" data-url="{:url('/index/Iqbt/getIqbtApls',array('status'=>'1'))}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                        <thead>
+                                                        <tr>
+                                                            <th data-field="state" data-checkbox="true"></th>
+                                                            <th  data-field="name"> 孵化器名称</th>
+                                                            <th data-field="districtName">地区</th>
+                                                            <th data-field="address">地址</th>
+                                                            <th data-field="contact">联系人</th>
+                                                            <th data-field="mobile">联系电话</th>
+                                                            <th data-field="email">电子邮件</th>
+                                                            <th data-field="typeText">孵化器分类</th>
+                                                            <th data-field="levelText">级别</th>
+                                                            <th data-field="area">占地面积</th>
+                                                            <th data-field="roomnum">办公室个数</th>
+                                                            <th data-field="roomarea">办公区域面积</th>
+                                                            <th data-field="unitnum">工位数</th>
+                                                            <th data-field="servicesText">提供服务</th>
+                                                            <th data-field="facilityText">配套服务</th>
+                                                        </tr>
+                                                        </thead>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-3" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+
+                                                <div class="table-responsive">
+                                                    <table id="aplbackTable" class="resettable" data-toggle="table" data-url="{:url('/index/Iqbt/getIqbtApls',array('status'=>'2'))}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                        <thead>
+                                                        <tr>
+                                                            <th data-field="state" data-checkbox="true"></th>
+                                                            <th  data-field="name"> 孵化器名称</th>
+                                                            <th data-field="districtName">地区</th>
+                                                            <th data-field="address">地址</th>
+                                                            <th data-field="contact">联系人</th>
+                                                            <th data-field="mobile">联系电话</th>
+                                                            <th data-field="email">电子邮件</th>
+                                                            <th data-field="typeText">孵化器分类</th>
+                                                            <th data-field="levelText">级别</th>
+                                                            <th data-field="area">占地面积</th>
+                                                            <th data-field="roomnum">办公室个数</th>
+                                                            <th data-field="roomarea">办公区域面积</th>
+                                                            <th data-field="unitnum">工位数</th>
+                                                            <th data-field="servicesText">提供服务</th>
+                                                            <th data-field="facilityText">配套服务</th>
+                                                        </tr>
+                                                        </thead>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

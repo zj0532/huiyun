@@ -1,0 +1,159 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript"> $(function () {
+    $("#btnscore").click(function(){
+        var title=$("#name").val();
+        var param=new Object();
+        if(title!=""){
+            param.title=title;
+        }
+        $('#scoreTable').bootstrapTable('refresh',{query: param});
+    });
+    $("#btnplus").click(function(){
+    
+        var url="{:url('/index/Score/addScore/parentId/0')}";
+        baseadd(url,"新增","");
+    })
+});
+function actFmt(value, row, index) {
+
+    return '<a href="javascript:void(0)" class="edit ml10" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;' +
+            '<a class="del ml10" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;'+
+            '<a href="javascript:void(0)" class="plus ml10"><i class="fa fa-plus text-navy"></i>&nbsp;添加子指标</a>&nbsp;&nbsp;' ;
+}
+
+function optFmt(value, row, index) {
+    return '<a href="javascript:void(0)" onclick="editopt('+row.parentId+','+row.id+')" class=" ml10" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;' +
+            '<a class=" ml10" onclick="delopt('+row.id+')" href="javascript:void(0)" title="删除"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;';
+}
+
+function add0(m){return m<10?'0'+m:m }
+function format(time)
+{
+//shijianchuo是整数，否则要parseInt转换
+    var time = new Date(time*1000);
+    var y = time.getFullYear();
+    var m = time.getMonth()+1;
+    var d = time.getDate();
+    // var h = time.getHours();
+    //  var mm = time.getMinutes();
+    //  var s = time.getSeconds();
+    // return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+    return y+'-'+add0(m)+'-'+add0(d);
+}
+function timeFmt(value,row,index){
+    if(value!=null){
+        return format(parseInt(value));
+    }
+}
+
+window.actEvt = {
+    'click .edit': function (e, value, row, index) {
+        var url="{:url('/index/Score/addScore/parentId/0/id/"+row.id+"')}";
+        baseadd(url,"编辑","");
+    },
+    'click .del': function (e, value, row, index) {
+        var url = "{:url('/index/Score/delScore')}";
+        basedelete("scoreTable", url, row.id);
+    },
+    'click .plus': function (e, value, row, index) {
+        var url = "{:url('/index/Score/addScore/parentId/"+row.id+"')}";
+        baseadd(url,"添加子指标","");
+    }
+};
+function editopt(parentId,id){
+    var url="{:url('/index/Score/addScore/parentId/"+parentId+ "/id/"+id+"')}";
+    baseadd(url,"编辑选项","");
+}
+function delopt(id){
+    var url = "{:url('/index/Score/delScore')}";
+    basedelete("scoreTable", url, id);
+}
+
+function detailView(index, row){
+    var data = row.child;
+    if(data.length>0){
+        $('#opttable').bootstrapTable('destroy');
+        $('#opttable').bootstrapTable({
+            data: data
+        });
+        return $("#view_detail").html();
+    }else{
+        return "";
+    }
+}
+
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div id="view_detail" style="display:none;">
+        <table id="opttable" class="resettable">
+            <thead>
+            <tr>
+                <th data-field="title">指标名称</th>
+                <th data-field="score">所占分值</th>
+                <th data-field="sort">排序</th>
+                <th data-field="addtime" data-formatter="timeFmt">添加时间</th>
+                <th data-field="action" data-formatter="optFmt" data-events="optEvt">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="row">
+
+                                                    <div class="col-sm-12 m-b-xs">
+                                                       
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnplus">
+                                                            <i class="fa fa-plus"></i>
+                                                            新增指标
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table id="scoreTable" class="resettable" data-toggle="table" data-url="{:url('/index/Score/getList')}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView">
+                                                        <thead>
+                                                        <tr>
+                                                            <th  data-field="title">指标名称</th>
+                                                            <th data-field="score" >所占分值</th>
+                                                            <th data-field="count">下级指标数</th>
+                                                            <th data-field="sort">排序</th>
+                                                            <th data-field="addtime"  data-formatter="timeFmt">添加时间</th>
+                                                            <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                        </tr>
+                                                        </thead>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

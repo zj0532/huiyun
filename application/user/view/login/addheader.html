@@ -1,0 +1,71 @@
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<link href="__PLUG__/summernote/summernote.css" rel="stylesheet">
+<link href="__CSS__/plugins/switchery/switchery.css" rel="stylesheet">
+
+<script src="__PLUG__/summernote/summernote.min.js"></script>
+<script src="__JS__/plugins/iCheck/icheck.min.js"></script>
+<script src="__JS__/plugins/switchery/switchery.js"></script>
+
+<link href="__CSS__/plugins/chosen/chosen.min.css" rel="stylesheet">
+<script src="__JS__/plugins/chosen/chosen.jquery.min.js"></script>
+
+<script src="__JS__/bootstrap_validate.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $(".btn-save").on("click", function () {
+
+            var form = $(this).closest("form");
+            var thisobj = $(this);
+            var url = form.prop("action");
+            var tableId = form.attr("tableId");
+            var formId = form.attr("id");
+            var err=custom_validate(formId);
+            if(err==0){
+                return;
+            }else {
+                var data=form.serializeArray();
+                if( form.find(".summernote").length>0){
+                    form.find(".summernote").each(function(){
+                        var obj=new Object();
+                        var smntId=$(this).attr("id");
+                        obj.name=smntId;
+                        obj.value=$("#"+smntId).summernote('code');
+                        data[data.length]=obj;
+                    });
+                }
+                thisobj.attr("disabled","true");
+                $.post(url, serializeJson(data), function (data) {
+                    if (data.code == 1) {
+                        thisobj.removeAttr("disabled");
+                        toastr.success(data.msg);
+                        if(tableId!=undefined){
+                            $("#" + tableId).bootstrapTable('refresh');
+                        }
+
+                        $('#myModal').modal('hide');
+
+                        try {
+                            if (typeof(eval("initOther")) == "function") {
+                                initOther();
+                            }
+                        } catch(e) {}
+                    } else {
+                        thisobj.removeAttr("disabled");
+                        toastr.error(data.msg);
+                    }
+
+
+                });
+            };
+        });
+        $(".chosen-select").chosen({
+            search_contains: true
+        });
+    });
+</script>
+
+<span id="uniqeUrl" data-url="{:url('/index/Index/checkUniqe')}"></span>
+<span id="uniqeiqbtUrl" data-url="{:url('/index/Index/checkiqbtUniqe')}"></span>
+
+<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>

@@ -1,0 +1,303 @@
+{include file="user@login/addheader" /}
+<script type="text/javascript">
+    $(function(){
+        $("#roleIds").change(function(){
+            var parentrole=$("#roleIds").find("option:checked").attr("datarole");
+            if($("#addusercate").val()=='1011003'){
+                //系统维护员
+                if(parentrole==4){
+                    $("#eiqbtfield").css("display","block");
+                }else{
+                    $("#etprsIqbtId").find("option[value='0']").attr("selected",true);
+                    $("#eiqbtfield").css("display","none");
+                }
+                if(parentrole==6){
+                    $("#districtfield").css("display","block");
+                }else{
+                    $("#hdistrictId").val("");
+                    $("#districtfield").css("display","none");
+                }
+            }else if($("#addusercate").val()=='1011001'){
+                alert($("#roleIds").val());
+                //管理人员
+                if($("#roleIds").val()!='1'&&$("#roleIds").val()!=null){
+                    //添加管理员
+                    $("#iqbtId").find("option[value='0']").attr("selected",true);
+                    //如果当前用户是超级管理员
+                    var admintype=$("#admintype").val();
+                    alert(admintype);
+                    if(admintype=='1'){
+                        $("#iqbtfield").css("display","block");
+                    }else{
+                        $("#iqbtfield").css("display","none");
+                    }
+                    //如果当前用户是普通管理员
+                }else{
+                //添加超级管理员
+                    $("#iqbtfield").css("display","none");
+                }
+            }
+        });
+
+        $("#province").change(function(){
+            $("#city").html("<option value=''>--市--</option>");
+            $("#district").html("<option value=''>--区（县）--</option>");
+            var id=$(this).val();
+            if(id!='') {
+                initRegion(id, "city", $("#hc").val(), '', '');
+            }else{
+                emptyRegion('','');
+            }
+        });
+        $("#city").change(function(){
+            $("#district").html("<option value=''>--区（县）--</option>");
+            var id=$(this).val();
+            if(id!='') {
+                initRegion(id, "district", $("#hd").val(), 'province', '');
+            }else{
+                emptyRegion('province','');
+            }
+        });
+        $("#district").change(function(){
+            var id=$(this).val();
+            if(id!=''){
+                initRegion(id,"",'','city','province');
+            }else{
+                emptyRegion('city','province');
+            }
+        });
+        if($("#province").val()!=''){
+            $("#province").change();
+        }
+
+        $("#btnsave").on("click", function () {
+            var form = $(this).closest("form");
+            var url = form.prop("action");
+            var tableId = form.attr("tableId");
+            var formId = form.attr("id");
+            if($("#addusercate").val()=='1011001'){
+                //管理人员
+                if($("#roleIds").val()!='1'&&$("#roleIds").val()!=null){
+                    //如果当前用户是超级管理员
+                    var admintype=$("#admintype").val();
+                    if(admintype=='1'){
+                        //超级管理员添加管理员需要选择孵化器
+                        if($("#iqbtfield").hasClass("has-error")){
+                            $("#iqbtfield").removeClass("has-error");
+                        }
+                        if($("#iqbtfield option:selected").val()=="0"){
+                            toastr.error("*请选择孵化器");
+                            $("#iqbtfield").addClass("has-error");
+                        }
+                    }
+                    //如果当前用户是普通管理员
+                }
+            }
+            var err=custom_validate(formId);
+            if(err==0){
+                return;
+            }else {
+                var data=form.serializeArray();
+                if( form.find(".summernote").length>0){
+                    form.find(".summernote").each(function(){
+                        var obj=new Object();
+                        var smntId=$(this).attr("id");
+                        obj.name=smntId;
+                        obj.value=$("#"+smntId).summernote('code');
+                        data[data.length]=obj;
+                    });
+                }
+                var thisobj = $(this);
+                thisobj.attr("disabled","true");
+                $.post(url, serializeJson(data), function (data) {
+                    thisobj.removeAttr("disabled");
+                    if (data.code == 1) {
+                        toastr.success(data.msg);
+                        if(tableId!=undefined){
+                            $("#" + tableId).bootstrapTable('refresh');
+                        }
+
+                        $('#myModal').modal('hide');
+
+                        try {
+                            if (typeof(eval("initOther")) == "function") {
+                                initOther();
+                            }
+                        } catch(e) {}
+                    } else {
+                        toastr.error(data.msg);
+                    }
+
+
+                });
+            };
+        });
+    });
+    function initRegion(id,htmlid,val,phtmlid,pphtmlid){
+        if(val!=''){
+            $("#hdistrictId").val(val);
+        }else{
+            if(id!=''){
+                $("#hdistrictId").val(id);
+            }
+        }
+        if(id!=''){
+            if(htmlid!=''){
+                var url="{:url('/user/User/initRegion/id/"+id+"')}";
+                var text=$("#"+htmlid).attr("data-placeholder");
+                $("#"+htmlid).html("<option value=''>--"+text+"--</option>");
+                $.post(url, function(data) {
+                    for(var i=0;i<data.length;i++){
+                        var ischk='';
+                        if(data[i]["id"]==val){
+                            ischk="selected";
+                        }
+                        $("#"+htmlid).append("<option "+ischk+" value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>")
+                    }
+                    if(val!=""){
+                        $("#"+htmlid).change();
+                    }
+                });
+            }
+        }else{
+            if($("#"+phtmlid).val()!=""){
+                $("#hdistrictId").val($("#"+phtmlid).val());
+            }
+            else{
+                if($("#"+pphtmlid).val()!=""){
+                    $("#hdistrictId").val($("#"+pphtmlid).val());
+                }else{
+                    $("#hdistrictId").val("");
+                }
+            }
+            $("#"+htmlid).find("option[value='']").attr("selected",true);
+            $("#"+htmlid).change();
+        }
+    }
+    function emptyRegion(phtmlid,pphtmlid){
+        $("#hdistrictId").val("");
+        if($("#"+phtmlid).val()!=""){
+            $("#hdistrictId").val($("#"+phtmlid).val());
+        }
+        else{
+            if($("#"+pphtmlid).val()!=""){
+                $("#hdistrictId").val($("#"+pphtmlid).val());
+            }else{
+                $("#hdistrictId").val("");
+            }
+        }
+    }
+</script>
+<input type="hidden" id="addusercate" value="{$addusercate|default=''}">
+<form id="userform" action="{:url('/user/User/saveUser')}" method="post" tableId="{$tab|default=''}" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label" for="name">登录名</label>
+            <div class="col-sm-4">
+                <input class="form-control require unique" table="user" name="name" id="name" placeholder="英文字母/数字，初始密码为888888" value="{$data.name|default=''}">
+            </div></span>
+
+            <span><label class="col-sm-2 control-label" for="realname">真实姓名</label>
+            <div class="col-sm-4">
+                <input class="form-control require" name="realname" id="realname" placeholder="真实姓名" value="{$data.realname|default=''}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label" for="mobile">电话</label>
+            <div class="col-sm-4">
+                <input class="form-control mobile" table="user" name="mobile" id="mobile" placeholder="手机号码或0000-12345678" value="{$data.mobile|default=''}">
+            </div></span>
+
+            <span><label class="col-sm-2 control-label" for="email">电子邮件</label>
+            <div class="col-sm-4">
+                <input class="form-control email" name="email" id="email" placeholder="电子邮件" value="{$data.email|default=''}">
+            </div></span>
+        </div>
+
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">性别</label>
+            <div class="col-sm-4">
+                {:widget("user/HtmlWidget/initDictRedio",['iptname'=>'sex','con'=>['code'=>array('like','2001%'),'level'=>'2'],'default'=>isset($data['sex'])?$data['sex']:'2001001'])}
+            </div>
+
+            <span style="display: {if condition='isset($data.userCate)'}{if condition='$data.userCate eq 1011002'}block{else /}none{/if}{else /}none{/if};" id="spanEtprs"><label class="col-sm-2 control-label">企业</label>
+            <div class="col-sm-4">
+                <select data-placeholder="企业..." class="chosen-select col-sm-12" tabindex="2" name="etprsId" id="etprsId">
+                    <option value="">请选择企业</option>
+                    {:widget("user/HtmlWidget/initCommonSelect",['table'=>'enterprise','con'=>array('iqbtId'=>session('user.iqbtId')),'default'=>isset($data['etprsId'])?$data['etprsId']:'0','field'=>'id,name'])}
+                </select>
+            </div></span>
+
+            <span style="display: {if condition='isset($data.userCate)'}{if condition='$data.userCate eq 1011002'}none{else /}block{/if}{else /}block{/if};" id="spanRoles"><label class="col-sm-2 control-label">角色</label>
+            <div class="col-sm-4">
+                <select data-placeholder="请选择角色..."  placeholder="角色" class="chosen-select form-control col-sm-12" {if condition="$addusercate neq '1011003'"}multiple{/if} tabindex="6" id="roleIds" name="roleIds">
+                    {volist name="roles" id="role"}
+                    {if condition='$role.isRole eq 1'}
+                    <option datarole="{$role.parentId}" value="{$role.id}" {if condition="!empty($data.roleIds)"}{if condition="in_array($role.id,explode(',',$data.roleIds))"}selected{/if}{/if}>{$role.rolename}</option>
+                    {else /}
+                    <optgroup label="{$role.rolename}">
+                        {volist name="role.sub" id="sub"}
+                        <option datarole="{$sub.parentId}" value="{$sub.id}" {if condition="!empty($data.roleIds)"}{if condition="in_array($sub.id,explode(',',$data.roleIds))"}selected{/if}{/if}>{$sub.rolename}</option>
+                        {/volist}
+                    </optgroup>
+                    {/if}
+                    {/volist}
+                </select>
+            </div></span>
+        </div>
+        <div class="form-group" id="eiqbtfield" {if condition="!isset($addusercate)||!isset($data['userCate'])||$addusercate neq '1011003'||$data.userCate neq '1011001'"} style="display: none;"{/if}>
+            <span><label class="col-sm-2 control-label">选择孵化器</label>
+            <div class="col-sm-10">
+                <select data-placeholder="请选择孵化器..."  placeholder="孵化器" class="chosen-select form-control col-sm-12" tabindex="6" id="etprsIqbtId" name="etprsIqbtId">
+                    <option value="0">--请选择--</option>
+                    {:widget("user/HtmlWidget/initCommonSelect",['table'=>'etprsIqbt','con'=>array(),'default'=>isset($data['etprsIqbtId'])?$data['etprsIqbtId']:'0','field'=>'id,name'])}
+                </select>
+            </div></span>
+        </div>
+        <div class="form-group" id="iqbtfield"  style="display: none;">
+            <span><label class="col-sm-2 control-label">选择孵化器</label>
+            <div class="col-sm-10">
+                <select data-placeholder="请选择孵化器..."  placeholder="孵化器" class="chosen-select form-control col-sm-12" tabindex="6" id="iqbtId" name="iqbtId">
+                    <option value="0">--请选择--</option>
+                    {:widget("user/HtmlWidget/initCommonSelect",['table'=>'incubator','con'=>array('etprsIqbtId'=>$data['etprsIqbtId']),'default'=>isset($data['iqbtId'])?$data['iqbtId']:'0','field'=>'id,name'])}
+                </select>
+            </div></span>
+        </div>
+        <div class="form-group" id="districtfield" {if condition="$data.userCate neq '1011004'"} style="display: none;"{/if}>
+            <span><label class="col-sm-2 control-label">选择区域</label>
+            <div class="col-sm-10">
+                <div class="col-sm-4">
+                    <select data-placeholder="省" class="form-control" tabindex="2" id="province">
+                        <option value="">--省--</option>
+                        {:widget("user/HtmlWidget/initCommonSelect",['table'=>'region','con'=>array('level'=>1),'default'=>isset($data['province'])?$data['province']:'','field'=>'id,name'])}
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <select data-placeholder="市" class="form-control" tabindex="2" id="city">
+                        <option value="">--市--</option>
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <select data-placeholder="区（县）" class="form-control" tabindex="2" id="district">
+                        <option value="">--区（县）--</option>
+                    </select>
+                </div>
+                <input type="hidden" id="hp" value="{$data.province|default=''}">
+                <input type="hidden" id="admintype" value="{$admintype|default='0'}">
+                <input type="hidden" id="hc" value="{$data.city|default=''}">
+                <input type="hidden" id="hd" value="{$data.district|default=''}">
+                <input type="hidden" name="districtId" id="hdistrictId" value="{$data.districtId|default=''}">
+            </div></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+      <!--  <input type="hidden" id="role" name="roleIds" value="{$data.roleIds|default=''}"> -->
+        <input type="hidden" id="userCate" name="userCate" value="{$data.userCate|default=''}">
+        <button type="button" class="btn btn-primary" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

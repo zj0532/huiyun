@@ -1,0 +1,74 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script type="text/javascript">
+    $(function () {
+        $("#btnsave").click(function () {
+            alert($('input[type=checkbox]:checked').val());
+        });
+        $("input[name='step']").change(function () {
+
+            if($(this).val()=='apllist'||$(this).val()=='enteriqbt'){
+                $(this).prop("checked",true);
+                toastr.warning("该流程不允许修改");
+                return false;
+            }
+
+            var ischeck=$(this).is(':checked')?"1":"0";
+            var url="{:url('/index/Config/saveEnterStep')}";
+            $.post(url, {'name':$(this).val(),'ischeck':ischeck}, function (data) {
+                if (data.code == 1) {
+                    toastr.success(data.msg);
+                } else {
+                    toastr.error(data.msg);
+                }
+            });
+
+        });
+
+    });
+</script>
+<!--右侧部分开始-->
+<div id="page-wrapper" class="gray-bg dashbard-1" >
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <div class="ibox-content" style="border: none;">
+                    <div class="col-sm-12 m-b-xs">
+                        <span>入驻流程：</span>
+
+                        <div class="checkbox checkbox-success checkbox-inline">
+                            <input type="checkbox" id="apllist" value="apllist"  name="step" {if condition="!(isset($data.apllist)&&$data.apllist==0)"}checked{/if} />
+                            <label for="apllist"> 入孵申请 </label>
+                        </div>
+                        <div class="checkbox checkbox-success checkbox-inline">
+                            <input type="checkbox" id="batchapl" value="batchapl"  name="step" {if condition="!(isset($data.batchapl)&&$data.batchapl==0)"}checked{/if}>
+                            <label for="batchapl"> 复审通知 </label>
+                        </div>
+                        <div class="checkbox checkbox-success checkbox-inline">
+                            <input type="checkbox" id="retrialapl" value="retrialapl"  name="step" {if condition="!(isset($data.retrialapl)&&$data.retrialapl==0)"}checked{/if}>
+                            <label for="retrialapl"> 导师复审 </label>
+                        </div>
+                        <div class="checkbox checkbox-success checkbox-inline">
+                            <input type="checkbox" id="enterapl" value="enterapl"  name="step" {if condition="!(isset($data.enterapl)&&$data.enterapl==0)"}checked{/if}>
+                            <label for="enterapl"> 同意入驻 </label>
+                        </div>
+                        <div class="checkbox checkbox-success checkbox-inline">
+                            <input type="checkbox" id="roomdstb" value="roomdstb"  name="step" {if condition="!(isset($data.roomdstb)&&$data.roomdstb==0)"}checked{/if}>
+                            <label for="roomdstb"> 房间分配 </label>
+                        </div>
+                        <div class="checkbox checkbox-success checkbox-inline">
+                            <input type="checkbox" id="enteriqbt" value="enteriqbt"  name="step" {if condition="!(isset($data.enteriqbt)&&$data.enteriqbt==0)"}checked{/if}>
+                            <label for="enteriqbt"> 孵化入驻 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

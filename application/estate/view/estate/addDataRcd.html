@@ -1,0 +1,39 @@
+{include file="user@login/addheader" /}
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){var a,b,c;$(".datepicker").datetimepicker({minView:"month",autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd"})});
+</script>
+<form id="dataform" action="{:url('/estate/Estate/saveDatasRcd')}" method="post" tableId="datatable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label">状态</label>
+            <div class="col-sm-8">
+                <div class="radio radio-success radio-inline"><input type="radio" id="status0" value="0" name="status" {if condition="empty($data.status)"}checked{/if}><label for="status0">正常</label></div>
+                <div class="radio radio-success radio-inline"><input type="radio" id="status1" value="1" name="status" {if condition="!empty($data.status)&&$data.status=='1'"}checked{/if}><label for="status1">维修中</label></div>
+                <div class="radio radio-success radio-inline"><input type="radio" id="status2" value="2" name="status" {if condition="!empty($data.status)&&$data.status=='2'"}checked{/if}><label for="status2">损坏</label></div>
+            </div></span>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">日期：</label>
+            <div class="col-sm-8">
+                <input class="form-control datepicker opt-require" name="actTime" id="actTime" placeholder="日期" value="{$data.actTime|default=time()|date='Y-m-d',###}">
+            </div>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="desc">说明</label>
+            <div class="col-sm-8">
+                <textarea id="desc" name="desc" class="form-control" placeholder="说明">{$data.desc|default=''}</textarea>
+            </div></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="dataId" name="dataId" value="{$dataId|default='0'}">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

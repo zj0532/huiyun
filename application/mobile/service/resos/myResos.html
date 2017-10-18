@@ -1,0 +1,323 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btnadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加资源/需求","modal-lg");
+        });
+
+        $("#btnedit").click(function(){
+            var $table = $("#resostable");
+            var selections=$table.bootstrapTable('getSelections');
+            for(var i=0;i<selections.length;i++){
+                var stat=selections[i]["status"];
+                if(stat=="2"||stat=="4"){
+                    toastr.warning("【"+selections[i]["name"]+"】当前状态不可修改");
+                    return false;
+                }
+            }
+            var url=$(this).attr("data-url");
+            baseedit("resostable",url,"编辑资源信息","modal-lg");
+        });
+
+        $("#btndelete").click(function(){
+            var $table = $("#resostable");
+            var selections=$table.bootstrapTable('getSelections');
+            for(var i=0;i<selections.length;i++){
+                var stat=selections[i]["status"];
+                if(stat=="2"||stat=="4"){
+                    toastr.warning("【"+selections[i]["name"]+"】当前状态不可删除");
+                    return false;
+                }
+            }
+            var url=$(this).attr("data-url");
+            id = mulitecheck("resostable");
+            if (id != null) {
+                basedelete("resostable", url, id);
+            }
+        });
+
+    });
+
+    function actionFormatterPlat(value, row, index) {
+        var html = '';
+            html='<a class="contact ml10" href="javascript:void(0)" title="联系"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;联系</a>';
+        return html;
+    }
+    window.actionEventsPlat = {
+        'click .contact': function (e, value, row, index) {
+            var type="{$type}";
+        //    alert(type);
+         //   alert(row.etprsId);
+           // return;
+            var url="{:url('/service/Resos/getContact')}";
+            $.post(url,{resosId:row.id,type:type}, function(data) {
+                if(data.code=="1"){
+                    //合作中，或者资源/需求用户跟当前用户是一个用户
+                    showCotact(data.data.id,data.data.etprsId,data.data.contact,data.code);
+                }else if(data.code=="2"){
+                    //新合作
+                    var vdata='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要查看联系方式么？查看后将生成合作记录，方便后期跟进。</div>' +
+                            '<div class="modal-footer"><button class="btn btn-primary" onclick="showCotact(\''+data.data.id+'\',\''+data.data.etprsId+'\',\''+data.data.contact+'\',\''+data.code+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+                    show_modal("提示",vdata,"modal-sm");
+                    //showCotact(data.data.id,data.data.etprsId,data.data.contact,data.code);
+                }else{
+                    toastr.error(data.msg);
+                }
+            });
+
+        }
+
+    };
+
+    function showCotact(resosId,etprsId,contact,code){
+        if(code=="2"){
+            $('#myModal').modal('hide');
+            //完全隐藏时候触发。
+            $('#myModal').on('hidden.bs.modal', function () {
+                var type="{$type}";
+                var url="{:url('/service/Resos/coperate')}";
+                $.post(url,{resosId:resosId,etprsId:etprsId,type:type}, function(data) {
+                    if(data.code=="1"){
+                        toastr.success("已生成合作记录");
+                        model_contact(contact);
+                    }
+                });
+            })
+        }else{
+            model_contact(contact);
+        }
+
+    }
+    function model_contact(contact){
+        var vdata='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>' +
+                '<div class="modal-body"><p>' +
+                contact+
+                '</p></div>' +
+                '<div class="modal-footer">' +
+                    /*'<button class="btn btn-primary" onclick="coperate(\''+resosId+'\',\''+etprsId+'\')">确定</button>' +*/
+                '<button class="btn btn-glyph" data-dismiss="modal" onclick="return false;">关闭</span></button></div>';
+        show_modal("提示",vdata,"");
+    }
+
+
+    function actionFormatter(value, row, index) {
+        var html = '';
+        if(row.status=="0"||row.status=="1"||row.status=="3"){
+            //提交
+            html='<a class="edit ml10" href="javascript:void(0)" title="修改"><i class="glyphicon glyphicon-edit"></i></a><a class="remove ml10" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>';
+        }
+        if(row.status=="0"||row.status=="3"){
+            //提交
+            html=html+'<a class="sbmt ml10" href="javascript:void(0)" title="申请发布"><i class="glyphicon glyphicon-open-file"></i></a>';
+        }
+        if(row.status=="2"){
+            //提交
+            html=html+'<a class="end ml10" href="javascript:void(0)" title="结束"><i class="glyphicon glyphicon-open-file"></i></a>';
+        }
+        return html;
+    }
+
+    window.actionEvents = {
+        'click .edit': function (e, value, row, index) {
+            if(row.status=="2"||row.status=="4"){
+                toastr.warning(" 当前状态不可修改");
+            }else{
+                var url="{:url('/service/Resos/addResos/id/"+row.id+"')}";
+                $.post(url, function(data) {
+                    show_modal("编辑资源/需求信息",data,"modal-lg");
+                });
+            }
+
+        },
+        'click .remove': function (e, value, row, index) {
+            if(row.status=="2"||row.status=="4"){
+                toastr.warning("当前状态不可删除");
+            }else{
+                var url="{:url('/service/Resos/deleteResos')}";
+                basedelete("resostable", url, row.id);
+            }
+
+        },
+        'click .sbmt': function (e, value, row, index) {
+            var id=row.id;
+            var status="1";//提交
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要申请发布资源么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="resosStatus(\''+id+'\',\''+status+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        },
+        'click .end': function (e, value, row, index) {
+            var id=row.id;
+            var status="4";//结束/wanc
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要设置完成么？设置后将不会被用户搜索到</div><div class="modal-footer"><button class="btn btn-primary" onclick="resosStatus(\''+id+'\',\''+status+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        }
+    };
+    function resosStatus(id,status){
+        var url="{:url('/service/Resos/resosStatus')}";
+        $.post(url,{status:status,id:id}, function(data) {
+            if(data.code==1){
+                toastr.success(status=='1'?"申请成功，请耐心等待。":"已结束");
+                $('#resostable').bootstrapTable('refresh');
+                $('#myModal').modal('hide');
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+    function detailView(index, row){
+        var contact=null==row.contact?'~':row.contact;
+        var remark=null==row.remark?'~':row.remark;
+        var detail=null==row.detail?'~':row.detail;
+        var baseinfo= '<form class="form-horizontal"><div class="form-group"><label class="col-sm-2 control-label" for="contact">联系信息</label><div class="col-sm-10">'+contact+'</div></div><div class="form-group"><label class="col-sm-2 control-label" for="contact">资源详情</label><div class="col-sm-10">'+detail+'</div></div><div class="form-group"><label class="col-sm-2 control-label" for="contact">审核说明</label><div class="col-sm-10">'+remark+'</div></div></form>';
+        var data = $.parseJSON(row.coperates);
+        if(data.length>0){
+            $('#detailtable').bootstrapTable('destroy');
+            $('#detailtable').bootstrapTable({
+                data: data
+            });
+            return baseinfo+$("#view_detail").html();
+        }else{
+            return baseinfo;
+        }
+    }
+    function coperateFormatter(value, row, index) {
+        var html = '';
+        if(row.status=="1007001"||row.status=="1007002"){
+            //提交
+            html='<a class="ml10" href="javascript:void(0)" title="终止合作" onclick="confirmStatus('+row.id+',\'1007004\')">终止合作</a>';
+        }
+        if(row.status=="1007001"){
+            //提交
+            html=html+'<a class="ml10" href="javascript:void(0)" title="正式合作" onclick="confirmStatus('+row.id+',\'1007002\')">正式合作</a>';
+        }
+        if(row.status=="1007002"){
+            //提交
+            html=html+'<a class="ml10" href="javascript:void(0)" title="合作完成" onclick="confirmStatus('+row.id+',\'1007003\')">合作完成</a>';
+        }
+        return html;
+    }
+    function confirmStatus(cprtId,status){
+        //新合作
+        var vdata='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要修改么？修改后不可恢复</div>' +
+                '<div class="modal-footer"><button class="btn btn-primary" onclick="coprtStatus(\''+cprtId+'\',\''+status+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",vdata,"modal-sm");
+    }
+
+    function coprtStatus(cprtId,status){
+        var url="{:url('/service/Resos/coprtStatus')}";
+        $.post(url,{status:status,id:cprtId}, function(data) {
+            if(data.code==1){
+                $('#myModal').modal('hide');
+                $('#resostable').bootstrapTable('refresh');
+                toastr.success(data.msg);
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+    function detailViewPlat(index, row){
+        var baseinfo= '<div>'+row.detail+'</div>';
+        return baseinfo;
+    }
+
+</script>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">内部资源</div>
+</div>
+
+<div class="user_com">
+
+<div id="view_detail" style="display:none;">
+    <table id="detailtable">
+        <thead>
+            <tr>
+                <th data-field="requireEtprsText">需求企业</th>
+                <th data-field="resosEtprsText">资源企业</th>
+                <th data-field="statusText">合作状态</th>
+                <th data-field="cprtReason">合作/不合作 原因</th>
+                <th data-field="action" data-formatter="coperateFormatter">操作</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">{if condition="$type eq 0"}我的资源{else/}我的需求{/if}</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">{if condition="$type eq 0"}内部资源{else/}内部需求{/if}</a></li>
+                    </ul>
+                    <div class="tab-content">
+
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div>
+                                    <div id="toolbar" class="col-sm-12 m-b-xs">
+                                        <button type="button" class="btn btn-primary btn-sm" id="btnadd" data-url="{:url('/service/Resos/addResos/type/'.$type)}">
+                                            <i class="glyphicon glyphicon-plus"></i>
+                                            新增
+                                        </button>
+                                        <button type="button" class="btn btn-info btn-sm ml10" id="btnedit" data-url="{:url('/service/Resos/addResos/type/'.$type)}">
+                                            <i class="glyphicon glyphicon-edit"></i>
+                                            编辑
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm ml10" id="btndelete" data-url="{:url('/service/Resos/deleteResos')}">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                            删除
+                                        </button>
+                                    </div>
+                                    <table id="resostable" class="resettable" data-toggle="table" data-url="{:url('/service/Resos/getMyResos/type/'.$type)}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView">
+                                        <thead>
+                                        <tr>
+                                            <th data-field="state" data-checkbox="true"></th>
+                                            <th data-field="name" data-sortable="true">资源名称</th>
+                                            <!--<th data-field="category" data-sortable="true">分类</th>
+                                            <th data-field="desc">说明</th>
+                                            <th data-field="remark">审核说明</th>
+                                            <th data-field="deadlineTime" data-sortable="true">截至时间</th>
+                                            <th data-field="statusText" data-sortable="true">状态</th>-->
+                                            <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div>
+
+                                    <table id="resostable6" class="resettable" data-toggle="table" data-url="{:url('/service/Resos/getPlatResos/type/'.$type)}" data-search="true"
+                                           data-show-refresh="true" data-toolbar="#toolbar1" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailViewPlat">
+                                        <thead>
+                                        <tr>
+                                            <th data-field="state" data-checkbox="true"></th>
+                                            <th data-field="name" data-sortable="true">资源名称</th>
+                                            <th data-field="action" data-formatter="actionFormatterPlat" data-events="actionEventsPlat">操作</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+</html>

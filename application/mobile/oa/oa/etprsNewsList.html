@@ -1,0 +1,44 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>公告列表</title>
+    <meta name="Keywords" content="" />
+    <meta name="Description" content="" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/css/public.css"/>
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/font-awesome/css/font-awesome.min.css" media="all">
+    <script src="__JS__/jquery-2.1.1.min.js"></script>
+<body style="background:#FFF;">
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">公告列表</div>
+    <div class="h-right"></div>
+</div>
+<!--公告列表-->
+<div class="newbox">
+    <div class="xqlist">
+        <ul>
+            {volist name='data' id='vo'}
+            <a href="{$vo.url}"><li><p class="xqleft">{$vo.title}</p><p class="xqright">{$vo.addtime|date="Y-m-d",###}</p></li></a>
+            {/volist}
+
+        </ul>
+    </div>
+</div>
+<!--底部悬浮菜单-->
+<div class="v_nav">
+    <div class="vf_nav">
+        <ul>
+            <li><a href="{:url('/index/Apply/etprsAplInfo')}"><i class="vf_1"></i> <span>服务</span></a></li>
+            <li><a href="{:url('/service/Service/statelist')}"><i class="vf_3"></i> <span>月报</span></a></li>
+            <li><a href="{:url('user/User/impvInfo')}"><i class="vf_5"></i> <span>我的</span></a></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

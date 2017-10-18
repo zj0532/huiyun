@@ -1,0 +1,29 @@
+{include file="user@login/addheader" /}
+
+<form id="suggestform" action="{:url('/oa/Oa/saveSuggest')}" method="post" tableId="visitTable" class="form-horizontal">
+
+    <div class="modal-body">
+
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label">标题</label>
+            <div class="col-sm-8">
+                {$data.title|default=''}
+            </div></span>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">回复：</label>
+            <div class="col-sm-8">
+                <textarea name="desc" id="desc" class="form-control">{$data.desc|default=''}</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <input type="hidden" name="title" value="{$data.title|default=''}">
+        <input type="hidden" id="status" name="status" value="1">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

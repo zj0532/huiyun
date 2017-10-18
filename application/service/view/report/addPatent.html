@@ -1,0 +1,61 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function(){$(".datepicker").datetimepicker({minView:"month",autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd"})
+        $(".datepicker").datetimepicker({minView:"month",autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd"});
+    });
+</script>
+
+<form id="historyform" action="{:url('/service/Report/savePatent')}" method="post" tableId="patenttable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">专利名称：</label>
+            <div class="col-sm-10">
+                <input type="text" placeholder="专利名称" class="form-control" id="name" name="name" value="{$data.name|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">类型：</label>
+            <div class="col-sm-10">
+                <input type="text" placeholder="类型" class="form-control" id="type" name="type" value="{$data.type|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">是否批准：</label>
+            <div class="col-sm-10">
+                <div class="radio radio-success radio-inline">
+                    <input type="radio" id="type1" value="1" name="approval" {if condition="!isset($data.approval)||($data.approval!=1)"}checked{/if}>
+                    <label for="type1" class="text-success"><b>是</b></label>
+                </div>
+                <div class="radio radio-success radio-inline">
+                    <input type="radio" id="type2" value="0" name="approval" {if condition="isset($data.approval)&&($data.approval==1)"}checked{/if}>
+                    <label for="type2" class="text-success"><b>否</b></label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">批准（申请）号：</label>
+            <div class="col-sm-10">
+                <input type="text" placeholder="批准（申请）号" class="form-control" id="no" name="no" value="{$data.no|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">批准（申请）时间：</label>
+            <div class="col-sm-10">
+                <input type="text" placeholder="批准（申请）时间" class="form-control datepicker" id="time" name="time" value="{$data.time|default=''}">
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <input type="hidden" id="tag" name="tag" value="{$data.tag|default=''}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

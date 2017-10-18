@@ -1,0 +1,49 @@
+<nav class="navbar navbar-static-top" role="navigation" style="border-bottom:solid 2px #2f4050;background:#FFF;">
+    <div class="navbar-header">
+        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary" href="#"><i class="fa fa-bars"></i></a>
+    </div>
+    <h2 style="float:left;margin:16px 0 0 30px;font-weight:bold;">中联慧云孵化器管理系统</h2>
+    <ul class="nav navbar-top-links navbar-right">
+        <li class="dropdown">
+
+            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#" style="font-weight:normal">
+                <i class="fa fa-home"  style="color: #337ab7;"></i>欢迎您：{$Think.session.user.realname}
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{:url('/user/User/impvInfo')}">完善个人信息</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="{:url('/user/User/resetpasswd')}">修改密码</a>
+                </li>
+                <li style="text-align: center;">
+                    <a href="">二维码</a>
+                    <img style="display: inline;margin: 10px auto 30px auto;width:60%;height: auto;" src="{$Think.session.user.qr_img}"/>
+                </li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle count-info" href="{:url('/index/Index/schedule')}" title="日程">
+                <i class="fa fa-table"></i>
+                <span class="label label-warning">
+                    {:action("index/Index/getScheduleCount")}
+                </span>
+            </a>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle count-info"  href="{:url('/index/Index/msg')}" title="消息">
+                <i class="fa fa-bell"></i> <span class="label label-primary">{:action("index/Index/getMsgCount")}</span>
+            </a>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle count-info"  href="{:url('/index/Index/notice')}" title="便签">
+                <i class="fa fa-file-text"></i> <span class="label label-primary">{:action("index/Index/getNoticeCount")}</span>
+            </a>
+        </li>
+
+        <li style="margin-right:25px;">
+            <a href="{:url('/user/Login/logout')}"><i class="fa fa-sign-out"></i> 退出</a>
+        </li>
+    </ul>
+</nav>

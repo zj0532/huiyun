@@ -1,0 +1,113 @@
+
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">关闭</span>
+    </button>
+    <h4 class="modal-title" id="myModalLabel" style="text-align:center;"></h4>
+</div>
+                <div class="row" style="width:850px;margin:30px auto 0 auto;">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins">
+                            <div class="table-responsive">
+                                <style>
+                                    .label1{padding:3px 6px;}
+                                </style>
+                                <table class="table table-bordered table-hover" style="text-align:center;margin-top:10px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center;"><span>最终得分</span></th>
+                                            {volist name="retrials" id="vo" key="num"}
+                                            <th style="text-align: center;"><span>导师{$num}</span></th>
+                                            {/volist}
+                                            <th style="text-align: center;"><span  >最低分</span></th>
+                                            <th style="text-align: center;"><span >最高分</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {notempty name='total'}
+                                    <tr>
+                                            <td><span> {$total.avg}</span></td>
+                                                {volist name="retrials" id="re"}
+                                                      <td><span>{$total[$re.adduserId]}</span></td>
+                                                {/volist}
+                                                <td><span>{$total.min}</span></td>
+                                                 <td><span>{$total.max}</span></td>
+                                        </tr>
+                                    {else/}
+                                    <tr>
+                                        <td colspan="3"><span>暂时没有导师打分</span></td>
+                                    </tr>
+                                    {/notempty}
+
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="ibox float-e-margins">
+                          <h3 >详细评分数据</h3>
+                            <div class="table-responsive">
+                                <style>
+                                    .label1{padding:3px 6px;}
+                                </style>
+                                <table class="table table-bordered table-hover" style="text-align:center;margin-top:10px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: center;"><span>大指标</span></th>
+                                            <th style="text-align: center;"><span>小指标</span></th>
+                                            {volist name="retrials" id="vo" key="kk"}
+                                            <th style="text-align: center;"><span>导师{$kk}</span></th>
+                                            {/volist}
+                                            <th style="text-align: center;"><span  >最低分</span></th>
+                                            <th style="text-align: center;"><span >最高分</span></th>
+                                            <th style="text-align: center;"><span>平均分</span></th>
+                                        </tr>
+                                    </thead>
+                                    {notempty name="score"}
+                                    <tbody>
+
+                                        <tr>
+                                        {volist name="score" id="sc" key="k"}
+
+                                            <td rowspan="{$sc.count}"><span>{$sc.title}({$sc.score})</span></td>
+                                            {notempty name="sc.child"}
+                                                {volist name="sc.child" id="ch"}
+                                                <td><span>{$ch.title}({$ch.score})</span></td>
+                                                {volist name="retrials" id="re"}
+                                                      <td><span>{$ch.teacher[$re.adduserId]}</span></td>
+                                                {/volist}
+                                                <td><span >{$ch.teacher['min']|default=""}</span></td>
+                                                <td><span >{$ch.teacher['max']|default=""}</span></td>
+                                                <td><span >{$ch.teacher['avg']|default=""}</span></td>
+                                                </tr>
+                                                <tr>
+                                                {/volist}
+                                            {/notempty}
+
+
+                                        {/volist}
+                                            <td colspan="2"><span >导师复审意见</span></td>
+                                             {volist name="retrials" id="re"}
+                                                      <td><span>{$re.content}</span></td>
+                                                {/volist}
+                                            <td><span></span></td>
+                                            <td><span></span></td>
+                                            <td><span></span></td>
+                                        </tr>
+                                    {else/}
+                                        <tr>
+                                        <td colspan="5"><span>暂时没有导师打分明细</span></td>
+                                        </tr>
+                                    {/notempty}
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+

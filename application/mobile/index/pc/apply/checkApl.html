@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>慧云数字化园区管理云平台选择入驻模式</title>
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script src="__PUBLIC__/login/js/jquery.min.js"></script>
+<link href="__CSS__/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+<link href="__CSS__/style.min.css?v=3.0.0" rel="stylesheet">
+<script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+<script src="__JS__/base.js"></script>
+<script type="text/javascript">
+    $(function(){
+        var model='<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" backdrop="static" keyboard="false">' +
+                '</div>';
+        $('#myModal').remove();
+        if($('#myModal').length == 0) {
+            $('body').append(model);
+        }
+        var url="{:url('/index/Apply/checkAplIqbt')}";
+        var iqbtId=$("#iqbtId").val();
+        var etprsIqbtId=$("#etprsIqbtId").val();
+        $.post(url,{"iqbtId":iqbtId,"etprsIqbtId":etprsIqbtId},function(data) {
+            $('#myModal').html(data);
+            $('#myModal').modal({backdrop: 'static', keyboard: false});
+        });
+
+    });
+</script>
+<body>
+<input type="hidden" id="etprsIqbtId" value="{$etprsIqbtId|default=0}">
+<input type="hidden" id="iqbtId" value="{$iqbtId|default=0}">
+</body>
+</html>

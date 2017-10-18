@@ -1,0 +1,47 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+
+
+    });
+    function detailView(index, row){
+        var baseinfo= '<form class="form-horizontal"><div class="form-group"><label class="col-sm-2 control-label" for="contact">联系信息</label><div class="col-sm-10">'+row.contact+'</div></div><div class="form-group"><label class="col-sm-2 control-label" for="contact">资源详情</label><div class="col-sm-10">'+row.detail+'</div></div></form>';
+        return baseinfo;
+    }
+
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+<div class="row">
+    <div class="col-sm-12">
+        <!-- Example Events -->
+        <div>
+
+            <table id="resostable" class="resettable" data-toggle="table" data-url="{:url('/service/Resos/getAllCoperate')}" data-search="true"
+                   data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true"
+                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView">
+                <thead>
+                <tr>
+                    <th data-field="resosname" data-sortable="true">资源名称</th>
+                    <th data-field="categoryText" data-sortable="true">分类</th>
+                    <th data-field="resosEtprs" data-sortable="true">资源企业</th>
+                    <th data-field="requireEtprs" data-sortable="true">需求企业</th>
+                    <th data-field="resosdesc">说明</th>
+                    <th data-field="statusText" data-sortable="true">状态</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+        <!-- End Example Events -->
+    </div>
+</div>
+</div>
+
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

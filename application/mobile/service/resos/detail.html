@@ -1,0 +1,74 @@
+{include file="index@index/header" /}
+<script type="text/javascript">
+
+    function resosStatus(id,status){
+        var remark=$("#remark").val();
+        var url="{:url('/service/Resos/resosStatus')}";
+        $.post(url,{status:status,id:id,remark:remark}, function(data) {
+            if(data.code==1){
+                toastr.success(status=='2'?"已发布":"已退回");
+                $('#resostable').bootstrapTable('refresh');
+                $('#myModal').modal('hide');
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+</script>
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:92%;margin:20px auto;padding:0;}
+    .user_com .row .col-xs-6{padding-left:10px;padding-right:10px;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">资源详情</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                <tr>
+                    <td>资源类型</td>
+                    <td>{$data.type=='0'?'需求':'资源'}</td>
+                </tr>
+                <tr>
+                    <td>资源名称</td>
+                    <td>{$data.name}</td>
+                </tr>
+                <tr>
+                    <td>资源分类</td>
+                    <td>{$data.category}</td>
+                </tr>
+                <tr>
+                    <td>截至时间</td>
+                    <td>{$data.deadline|default=''|date="Y-m-d",###}</td>
+                </tr>
+                <tr>
+                    <td>状态</td>
+                    <td>{$data.status=='2'?"通过":($data.status=='3'?"退回":"已提交")}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="word">
+            <p><strong>说明</strong></p>
+            <p>{$data.desc}</p>
+        </div>
+        <br>
+        {if condition="$data.status!='2'&&$data.status!='3'"}
+        <div class="form-group" style="text-align:center;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="resosStatus({$data.id},2)">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;通过&nbsp;&nbsp;</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="resosStatus({$data.id},3)">&nbsp;&nbsp;<i class="fa fa-times"></i>&nbsp;&nbsp;拒绝&nbsp;&nbsp;</button>
+        </div>
+        {/if}
+    </div>
+</div>
+</body>
+</html>

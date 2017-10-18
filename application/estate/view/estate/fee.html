@@ -1,0 +1,89 @@
+{include file="index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btnadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加缴费信息","");
+        });
+
+        $("#btnedit").click(function(){
+            var url=$(this).attr("data-url");
+            baseedit("datatable",url,"编辑缴费信息","");
+        });
+
+        $("#btndelete").click(function(){
+            var url=$(this).attr("data-url");
+            id = mulitecheck("datatable");
+            if (id != null) {
+                basedelete("datatable", url, id);
+            }
+        });
+    });
+    function actFmt(value, row, index) {
+        var html='<a class="edit ml10" href="javascript:void(0)" title="修改"><i class="glyphicon glyphicon-edit"></i></a><a class="remove ml10" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>';
+        return html;
+    }
+
+    window.actEnt = {
+        'click .edit': function (e, value, row, index) {
+            var url="{:url('/Estate/addFee/id/"+row.id+"')}";
+            $.post(url, function(data) {
+                show_modal("编辑缴费信息",data,"");
+            });
+        },
+        'click .remove': function (e, value, row, index) {
+            var url="{:url('/Estate/deleteFee')}";
+            basedelete("datatable", url, row.id);
+        }
+    };
+</script>
+
+
+</head>
+
+<body class="animated fadeInRight">
+
+<div class="wrapper wrapper-content">
+    <div class="col-sm-12">
+        <!-- Example Events -->
+        <div>
+            <div id="toolbar" class="btn-group">
+                <button type="button" class="btn btn-success" id="btnadd" data-url="{:url('/Estate/addFee')}">
+                    <i class="glyphicon glyphicon-plus">新增</i>
+                </button>
+                <button type="button" class="btn btn-info" id="btnedit" data-url="{:url('/Estate/addFee')}">
+                    <i class="glyphicon glyphicon-edit">编辑</i>
+                </button>
+                <button type="button" class="btn btn-default" id="btndelete" data-url="{:url('/Estate/deleteFee')}">
+                    <i class="glyphicon glyphicon-trash">删除</i>
+                </button>
+            </div>
+            <table id="datatable" class="resettable" data-search="true" data-toggle="table"
+                   data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true" data-url="{:url('/Estate/getFee')}"
+                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                <thead>
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th data-field="name">缴费企业</th>
+                    <th data-field="payaccount">缴费金额</th>
+                    <th data-field="addtime">缴费时间</th>
+                    <th data-field="staff">收费人</th>
+                    <th data-field="typeText">分类</th>
+                    <th data-field="action"  data-formatter="actFmt" data-events="actEnt">操作
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+        <!-- End Example Events -->
+    </div>
+</div>
+</body>
+</html>

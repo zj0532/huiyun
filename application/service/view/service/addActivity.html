@@ -1,0 +1,107 @@
+{include file="user@login/addheader" /}
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+<script type="text/javascript">
+    $(function(){var a="{:url('/index/Index/smntUpload',array('dir'=>'smnt'))}";$("#desc").summernote({lang:"zh-CN",focus:!0,height:100,callbacks:{onImageUpload:function(b){img=smntUploadFile(b,$("#desc"),a,"__PUBLIC__")}}}),$(".datepicker").datetimepicker({autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd hh:ii"})});
+    $(function(){
+        var oFileInput = new FileInput();
+        var url="{:url('/oa/Oa/uploadFile')}";
+        var bannerText=$('#hbanner').attr('data-path');
+        if(bannerText==""||bannerText==undefined||bannerText==null){
+            oFileInput.Init("banner",url,[],"hbanner");
+        }else{
+            oFileInput.Init("banner",url,["<img src='__PUBLIC__/"+bannerText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;'/>"],"hbanner");
+        }
+    });
+
+    function FileInput() {
+        var oFile = new Object();
+        //初始化fileinput控件（第一次初始化）
+        oFile.Init = function(ctrlName,url,initImg,hidefield) {
+            //alert(JSON.stringify(initImg));
+            var control = $('#' + ctrlName);
+            //初始化上传控件的样式
+            control.fileinput({
+                showPreview:true,
+                language: 'zh', //设置语言
+                uploadUrl:url+"?cate="+ctrlName, //上传的地址..
+                allowedFileExtensions: ['jpg','jpeg','gif','png'],//接收的文件后缀
+                showUpload: false, //是否显示上传按钮
+                showCaption: true,//是否显示标题
+                browseClass: "btn btn-primary btn-inline", //按钮样式
+                dropZoneEnabled: true,//是否显示拖拽区域
+                initialPreview: initImg,
+                maxFileSize: 3100,//单位为kb，如果为0表示不限制文件大小
+                maxFileCount:0, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount:false,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！"
+            }).on("filebatchselected", function(event, files) {
+                $(this).fileinput("upload");
+            });
+
+            //导入文件上传完成之后的事件
+            $("#"+ctrlName).on("fileuploaded", function (event, data, previewId, index) {
+                if(hidefield!=""){
+                    $("#"+hidefield).val(data["response"]["data"]);
+                }
+                toastr.success("上传成功");
+            });
+        }
+        return oFile;
+    };
+</script>
+<form id="resosform" action="{:url('/service/Service/saveActivity')}" method="post" tableId="activitytable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label" for="name">活动名称</label>
+            <div class="col-sm-4">
+                <input class="form-control require"  name="name" id="name" placeholder="活动名称" value="{$data.name|default=''}">
+            </div></span>
+
+            <span><label class="col-sm-2 control-label" for="budget">预算(元)</label>
+            <div class="col-sm-4">
+                <input class="form-control decimal"  name="budget" id="budget" placeholder="经费预算" value="{$data.budget|default=''}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label" for="startTime">报名开始时间</label>
+            <div class="col-sm-4">
+                <input class="form-control datepicker opt-require"  name="startTime" id="startTime" placeholder="开始时间" value="{$data.startTime|default=time()|date='Y-m-d H:i',###}">
+            </div></span>
+            <span><label class="col-sm-2 control-label" for="endTime">报名结束时间</label>
+            <div class="col-sm-4">
+                <input class="form-control datepicker opt-require"  name="endTime" id="endTime" placeholder="结束时间" value="{$data.endTime|default=time()|date='Y-m-d H:i',###}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">活动banner图：</label>
+            <div class="col-sm-10">
+                <input id="banner" type="file"  multiple>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">活动内容：</label>
+
+            <div class="col-sm-10">
+                <div class="summernote" id="desc" name="desc">
+                    {$data.desc|default=''}
+                </div>
+            </div>
+        </div>
+        <p style="text-align:right;margin-right:25%;"> <input type="checkbox" name="sms" value="1"  id="sms"><label for="sms">&nbsp;&nbsp;&nbsp;短信通知在孵企业</label></p>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="hbanner" name="banner" data-path="{$data.savePath|default=''}" value="{$data.banner|default=''}">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

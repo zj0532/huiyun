@@ -1,0 +1,84 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+
+</script>
+
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+<div id="view_detail" style="display:none;">
+    <table id="detailtable">
+        <thead>
+        <tr>
+            <th data-field="requireEtprsText" data-formatter="requireEtprsFmt">需求企业</th>
+            <th data-field="resosEtprsText" data-formatter="resosEtprsFmt">资源企业</th>
+            <th data-field="statusText">合作状态</th>
+            <th data-field="cprtReason">合作/不合作 原因</th>
+            <th data-field="action" data-formatter="coperateFormatter" data-events="coperateEvents">操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h3 style="text-align:center;">在孵企业考核表</h3></div>
+                <div class="ibox-content">
+                    <table class="table table-bordered table-hover">
+                        <tbody>
+                            <tr>
+                                <td><strong>产品名称</strong></td>
+                                <td colspan="3">{$data['name']|default=''}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>技术领域</strong></td>
+                                <td>{$data['technical']|default=''}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>是否出口</strong></td>
+                                <td>{$data.export?'是':'否'}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>技术来源</strong></td>
+                                <td colspan="3">{$data['techsourceText']|default=''}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>所处研发阶段</strong></td>
+                                <td colspan="3">{$data['stageText']|default=''}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>技术水平</strong></td>
+                                <td colspan="3">{$data['techlevelText']|default=''}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>产品功能及应用领域</strong></td>
+                                <td colspan="3">{$data['desc']|default=''}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>主要技术指标</strong></td>
+                                <td colspan="3">{$data['techindex']|default=''}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>市场情况</strong></td>
+                                <td colspan="3">{$data['market']|default=''}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="text-indent:2em;">注：1. 技术水平须附鉴定证书复印件</p>
+                    <p style="text-indent:2em;">2. 与产品相关的专利和软件著作权须附证书复印件；</p>
+                    <p style="margin-bottom: 30px;text-indent:2em;">3．市场前景主要描述产品市场需求程度、市场竞争优势。</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button class="btn btn-primary btn-sm" type="button" onclick="window.history.go(-1);">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;返回</button>
+    </div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

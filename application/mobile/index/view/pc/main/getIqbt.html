@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>慧云孵化器</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link href="__CSS__/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+    <link href="__CSS__/font-awesome.min.css?v=4.3.0" rel="stylesheet">
+    <link href="__CSS__/animate.min.css" rel="stylesheet">
+    <link href="__CSS__/style.min.css?v=3.0.0" rel="stylesheet">
+
+    <link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <!--[if lt IE 8]>
+    <script>
+        alert('H+已不支持IE6-8，请使用谷歌、火狐等浏览器\n或360、QQ等国产浏览器的极速模式浏览本页面！');
+    </script>
+    <![endif]-->
+    <!-- 全局js -->
+    <script src="__JS__/jquery-2.1.1.min.js"></script>
+    <script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+    <script src="__JS__/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="__JS__/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="__JS__/plugins/layer/layer.min.js"></script>
+    <!-- 自定义js -->
+    <script src="__JS__/hplus.min.js?v=3.0.0"></script>
+    <script src="__JS__/contabs.min.js"></script>
+    <!-- 第三方插件 -->
+    <script src="__JS__/plugins/pace/pace.min.js"></script>
+    <!--时间选择-->
+    <script src="__JS__/bootstrap_validate.js"></script>
+    <script src="__JS__/base.js"></script>
+
+    <!-- toastr CSS -->
+    <link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+    <!-- toastr Theme JavaScript -->
+    <script src="__PLUG__/toastr/toastr.js"></script>
+
+    <script type="text/javascript">
+        $(function(){
+            $("#btnsave").click(function(){
+                var form = $("#aplForm");
+                var err=custom_validate("aplForm");
+                var url="{:url('/index/Main/saveIqbtapl')}";
+                if(err==0){
+                    toastr.error("有未通过的校验");
+                    return;
+                }else {
+                    var data = form.serialize();
+                    $.post(url, data, function (data) {
+                        if (data.code == 1) {
+                            $('#myModal').modal({backdrop: 'static', keyboard: false});
+                        } else {
+                            toastr.error(data.msg);
+                        }
+                    });
+                }
+            });
+
+            $('#myModal').on('hide.bs.modal', function () {
+                location.href="{:url('/index/Main/index')}";
+            })
+            $("#province").change(function(){
+                $("#city").html("<option value=''>--市--</option>");
+                $("#district").html("<option value=''>--区（县）--</option>");
+                var id=$(this).val();
+                if(id!='') {
+                    initRegion(id, "city", $("#hc").val(), '', '');
+                }else{
+                    emptyRegion('','');
+                }
+            });
+            $("#city").change(function(){
+                $("#district").html("<option value=''>--区（县）--</option>");
+                var id=$(this).val();
+                if(id!='') {
+                    initRegion(id, "district", $("#hd").val(), 'province', '');
+                }else{
+                    emptyRegion('province','');
+                }
+            });
+            $("#district").change(function(){
+                var id=$(this).val();
+                if(id!=''){
+                    initRegion(id,"",'','city','province');
+                }else{
+                    emptyRegion('city','province');
+                }
+            });
+            if($("#province").val()!=''){
+                $("#province").change();
+            }
+        });
+        function initRegion(id,htmlid,val,phtmlid,pphtmlid){
+            if(val!=''){
+                $("#hdistrictId").val(val);
+            }else{
+                if(id!=''){
+                    $("#hdistrictId").val(id);
+                }
+            }
+            if(id!=''){
+                if(htmlid!=''){
+                    var url="{:url('/user/User/initRegion/id/"+id+"')}";
+                    var text=$("#"+htmlid).attr("data-placeholder");
+                    $("#"+htmlid).html("<option value=''>--"+text+"--</option>");
+                    $.post(url, function(data) {
+                        for(var i=0;i<data.length;i++){
+                            var ischk='';
+                            if(data[i]["id"]==val){
+                                ischk="selected";
+                            }
+                            $("#"+htmlid).append("<option "+ischk+" value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>")
+                        }
+                        if(val!=""){
+                            $("#"+htmlid).change();
+                        }
+                    });
+                }
+            }else{
+                if($("#"+phtmlid).val()!=""){
+                    $("#hdistrictId").val($("#"+phtmlid).val());
+                }
+                else{
+                    if($("#"+pphtmlid).val()!=""){
+                        $("#hdistrictId").val($("#"+pphtmlid).val());
+                    }else{
+                        $("#hdistrictId").val("");
+                    }
+                }
+                $("#"+htmlid).find("option[value='']").attr("selected",true);
+                $("#"+htmlid).change();
+            }
+        }
+        function emptyRegion(phtmlid,pphtmlid){
+            $("#hdistrictId").val("");
+            if($("#"+phtmlid).val()!=""){
+                $("#hdistrictId").val($("#"+phtmlid).val());
+            }
+            else{
+                if($("#"+pphtmlid).val()!=""){
+                    $("#hdistrictId").val($("#"+pphtmlid).val());
+                }else{
+                    $("#hdistrictId").val("");
+                }
+            }
+        }
+    </script>
+</head>
+<body class="fixed-sidebar full-height-layout gray-bg">
+<div id="wrapper">
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1" style="margin-left: 0;">
+            <div class="row">
+                <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                           <h2 style="text-align:center;">孵化器认领申请</h2>
+                           <div class="ibox-content" style="border: none;">
+                               <form action="{:url('/index/Main/saveIqbtapl')}" class="form-horizontal" method="post" id="aplForm">
+                                   <fieldset>
+
+                                       <div class="form-group">
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">孵化器名称：</label>
+                                               <div class="col-sm-8">
+                                                   <input type="text" placeholder="孵化器名称" class="form-control require" id="name" name="name" value="{$data.name|default=''}">
+                                               </div>
+                                           </div>
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">联系人：</label>
+                                               <div class="col-sm-8">
+                                                   <input type="text" placeholder="联系人" class="form-control require" id="contact" name="contact" value="{$data.contact|default=''}">
+                                               </div>
+                                           </div>
+                                       </div>
+                                       <div class="form-group">
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">联系电话：</label>
+                                               <div class="col-sm-8">
+                                                   <input type="text" placeholder="联系电话" class="form-control require mobile" id="mobile" name="mobile" value="{$data.mobile|default=''}">
+                                               </div>
+                                           </div>
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">邮箱：</label>
+                                               <div class="col-sm-8">
+                                                   <input type="text" placeholder="邮箱" class="form-control require email" id="email" name="email" value="{$data.email|default=''}">
+                                               </div>
+                                           </div>
+                                       </div>
+                                       <div class="form-group">
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">选择地区：</label>
+                                               <div class="col-sm-8">
+                                                   <div class="col-sm-4">
+                                                       <select data-placeholder="省" class="form-control" tabindex="2" id="province">
+                                                           <option value="">--省--</option>
+                                                           {:widget("user/HtmlWidget/initCommonSelect",['table'=>'region','con'=>array('level'=>1),'default'=>isset($data['province'])?$data['province']:'','field'=>'id,name'])}
+                                                       </select>
+                                                   </div>
+                                                   <div class="col-sm-4">
+                                                       <select data-placeholder="市" class="form-control" tabindex="2" id="city">
+                                                           <option value="">--市--</option>
+                                                       </select>
+                                                   </div>
+                                                   <div class="col-sm-4">
+                                                       <select data-placeholder="区（县）" class="form-control" tabindex="2" id="district">
+                                                           <option value="">--区（县）--</option>
+                                                       </select>
+                                                   </div>
+                                                   <input type="hidden" id="hp" value="{$data.province|default=''}">
+                                                   <input type="hidden" id="hc" value="{$data.city|default=''}">
+                                                   <input type="hidden" id="hd" value="{$data.district|default=''}">
+                                                   <input type="hidden" name="districtId" id="hdistrictId" value="{$data.districtId|default=''}">
+                                               </div>
+                                           </div>
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">详细地址：</label>
+                                               <div class="col-sm-8">
+                                                   <input type="text" placeholder="详细地址" class="form-control require" id="address" name="address" value="{$data.address|default=''}">
+                                               </div>
+                                           </div>
+                                       </div>
+                                       <div class="form-group">
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">占地面积(㎡)：</label>
+                                               <div class="col-sm-8">
+                                                   <input type="text" placeholder="占地面积" class="form-control require decimal" id="area" name="area" value="{$data.area|default='0'}">
+                                               </div>
+                                           </div>
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">建筑面积(㎡)：</label>
+                                               <div class="col-sm-8">
+                                                   <input type="text" placeholder="建筑面积" class="form-control require decimal" id="roomarea" name="roomarea" value="{$data.roomarea|default='0'}">
+                                               </div>
+                                           </div>
+                                       </div>
+                                       <div class="form-group">
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">房间数：</label>
+                                               <div class="col-sm-8">
+                                                   <input type="text" placeholder="房间数" class="form-control require number" id="roomnum" name="roomnum" value="{$data.roomnum|default='0'}">
+                                               </div>
+                                           </div>
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">工位数：</label>
+                                               <div class="col-sm-8">
+                                                   <input type="text" placeholder="工位数" class="form-control require number" id="unitnum" name="unitnum" value="{$data.roomnum|default='0'}">
+                                               </div>
+                                           </div>
+                                       </div>
+                                       <div class="form-group">
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">孵化器级别：</label>
+                                               <div class="col-sm-8">
+                                                   <select data-placeholder="孵化器级别..."  placeholder="孵化器级别" class="chosen-select form-control col-sm-12" tabindex="6" id="level" name="level">
+                                                       {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1031%'),'level'=>'2'),'default'=>isset($data['level'])?$data['level']:'1031001'])}
+                                                   </select>
+                                               </div>
+                                           </div>
+                                           <div class="col-sm-6">
+                                               <label class="col-sm-4 control-label">孵化器分类：</label>
+                                               <div class="col-sm-8">
+                                                   <select data-placeholder="孵化器分类..."  placeholder="孵化器分类" class="chosen-select form-control col-sm-12" tabindex="6" id="type" name="type">
+                                                       {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1034%'),'level'=>'2'),'default'=>isset($data['type'])?$data['type']:'1034001'])}
+                                                   </select>
+                                               </div>
+                                           </div>
+                                       </div>
+                                       <div class="form-group">
+                                           <label class="col-sm-2 control-label">配套设施：</label>
+                                           <div class="col-sm-8">
+                                               {:widget("user/HtmlWidget/initDictCheckbox",['iptname'=>'facility[]','con'=>['level'=>'2','code'=>['like','1033%']],'default'=>isset($data['facility'])?$data['facility']:''])}
+                                           </div>
+                                       </div>
+                                       <div class="form-group">
+                                           <label class="col-sm-2 control-label">基础服务：</label>
+                                           <div class="col-sm-8">
+                                               {:widget("user/HtmlWidget/initDictCheckbox",['iptname'=>'services[]','con'=>['level'=>'2','code'=>['like','1032%']],'default'=>isset($data['services'])?$data['services']:''])}
+                                           </div>
+                                       </div>
+
+
+                                        <div style="width:100%;overflow:hidden;text-align:center;">
+                                           <!--<input type="hidden" name="apltype" value="1">-->
+                                            <input type="hidden" id="iqbtId" value="{$data.iqbtId|default=0}" name="iqbtId">
+                                            <input type="hidden" id="id" value="{$data.id|default=0}" name="id">
+                                           <button type="button" class="btn btn-primary btn-sm" id="btnsave">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+                                           <button type="button" class="btn btn-danger btn-sm">&nbsp;&nbsp;<i class="fa fa-remove"></i>&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+                                        </div>
+                                   </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                <h4 class="modal-title" id="myModalLabel">申请成功</h4></div>
+            <div class="modal-body">您的申请信息已提交，我们会尽快审核并将通过电话联系您。<a href="{:url('/index/Main/index')}">点击返回</a> </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

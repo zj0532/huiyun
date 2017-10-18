@@ -1,0 +1,109 @@
+{include file="user@login/addheader" /}
+<!--时间选择-->
+<link href='__PLUG__/raty/lib/jquery.raty.css' rel='stylesheet' />
+<script src="__PLUG__/raty/lib/jquery.raty.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $('.starScore').raty({ half: false,starOff:'__IMG__/star-off.png',starHalf:'__IMG__/star-half.png',starOn:'__IMG__/star-on.png',
+            click: function(score, evt) {
+                score=Math.round(score*100)/100+"";
+                var b = score.split(".");
+                var nb=b[0];
+                var xs=b[1];
+                if(xs<25){
+                    score= nb;
+                }else if(xs<75){
+                    score= parseInt(nb)+parseFloat(0.5);
+                }else{
+                    score= parseInt(nb)+parseInt(1);
+                }
+                var id=$(this).attr('id');
+                $("#h"+id).val(score);
+            },
+            score: function() {
+                //初始化得分
+                return $(this).attr('data-score');
+            },
+            hints: ['1分','2分', '3分', '4分','5分']
+        });
+    });
+</script>
+<form id="coperateform" action="{:url('/service/Resos/saveCoperateScore')}" method="post" tableId="detailtable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label">资源名称</label>
+            <div class="col-sm-4">
+                {$data.resosname|default=''}
+            </div></span>
+
+            <span><label class="col-sm-2 control-label">合作状态</label>
+            <div class="col-sm-4">
+                {$data.statusText|default=''}
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label">资源企业</label>
+            <div class="col-sm-4">
+                {$data.resosEtprs|default=''}
+            </div></span>
+            <span><label class="col-sm-2 control-label">需求企业</label>
+            <div class="col-sm-4">
+                {$data.requireEtprs|default=''}
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label">优质度评分</label>
+            <div class="col-sm-4">
+                <span class="starScore" id="resosqualityScore" data-score="{$data.resosqualityScore|default='0'}"></span>
+                <input type="hidden" name="resosqualityScore" id="hresosqualityScore" value="{$data.resosqualityScore|default='0'}">
+            </div></span>
+            <span><label class="col-sm-2 control-label">优质度评分</label>
+            <div class="col-sm-4">
+                <span class="starScore" id="requirequalityScore" data-score="{$data.requirequalityScore|default='0'}"></span>
+                <input type="hidden" name="requirequalityScore" id="hrequirequalityScore" value="{$data.requirequalityScore|default='0'}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label">合作度评分</label>
+            <div class="col-sm-4">
+                <span class="starScore" id="resoscprtScore" data-score="{$data.resoscprtScore|default='0'}"></span>
+                <input type="hidden" name="resoscprtScore" id="hresoscprtScore" value="{$data.resoscprtScore|default='0'}">
+            </div></span>
+            <span><label class="col-sm-2 control-label">合作度评分</label>
+            <div class="col-sm-4">
+                <span class="starScore" id="requirecprtScore" data-score="{$data.requirecprtScore|default='0'}"></span>
+                <input type="hidden" name="requirecprtScore" id="hrequirecprtScore" value="{$data.requirecprtScore|default='0'}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label">资源企业合作说明</label>
+            <div class="col-sm-4">
+                <input class="form-control"  name="resosEtprsDesc" id="resosEtprsDesc" placeholder="资源企业合作说明" value="{$data.resosEtprsDesc|default=''}">
+            </div></span>
+            <span><label class="col-sm-2 control-label">需求企业合作说明</label>
+            <div class="col-sm-4">
+                <input class="form-control"  name="requireEtprsDesc" id="requireEtprsDesc" placeholder="需求企业合作说明" value="{$data.requireEtprsDesc|default=''}">
+            </div></span>
+        </div>
+
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label" for="cprtReason">合作/不合作原因</label>
+            <div class="col-sm-8">
+                <textarea class="form-control require"  name="cprtReason" id="cprtReason" placeholder="合作/不合作原因">{$data.cprtReason|default=''}</textarea>
+            </div></span>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="resosCprtid" name="resosCprtid" value="{$data.resosCprtid|default='0'}">
+        <input type="hidden" id="requireCprtid" name="requireCprtid" value="{$data.requireCprtid|default='0'}">
+        <input type="hidden" id="requireEtprsId" name="requireEtprsId" value="{$data.requireEtprsId|default='0'}">
+        <input type="hidden" id="resosEtprsId" name="resosEtprsId" value="{$data.resosEtprsId|default='0'}">
+        <input type="hidden" id="resosId" name="resosId" value="{$data.resosId|default='0'}">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

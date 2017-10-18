@@ -1,0 +1,88 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript"> $(function () {
+
+    $("#btnplus").click(function(){
+        var url = "{:url('/oa/Oa/addFaq')}";
+        window.location.href = url;
+    })
+});
+function actFmt(value, row, index) {
+    return '<a href="javascript:void(0)" class="faqdetail ml10"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;' +
+            '<a href="javascript:void(0)" class="faqdel ml10"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;';
+}
+window.actEvt = {
+    'click .faqdetail': function (e, value, row, index) {
+        var url = "{:url('/oa/Oa/addFaq/id/" + row.id + "')}";
+       window.location.href = url;
+    },
+    'click .faqdel': function (e, value, row, index) {
+        var url="{:url('/oa/Oa/deleteFaq')}";
+        basedelete("introTable", url, row.id);
+    }
+};
+
+function detailView(index, row){
+    var baseinfo= '<div><span style="font-weight:bold;">问题详情：</span><br/>'+row.content+'</div>';
+    return baseinfo;
+}
+</script>
+
+
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="row">
+                                                    <div id="toolbar" class="col-sm-12 m-b-xs">
+                                                        <button type="button" class="btn btn-primary btn-sm" id="btnplus">&nbsp;&nbsp;<i
+                                                                class="fa fa-plus"></i>&nbsp;&nbsp;新增&nbsp;&nbsp;
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table id="introTable" class="resettable" data-toggle="table" data-url="{:url('/oa/Oa/getFaqList')}" data-search="true"
+                                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true"
+                                                           data-detail-view="true" data-detail-formatter="detailView" >
+                                                        <thead>
+                                                        <tr>
+                                                            <th  data-field="title">标题</th>
+                                                            <th data-field="sort">排序</th>
+                                                            <th  data-field="username">添加人</th>
+                                                            <th data-field="addtime">添加时间</th>
+                                                            <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                        </tr>
+                                                        </thead>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

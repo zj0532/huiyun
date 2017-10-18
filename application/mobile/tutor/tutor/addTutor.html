@@ -1,0 +1,52 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+
+<form action="{:url('/tutor/Tutor/saveTutor')}" method="post" tableId="tutorTable" class="form-horizontal m-t" id="tutorForm">
+    <div class="form-group" id="feefield">
+        <label class="col-sm-3 control-label">导师名称：</label>
+        <div class="col-sm-8">
+            <input id="name" type="text" class="form-control require" name="name" value="{$data.name|default=''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">性别：</label>
+        <div class="col-sm-8">
+            {:widget("user/HtmlWidget/initDictRedio",['iptname'=>'sex','con'=>['code'=>array('like','2001%'),'level'=>'2'],'default'=>isset($data['sex'])?$data['sex']:'2001001'])}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-3 control-label">电话：</label>
+        <div class="col-sm-8">
+            <input id="mobile" type="text" class="form-control require mobile" name="mobile" value="{$data.mobile|default=''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">电子邮件：</label>
+        <div class="col-sm-8">
+            <input id="email" type="text" class="form-control require email" name="email" value="{$data.email|default=''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">擅长领域：</label>
+        <div class="col-sm-8">
+            <input id="field" type="text" class="form-control require" name="field" value="{$data.field|default=''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">个人说明：</label>
+        <div class="col-sm-8">
+            <textarea id="desc" rows="3" name="desc" class="form-control">{$data.desc|default=''}</textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-3">
+            <span style="color: red" id="msg"></span>
+            <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+            <input type="hidden" id="userId" name="userId" value="{$data.userId|default='0'}">
+            <button type="button" class="btn btn-primary btn-sm btn-save">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+        </div>
+    </div>
+
+</form>

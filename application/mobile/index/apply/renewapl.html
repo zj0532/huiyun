@@ -1,0 +1,134 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+    });
+    function actFmt(value, row, index) {
+        var html='<a class="detail ml10" href="javascript:void(0)" title="详情" onclick="deltRenewApl('+row.id+')"><i class="fa fa-file"></i>&nbsp;详情</a>&nbsp;&nbsp;';
+        /*if(row.status=="1027001"){
+            html+='<a class="pass ml10" href="javascript:void(0)" title="通过"><i class="fa fa-check text-navy"></i>&nbsp;通过</a>&nbsp;&nbsp;' +
+            '<a class="back ml10" href="javascript:void(0)" title="退回"><i class="fa fa-times text-danger"></i>&nbsp;退回</a>&nbsp;&nbsp;';
+        }*/
+        return html;
+    }
+
+    window.actEvt = {
+        'click .detail': function (e, value, row, index) {
+            var url="{:url('/index/Apply/renewdetail/id/"+row.id+"')}";
+            location.href=url;
+        },
+        'click .pass': function (e, value, row, index) {
+            var table="etprsAplRenew";
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                    '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body"><p>确定要通过续约审核么？</p>'+
+                    '<input type="checkbox" name="sms" id="sms3" value="1"><label for="sms3">&nbsp;&nbsp;短信通知</label></div>'  +
+                    '<div class="modal-footer"><button class="btn btn-primary" onclick="setAplStatus(\''+table+'\',\''+row.id+'\',\'1027002\',\'sms3\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        },
+        'click .back': function (e, value, row, index) {
+            var table="etprsAplRenew";
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                    '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body"><p>确定要退回续约申请么？</p>'+
+                    '<input type="checkbox" name="sms" id="sms4" value="1"><label for="sms4">&nbsp;&nbsp;短信通知</label></div>'  +
+                    '<div class="modal-footer"><button class="btn btn-primary" onclick="setAplStatus(\''+table+'\',\''+row.id+'\',\'1027000\',\'sms4\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        }
+    };
+    function setAplStatus(table,id,status,smsid){
+        var url = "{:url('/index/Apply/setRenewStatus')}";
+        var sms = '2';
+        if($('#'+smsid).is(':checked')) {
+            sms ='1';
+        }
+        $.post(url,{"table":table,"id":id,"status":status,'sms':sms},function(data) {
+            $('#myModal').modal('hide');
+            if(data.code==1){
+                if(data.msg ==0){
+                    alert('短信发送失败，请人工通知');
+                }
+            //    toastr.success("设置成功，请确认缴费标准");
+                var url="{:url('/index/Apply/renewRoom/id/"+id+"')}";
+                baseadd(url,"请确认房间续约缴费类型","modal-lg");
+               // $.post(url,{"id":id},function(data) {
+               //     show_modal("确认房间缴费类型",data,"modal-lg");
+              //  });
+               // $("#renewAplTable").bootstrapTable('refresh');
+              //  $("#passrenewAplTable").bootstrapTable('refresh');
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+    function initOther(){
+    }
+
+</script>
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:92%;margin:20px auto;padding:0;}
+    .user_com .row .col-xs-6{padding-left:10px;padding-right:10px;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">续约管理</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">待处理</a></li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">已通过</a></li>
+            </ul>
+            <div class="tab-content">
+
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table id="renewAplTable" class="resettable" data-toggle="table" data-url="{:url('/index/Apply/getRenewApl',array('status'=>'1027001'))}" data-search="false"
+                                   data-show-refresh="false" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                <thead>
+                                <tr>
+                                    <th data-field="etprsName">企业名称</th>
+                                    <th data-field="roomNo">申请房间号</th>
+                                    <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作
+                                    </th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table id="passrenewAplTable" class="resettable" data-toggle="table" data-url="{:url('/index/Apply/getRenewApl',array('status'=>'1027002'))}" data-search="false"
+                                   data-show-refresh="false" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                <thead>
+                                <tr>
+                                    <th data-field="etprsName">企业名称</th>
+                                    <th data-field="roomNo">申请房间号</th>
+                                    <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作
+
+                                    </th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

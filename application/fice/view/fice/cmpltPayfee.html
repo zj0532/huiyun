@@ -1,0 +1,68 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var feestyle=$("#hfeestyle").val();
+        var numration=$("#hnumration").val();
+        if(feestyle=="input"||feestyle=="numration"){
+            $("#feestylefield").css("display","block");
+            $("#feefield").css("display","block");
+        }
+
+        if(numration=="data"){
+            $("#numrationfield").css("display","block");
+            $("#numfield").css("display","block");
+        }
+    });
+</script>
+
+
+<input type="hidden" id="hfeestyle" value="{$opt.feestyle}" >
+<input type="hidden" id="hnumration" value="{$opt.numration}" >
+<form action="{:url('/fice/Fice/cmpltFeeRcd')}" method="post" tableId="feeTable" class="form-horizontal m-t" id="feeForm">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">收费项目：</label>
+        <div class="col-sm-8">
+            {$opt.item|default=''}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">收费标准：</label>
+        <div class="col-sm-8">
+            {$opt.name|default=''}
+        </div>
+    </div>
+    <div class="form-group" id="feestylefield" style="display: none;">
+        <label class="col-sm-3 control-label">收费方式：</label>
+        <div class="col-sm-8" id="showfeestyle">
+            {$opt.feetext|default=''}
+        </div>
+    </div>
+    <div class="form-group" id="numrationfield" style="display: none;">
+        <label class="col-sm-3 control-label">计量方式：</label>
+        <div class="col-sm-8" id="shownumration">
+            {$opt.numrationtext|default=''}
+        </div>
+    </div>
+    <div class="form-group" id="feefield" style="display: none;">
+        <label class="col-sm-3 control-label">金额：</label>
+        <div class="col-sm-8">
+            <input id="fee" name="fee" type="text" class="form-control {if condition="$opt.feestyle=='input'||$opt.feestyle=='numration'"}require{/if} decimal" value="{$data.fee|default=''}">
+        </div>
+    </div>
+    <div class="form-group" id="numfield" style="display: none;">
+        <label class="col-sm-3 control-label">数量：</label>
+        <div class="col-sm-8">
+            <input id="num" type="text" class="form-control {if condition="$opt.numration=='data'"}require{/if} number" name="num" value="{$data.num|default=''}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-3">
+            <span style="color: red" id="msg"></span>
+            <input type="hidden" id="ids" name="ids" value="{$ids|default='0'}">
+            <input type="hidden" id="hoptId" name="optId" value="{$opt.id|default='0'}">
+            <button type="button" class="btn btn-primary btn-sm btn-save">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+        </div>
+    </div>
+</form>

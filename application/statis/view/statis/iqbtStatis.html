@@ -1,0 +1,228 @@
+{include file="index@index/header" /}
+<!-- 全局js -->
+<script src="__JS__/jquery-2.1.1.min.js"></script>
+<script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+<!-- 自定义js -->
+<script src="__JS__/content.min.js?v=1.0.0"></script>
+<!-- 全局js -->
+<script src="__JS__/jquery-2.1.1.min.js"></script>
+<script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+<!-- 自定义js -->
+<script src="__JS__/content.min.js?v=1.0.0"></script>
+
+<!-- jQuery UI-->
+<script src="__JS__/plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Sparkline -->
+<script src="__JS__/plugins/sparkline/jquery.sparkline.min.js"></script>
+
+<!-- 全局js -->
+
+<script src="__JS__/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="__JS__/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="__JS__/plugins/layer/layer.min.js"></script>
+<!-- 自定义js -->
+<script src="__JS__/hplus.min.js?v=3.0.0"></script>
+<script src="__JS__/contabs.min.js"></script>
+<!-- 第三方插件 -->
+<script src="__JS__/plugins/pace/pace.min.js"></script>
+
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script>
+    $(function () {
+        $("#province").change(function(){
+            $("#city").html("<option value=''>--市--</option>");
+            $("#district").html("<option value=''>--区（县）--</option>");
+            var id=$(this).val();
+            if(id!='') {
+                initRegion(id, "city", $("#hc").val(), '', '');
+            }else{
+                emptyRegion('','');
+            }
+        });
+        $("#city").change(function(){
+            $("#district").html("<option value=''>--区（县）--</option>");
+            var id=$(this).val();
+            if(id!='') {
+                initRegion(id, "district", $("#hd").val(), 'province', '');
+            }else{
+                emptyRegion('province','');
+            }
+        });
+        $("#district").change(function(){
+            var id=$(this).val();
+            if(id!=''){
+                initRegion(id,"",'','city','province');
+            }else{
+                emptyRegion('city','province');
+            }
+        });
+        if($("#province").val()!=''){
+            $("#province").change();
+        }
+        initData(0);
+    });
+
+    function initRegion(id,htmlid,val,phtmlid,pphtmlid){
+        if(val!=''){
+            $("#hdistrictId").val(val);
+        }else{
+            if(id!=''){
+                initData(id);
+                $("#hdistrictId").val(id);
+            }
+        }
+        if(id!=''){
+            if(htmlid!=''){
+                var url="{:url('/user/User/initRegion/id/"+id+"')}";
+                var text=$("#"+htmlid).attr("data-placeholder");
+                $("#"+htmlid).html("<option value=''>--"+text+"--</option>");
+                $.post(url, function(data) {
+                    for(var i=0;i<data.length;i++){
+                        var ischk='';
+                        if(data[i]["id"]==val){
+                            ischk="selected";
+                        }
+                        $("#"+htmlid).append("<option "+ischk+" value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>")
+                    }
+                    if(val!=""){
+                        $("#"+htmlid).change();
+                    }
+                });
+            }
+        }else{
+            if($("#"+phtmlid).val()!=""){
+                $("#hdistrictId").val($("#"+phtmlid).val());
+            }
+            else{
+                if($("#"+pphtmlid).val()!=""){
+                    $("#hdistrictId").val($("#"+pphtmlid).val());
+                }else{
+                    $("#hdistrictId").val("");
+                }
+            }
+            $("#"+htmlid).find("option[value='']").attr("selected",true);
+            $("#"+htmlid).change();
+        }
+    }
+    function emptyRegion(phtmlid,pphtmlid){
+        $("#hdistrictId").val("");
+        if($("#"+phtmlid).val()!=""){
+            $("#hdistrictId").val($("#"+phtmlid).val());
+        }
+        else{
+            if($("#"+pphtmlid).val()!=""){
+                $("#hdistrictId").val($("#"+pphtmlid).val());
+            }else{
+                $("#hdistrictId").val("");
+            }
+        }
+        if($("#hdistrictId").val()!=''&&$("#hdistrictId").val()!=0){
+            initData($("#hdistrictId").val());
+        }
+    }
+
+    function initData(districtId){
+        var url="{:url('/statis/Statis/getAllIqbtStatis/districtId/"+districtId+"')}";
+        $.post(url, function(data) {
+            $('#dataTable').bootstrapTable('destroy');
+            $('#dataTable').bootstrapTable({
+                data: data.list
+            });
+            for(var i in data.data){
+                $("#"+i).html(data.data[i]);
+            }
+        });
+    }
+
+</script>
+
+
+
+
+<input type="hidden" id="iqbtIds" value="{$data['iqbtIds']|default=''}">
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+
+    <div class="form-group" id="districtfield" >
+        <span>
+            <label class="col-sm-2 control-label">选择区域</label>
+            <div class="col-sm-10">
+                <div class="col-sm-4">
+                    <select data-placeholder="省" class="form-control" tabindex="2" id="province">
+                        <option value="">--省--</option>
+                        {:widget("user/HtmlWidget/initCommonSelect",['table'=>'region','con'=>array('level'=>1),'default'=>isset($data['province'])?$data['province']:'','field'=>'id,name'])}
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <select data-placeholder="市" class="form-control" tabindex="2" id="city">
+                        <option value="">--市--</option>
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <select data-placeholder="区（县）" class="form-control" tabindex="2" id="district">
+                        <option value="">--区（县）--</option>
+                    </select>
+                </div>
+                <input type="hidden" id="hp" value="{$data.province|default=''}">
+                <input type="hidden" id="admintype" value="{$admintype|default='0'}">
+                <input type="hidden" id="hc" value="{$data.city|default=''}">
+                <input type="hidden" id="hd" value="{$data.district|default=''}">
+                <input type="hidden" name="districtId" id="hdistrictId" value="{$data.districtId|default=''}">
+            </div>
+        </span>
+    </div>
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <h4>孵化器数量：<span  class="text-success" id="num"> </span> 家</h4>
+                        <h4>其中国家级：<span class="text-success" id="ctyiqbtnum"></span> 家，省级孵化器：<span class="text-success" id="prviqbtnum"></span> 家，市级孵化器：<span class="text-success" id="cityiqbtnum"></span> 家 </h4>
+                        <h4>
+                            孵化面积：<span class="text-success" id="room"></span> ㎡,提供工位：<span class="text-success" id="station"></span> 个
+                        </h4>
+
+                        <h4>
+                            在孵企业：<span class="text-success" id="etprsimg"></span> 个
+                        </h4>
+
+                        <h4>
+                            毕业企业：<span class="text-success" id="etprsedu"></span> 个
+                        </h4>
+                        <h4>
+                            创造就业：<span class="text-success" id="total"></span> 个，其中大专及以上：<span class="text-success" id="junior"></span>个
+                        </h4>
+                        <h4>
+                            千人计划：<span class="text-success" id="thousand"></span> 人
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <table id="dataTable" class="resettable" data-toggle="table"  data-search="false"
+                   data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                <thead>
+                <tr>
+                    <th  data-field="name"> 企业名称</th>
+                    <th data-field="room">孵化面积</th>
+                    <th data-field="station">办公工位</th>
+                    <th data-field="etprsimg">在孵企业</th>
+                    <th data-field="etprsedu">毕业企业</th>
+                    <th data-field="total">创造就业</th>
+                    <th data-field="junior">其中：大专以上</th>
+                    <th data-field="thousand">千人计划</th>
+                    </th>
+                </tr>
+                </thead>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+
+{include file="index@index/footer" /}

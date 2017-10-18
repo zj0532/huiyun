@@ -1,0 +1,81 @@
+<script src="__JS__/bootstrap_validate.js"></script>
+<script>
+    $(function(){
+        $("#btnsave").on("click",function(){
+            var data,form=$(this).closest("form"),url=form.prop("action");
+            data=form.serializeArray();
+            var thisobj =$(this);
+            thisobj.attr("disabled","true");
+            $.post(url,serializeJson(data),function(data){
+                if(1==data.code){
+                    thisobj.removeAttr("disabled");
+                    toastr.success(data.msg);$("#myModal").modal("hide");
+                    $('#crmTable').bootstrapTable('refresh',{});
+                }else {thisobj.removeAttr("disabled");toastr.error(data.msg)}
+            });
+        });
+    });
+
+</script>
+
+<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>
+
+<form id="crmform" action="{:url('/index/Crm/saveCrm')}" method="post" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >客户名称</label>
+            <div class="col-sm-9">
+                <input type="text" name="name"  class="form-control require" value="{$data.name|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >客户类型</label>
+            <div class="col-sm-9">
+                <select class="form-control" name="status">
+                    <option value="1" {if condition="!empty($data.id) && $data.status eq 1 "}selected {/if}>潜在客户</option>
+                    <option value="2" {if condition="!empty($data.id) && $data.status eq 2 "}selected {/if}>目标客户</option>
+                    <option value="3" {if condition="!empty($data.id) && $data.status eq 3 "}selected {/if}>重要客户</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >联系人</label>
+            <div class="col-sm-9">
+                <input type="text" name="contact"  class="form-control require" value="{$data.contact|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >联系电话</label>
+            <div class="col-sm-9">
+                <input type="text" name="mobile" class="form-control require mobile" value="{$data.mobile|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >联系邮箱</label>
+            <div class="col-sm-9">
+                <input type="text" name="email" class="form-control email" value="{$data.email|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >联系地址</label>
+            <div class="col-sm-9">
+                <input type="text" name="address" class="form-control" value="{$data.address|default=''}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span><label class="col-sm-3 control-label" >备注说明</label>
+            <div class="col-sm-9">
+                <textarea  name="desc" rows="5" class="form-control" >{$data.desc|default=""}</textarea>
+            </div></span>
+        </div>
+    </div>
+    <input type="hidden" id="id" name="id" value="{$data.id|default=0}">
+    <div class="modal-footer">
+
+        <button type="button" class="btn btn-primary" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

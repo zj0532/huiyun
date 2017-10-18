@@ -1,0 +1,90 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<title>修改个人资料</title>
+<meta name="Keywords" content="" />
+<meta name="Description" content="" />
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/css/public.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/font-awesome/css/font-awesome.min.css" media="all">
+<script src="__PUBLIC__/mobile/js/jquery_1_11_2_min.js"></script>
+    <script src="__PUBLIC__/mobile/js/jquery-2.1.1.min.js"></script>
+    <script src="__PUBLIC__/mobile/js/bootstrap.min.js?v=3.4.0"></script>
+    <script src="__JS__/base.js"></script>
+    <script src="__JS__/bootstrap_validate.js"></script>
+    <!-- toastr CSS -->
+    <link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+    <!-- toastr Theme JavaScript -->
+    <script src="__PLUG__/toastr/toastr.js"></script>
+<script>
+    $(function(){
+        $("#btnsave").on("click", function () {
+            var form = $("#userform");
+            var url = form.prop("action");
+            var formId = form.attr("id");
+            var err=custom_validate(formId);
+            if(err==0){
+                return;
+            }else {
+                $.post(url, serializeJson(form.serializeArray()), function (data) {
+                    if (data.code == 1) {
+                        toastr.success(data.msg);
+                        window.history.go(-1);
+                    } else {
+                        toastr.error(data.msg);
+                    }
+                });
+            }
+        });
+        $('.close').click(function(){
+            $(this).siblings('input').val("");
+
+        })
+    })
+</script>
+<body>
+<style>
+    .user_com{margin-top:15px;}
+	.Wallet dl dt{float:left;width:23%;}
+	.Wallet dl input{font-size:15px;float:left;width:68%;height:35px;line-height:35px;margin-top:5px;background: none;border:none;}
+    .Wallet dl img{float:left;width:17px;height:17px;margin-top:14px;}
+</style>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+       <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">修改个人资料</div>
+    <div class="h-right" id="btnsave">保存</div>
+</div>
+<div class="user_com">
+    <div class="Wallet">
+        <form id="userform" action="{:url('User/saveUserInfo')}" method="post" tableId="usertable" >
+            <dl>
+                <dt>登录名</dt>
+                <input class="form-control"  name="name" id="name" placeholder="登录名" value="{$data.name|default=''}">
+                <img src="__PUBLIC__/mobile/images/delete.png" class="close">
+            </dl>
+            <dl>
+                <dt>真实姓名</dt>
+                <input  class="form-control" name="realname" id="realname" placeholder="真实姓名" value="{$data.realname|default=''}">
+                <img src="__PUBLIC__/mobile/images/delete.png" class="close">
+            </dl>
+            <dl>
+                <dt>电话</dt>
+                <input class="form-control mobile"  name="mobile" id="mobile" placeholder="电话" value="{$data.mobile|default=''}">
+                <img src="__PUBLIC__/mobile/images/delete.png" class="close">
+            </dl>
+            <dl>
+                <dt>电子邮件</dt>
+                <input class="form-control email" name="email" id="email" placeholder="电子邮件" value="{$data.email|default=''}">
+                <img src="__PUBLIC__/mobile/images/delete.png" class="close">
+            </dl>
+            <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        </form>
+    </div>
+</div>
+</body>
+</html>

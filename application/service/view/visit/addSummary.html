@@ -1,0 +1,142 @@
+{include file="index@index/header" /}
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script src="__JS__/bootstrap_validate.js"></script>
+<script>
+	$(function(){
+        $(".datepicker").datetimepicker({autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd hh:ii"});
+
+        $('#btnsave').click(function(){
+            var etprsId = "{$data.etprsId}";
+            var jumpurl = "{:url('/service/Visit/etprsVisit/etprsId/"+etprsId+"')}";
+            var data,form=$(this).closest("form"),url=form.prop("action");
+            data=form.serializeArray();
+            var err = custom_validate("searchform");
+            if(err==0){
+                return;
+            }else{
+                var thisobj =$(this);
+                thisobj.attr("disabled","true");
+                $.post(url,serializeJson(data),function(data){
+                    thisobj.removeAttr("disabled");
+                    if(1==data.code){
+                        toastr.success(data.msg);
+                        location.href = jumpurl;
+                    }else {toastr.error(data.msg)}
+                });
+            }
+
+        })
+	});
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+        <div class="row">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h3 style="text-align:center;">{$etprsName|default=""}拜访总结</h3></div>
+                <div class="ibox-content">
+                    <form class="form-horizontal" id="searchform" action="{:url('/service/Visit/saveSummary')}" method="post" >
+                        <fieldset>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">拜访日期：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="拜访日期" class="form-control opt-require datepicker" id="visitTime" value="{$data.visitTime|date='Y-m-d H:i',###}"  name="visitTime">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">当年拜访频次：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="拜访频次" id="frequency" class="form-control require " name="frequency" value="{$data.frequency|default=''}" >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">拜访类型：</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control require" id="visitType" name="visitType">
+                                            {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1035%'),'level'=>'2'),'default'=>$data.visitType])}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">服务企业类别：</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control require" id="etprsType" name="etprsType">
+                                            {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1036%'),'level'=>'2'),'default'=>'1036001'])}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">企业接待人员：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="企业接待人员" id="servePeople" class="form-control require " value="{$data.servePeople|default=''}" name="servePeople">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">接待人员联系电话：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="接待人员联系电话" id="serveMobile" class="form-control require mobile " name="serveMobile" value="{$data.serveMobile|default=''}">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">拜访目的：</label>
+                                <div class="col-sm-10">
+                                    <textarea  placeholder="拜访目的" rows="3" class="form-control " name="visitGoal">{$data.visitGoal|default=''}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">服务提供与交流沟通纪要：</label>
+                                <div class="col-sm-10">
+                                    <textarea  placeholder="服务提供与交流沟通纪要" rows="3" class="form-control " name="visitSummary">{$data.visitSummary|default=''}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">采集的企业信息：</label>
+                                <div class="col-sm-10">
+                                    <textarea  placeholder="采集的企业信息" rows="3" class="form-control " name="etprsInfo">{$data.etprsInfo|default=''}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">了解的企业需求：</label>
+                                <div class="col-sm-10">
+                                    <textarea  placeholder="了解的企业需求" rows="3" class="form-control " name="etprsNeed">{$data.etprsNeed|default=''}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">需要向相关部门传递的信息：</label>
+                                <div class="col-sm-10">
+                                    <textarea  placeholder="需要向相关部门传递的信息" rows="3" class="form-control " name="transInfo">{$data.transInfo|default=''}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">后续服务设想：</label>
+                                <div class="col-sm-10">
+                                    <textarea  placeholder="后续服务设想" rows="3" class="form-control " name="servePlan">{$data.servePlan|default=''}</textarea>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="id" value="{$data.id|default=''}">
+                            <input type="hidden" name="etprsId" value="{$data.etprsId|default=''}">
+                            <div style="width:100%;overflow:hidden;text-align:center;">
+                               <button type="button" class="btn btn-primary btn-sm" id="btnsave">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+                               <button type="reset" class="btn btn-danger btn-sm">&nbsp;&nbsp;<i class="fa fa-remove"></i>&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+</div>
+    <!--右侧部分结束-->
+    {include file="index@index/footer" /}

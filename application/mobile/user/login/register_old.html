@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>慧云数字化园区管理云平台-登录</title>
+<link href="__CSS__/style.min.css?v=3.0.0" rel="stylesheet">
+<link href="__CSS__/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+
+
+<script src="__PUBLIC__/login/js/jquery.min.js"></script>
+<script src="__PUBLIC__/login/js/common.js"></script>
+<!--背景图片自动更换-->
+<script src="__PUBLIC__/login/js/supersized.3.2.7.min.js"></script>
+
+<!--表单验证-->
+<link rel="stylesheet" href="__PUBLIC__/login/css/style.css">
+<script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+<script src="__JS__/base.js"></script>
+<!-- toastr CSS -->
+<!-- toastr CSS -->
+<link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+<!-- toastr Theme JavaScript -->
+<script src="__PLUG__/toastr/toastr.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $.supersized({
+
+            // 功能
+            slide_interval     : 4000,    // 转换之间的长度
+            transition         : 1,    // 0 - 无，1 - 淡入淡出，2 - 滑动顶，3 - 滑动向右，4 - 滑底，5 - 滑块向左，6 - 旋转木马右键，7 - 左旋转木马
+            transition_speed   : 1000,    // 转型速度
+            performance        : 1,    // 0 - 正常，1 - 混合速度/质量，2 - 更优的图像质量，三优的转换速度//（仅适用于火狐/ IE浏览器，而不是Webkit的）
+
+            // 大小和位置
+            min_width          : 0,    // 最小允许宽度（以像素为单位）
+            min_height         : 0,    // 最小允许高度（以像素为单位）
+            vertical_center    : 1,    // 垂直居中背景
+            horizontal_center  : 1,    // 水平中心的背景
+            fit_always         : 0,    // 图像绝不会超过浏览器的宽度或高度（忽略分钟。尺寸）
+            fit_portrait       : 1,    // 纵向图像将不超过浏览器高度
+            fit_landscape      : 0,    // 景观的图像将不超过宽度的浏览器
+
+            // 组件
+            slide_links        : 'blank',    // 个别环节为每张幻灯片（选项：假的，'民'，'名'，'空'）
+            slides             : [    // 幻灯片影像
+                {image : '__PUBLIC__/login/images/1.jpg'},
+                {image : '__PUBLIC__/login/images/2.jpg'},
+                //{image : './images/3.jpg'}
+            ]
+
+        });
+        $("#btnrgst").click(function () {
+            if($("#etprsname").val()==""){
+                $("#msg").html("企业名称必填");
+                return;
+            }
+            if($("#realname").val()==""){
+                $("#msg").html("联系人必填");
+                return;
+            }
+            var isPhone = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
+            var isMob=/^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|15[012356789][0-9]{8}|18[02356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
+            var phone_str=$("#mobile").val();
+            if(phone_str==""){
+                $("#msg").html("联系电话必填");
+                return;
+            }else if(!(isPhone.test(phone_str)||isMob.test(phone_str))){
+                $("#msg").html("电话号码格式错误");
+                return;
+            }
+            if($("#password").val()==""){
+                $("#msg").html("密码必填");
+                return;
+            }
+            if($("#password").val()!=$("#cfmpassword").val()){
+                $("#msg").html("密码不一致");
+                return;
+            }
+            var regExp=/^(?![\d]+$)(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{6,20}$/;
+            if(!regExp.test($("#password").val())){
+                $("#msg").html("密码必须为6-20位字母，数字，符号组合");
+                return;
+            }
+            var form = $("#rgst");
+            var url = form.prop("action");
+            var formId = form.attr("id");
+            var data=form.serialize();
+            $.post(url, data, function (data) {
+                if (data.code == 1) {
+                    /*var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                            '<h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">用户注册成功，请选择填写申请信息。</div>' +
+                            '<div class="modal-body"><a href="{:url(\'/user/Login/etprsapl\')}" class="button">企业申请</a>&nbsp;&nbsp;&nbsp;<a href="{:url(\'/user/Login/teamapl\')}" class="button">团队申请</a> </div>' +
+                            '<div class="modal-footer"></div>';
+                    show_modal("提示",data,"modal-sm");*/
+
+                    var iqbtId=$("#iqbtId").val();
+                    var etprsIqbtId=$("#etprsIqbtId").val();
+                    location.href="{:url('/index/Apply/checkApl')}?iqbtId="+iqbtId+"&etprsIqbtId="+etprsIqbtId;
+                } else {
+                    toastr.error(data.msg);
+                }
+
+
+            });
+
+        });
+    });
+</script>
+<body>
+
+<div class="register-container">
+    <h1>慧云数字化园区管理云平台</h1>
+
+    <div class="connect">
+        <p>用户注册</p>
+    </div>
+
+    <form action="{:url('/user/Login/saveUser')}" method="post" id="rgst">
+        <div>
+            <input type="text" name="mobile" id="mobile" class="" placeholder="联系电话（登录名必填）" autocomplete="off" />
+        </div>
+        <div>
+            <input type="password" name="password" id="password" class="password" placeholder="输入密码"  />
+        </div>
+        <div>
+            <input type="password"  name="cfmpassword" id="cfmpassword" placeholder="再次输入密码"  />
+        </div>
+
+        <input type="hidden" id="etprsIqbtId" name="etprsIqbtId" value="{$etprsIqbtId|default=0}">
+        <input type="hidden" id="iqbtId" name="iqbtId" value="{$iqbtId|default=0}">
+        <button type="button" id="btnrgst">注 册</button>
+        <span style="color: #ff0000;" id="msg">{$msg|default=''}</span>
+    </form>
+    <a href="{:url('/user/Login/login',array('iqbtId'=>$iqbtId,'etprsIqbtId'=>$etprsIqbtId))}" >
+        <button type="button" class="register-tis">已经有账号？</button>
+    </a>
+
+</div>
+
+</body>
+</html>

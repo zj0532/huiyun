@@ -1,0 +1,73 @@
+{include file="user@login/addheader" /}
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+
+        $(".datepicker").datetimepicker({autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd hh:ii"});
+
+    });
+</script>
+<form id="resosform" action="{:url('/Service/Visit/saveVisit')}" method="post" tableId="visitTable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+                <span><label class="col-sm-2 control-label">拜访企业</label>
+                <div class="col-sm-10">
+                    {$etprsName|default=''}
+                </div></span>
+                <input type="hidden" name="etprsId" value="{$etprsId|default=''}">
+                <input type="hidden" name="etprsName" value="{$etprsName|default=''}">
+        </div>
+        <div class="form-group">
+                <span><label class="col-sm-2 control-label" for="visitTime">拜访时间</label>
+                <div class="col-sm-6">
+                    <input class="form-control datepicker opt-require"  name="visitTime" id="visitTime" placeholder="拜访时间" value="{$data.visitTime|default=time()|date='Y-m-d H:i',###}">
+                </div></span>
+
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">拜访类型</label>
+            <div class="col-sm-10">
+                <div class="radio radio-success radio-inline">
+                    <input type="radio" id="type1" value="1035001" name="visitType" {if condition="isset($data.visitType)"} {if condition="!empty($data.visitType)&&$data.visitType=='1035001'"}checked{/if} {else /}checked{/if}>
+                    <label for="type1" class="text-success"><b>例行走访</b></label>
+                </div>
+                <div class="radio radio-success radio-inline">
+                    <input type="radio" id="type2" value="1035002" name="visitType" {if condition="isset($data.visitType)&&$data.visitType=='1035002'"}checked{/if}>
+                    <label for="type2" class="text-success"><b>专题走访</b></label>
+                </div>
+                <div class="radio radio-success radio-inline">
+                    <input type="radio" id="type3" value="1035003" name="visitType" {if condition="isset($data.visitType)&&$data.visitType=='1035003'"}checked{/if}>
+                    <label for="type3" class="text-success"><b>跟踪走访</b></label>
+                </div>
+                <div class="radio radio-success radio-inline">
+                    <input type="radio" id="type4" value="1035004" name="visitType" {if condition="isset($data.visitType)&&$data.visitType=='1035004'"}checked{/if}>
+                    <label for="type4" class="text-success"><b>重点走访</b></label>
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label" for="goal">拜访目的</label>
+            <div class="col-sm-10">
+                <textarea class="form-control opt-require"  name="visitGoal" id="goal" rows="5" placeholder="拜访目的">{$data.visitGoal|default=''}</textarea>
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-2 control-label" for="main">思路要点</label>
+            <div class="col-sm-10">
+                <textarea class="form-control "  name="visitMain" id="main" rows="5" placeholder="拜访思路、要点">{$data.visitMain|default=''}</textarea>
+            </div></span>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" ><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

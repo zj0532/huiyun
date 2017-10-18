@@ -1,0 +1,474 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<link href="__CSS__/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<!-- iCheck -->
+<script src="__JS__/plugins/iCheck/icheck.min.js"></script>
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+        //选择框初始化
+        $("#btnsearch").click(function(){
+            $('#expname').remove();
+            var name=$("#name").val();
+            var apltype = $('#apltype').val();
+            var o=new Object();
+            if(name!=""){
+                o.name=name;
+            }
+            if(apltype !=""){
+                o.apltype = apltype;
+            }
+            var a = $('#search').serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            $('#pactTable').bootstrapTable('refresh',{query: o});
+            /*$("#btnasch").click();*/
+        });
+        //导出企业信息
+        $("#btnexport").click(function(){
+            var url = $(this).attr('data-url');
+            var form = $("#search");
+            // 设置属性
+            form.attr('action', url);
+            form.attr('method', 'post');
+            var name=$("#name").val();
+            var my_input = $('<input type="text" name="name" id="expname" />');
+            my_input.attr('value', name);
+            // 附加到Form
+            form.append(my_input);
+            // 提交表单  
+            form.submit();
+            return false;
+        });
+        //时间初始化
+        $(".datepicker").datetimepicker({minView:"month",autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd"});
+
+        $("#build").change(function(){
+            var id=$("#build").val();
+            if(id ==""){
+                html = "<option value=''>选择楼层</option>";
+                $('#floor').html(html);
+            }else{
+                initfloor(id);
+            }
+
+        });
+
+        jQuery(document.body).on('change','.singlechx',function(){
+            var cbxname=$(this).attr("name");
+            if($(this).prop("checked")==true){
+                $("input[name='"+cbxname+"']").prop("checked",false);
+                $(this).prop("checked",true);
+                if(cbxname=="people"){
+                    if($("input[name='peoplenum']:checked").length<1){
+                        $("input[name='peoplenum']").first().prop("checked",true);
+                    }
+                }
+                if(cbxname=="peoplenum"){
+                    if($("input[name='people']:checked").length<1){
+                        $("input[name='people']").first().prop("checked",true);
+                    }
+                }
+            }else{
+                if(cbxname=="people"){
+                    $("input[name='peoplenum']").prop("checked",false);
+                }
+                if(cbxname=="peoplenum"){
+                    $("input[name='people']").prop("checked",false);
+                }
+            }
+        })
+        
+        $("#floor").change(function () {
+            var url="{:url('/index/Apply/initFloorRoom')}";
+            var id=$("#build").val();
+            var floor=$("#floor").val();
+            $.post(url,{"id":id,"floor":floor},function(data) {
+                var html="<option value=''>请选择房间</option>"
+                if(data.code=="1"){
+                    var rooms=data.data;
+                    $.each(rooms,function(i,value){
+                        html=html+"<option value='"+rooms[i]["id"]+"'>"+rooms[i]["roomNo"]+"</option>";
+                    });
+                }else{
+                    toastr.error("初始化失败");
+                }
+                $("#roomNo").html(html);
+            });
+        });
+    });
+    //初始化楼层
+    function initfloor(id) {
+        var html = "<option value=''>选择楼层</option>";
+        var url = "{:url('/index/Apply/initFloor')}";
+        $.post(url, {"id": id}, function (data) {
+            if (data.code == "1") {
+                var floornum = data.data.floor;
+                for (var i = 1; i <= floornum; i++) {
+                    html +="<option value='"+i+"'>"+i+"层</option>";
+                }
+                $('#floor').html(html);
+            } else {
+                toastr.error("初始化失败");
+            }
+        });
+    }
+    function getsearch(schflag){
+        $('#expname').remove();
+        var name=$("#name").val();
+        var apltype = $('#apltype').val();
+        var o=new Object();
+        if(name!=""){
+            o.name=name;
+        }
+        if(apltype !=""){
+            o.apltype = apltype;
+        }
+        $("#schflag").val(schflag);
+        var a = $("#search").serializeArray();
+        $.each(a, function() {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+
+        $('#pactTable').bootstrapTable('refresh',{query: o});
+    }
+
+    function actFmt(value, row, index) {
+        return [
+            '<a class="detail ml10" href="javascript:void(0)" title="企业档案"><i class="fa fa-file"></i>&nbsp;企业档案</a>&nbsp;&nbsp;'
+        ].join('');
+    }
+    window.actEvt = {
+        'click .detail': function (e, value, row, index) {
+            var url="{:url('/service/Service/etprsInfo/etprsId/"+row.etprsId+"')}";
+            location.href=url;
+        }
+    };
+
+    function aplFmt(value, row, index){
+        if(value=='1'){
+            return "项目";
+        }else if(value=="0"){
+            return "企业";
+        }
+    }
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" onclick="getsearch('all')" aria-expanded="true">全部（{$numlist.total|default=0}）</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-1" onclick="getsearch('ing')" aria-expanded="false">在孵企业（{$numlist.enter|default=0}）</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-1" onclick="getsearch('apl')" aria-expanded="false">申请中（{$numlist.apply|default=0}）</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-1" onclick="getsearch('gradt')" aria-expanded="false">毕业（{$numlist.finish|default=0}）</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-1" onclick="getsearch('quit')" aria-expanded="false">中途退出（{$numlist.over|default=0}）</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="row">
+                                                    <style>
+                                                        .m-b-xs span{font-size:14px;line-height:30px;float:left;}
+                                                        .m-b-xs input[type="text"]{width:200px;float:left;margin-right:20px;}
+                                                        .m-b-xs select{float:left;width:200px;margin-right:20px;}
+                                                        .m-b-xs button{float:left;margin-left:4px;}
+                                                    </style>
+                                                    <div class="col-sm-12 m-b-xs">
+                                                        <span>企业名称：</span>
+                                                        <input type="text" placeholder="请输入企业名称" class="input-sm form-control" name="name" id="name">
+                                                        <button type="button" id="btnsearch" class="btn btn-primary btn-sm">
+                                                            <i class="fa fa-search"></i>
+                                                            查询
+                                                        </button>
+                                                        <a data-toggle="collapse" data-parent="#version" href="#v1" id="btnasch"><!--高级搜索点击展开按钮-->
+                                                            <button type="button" class="btn btn-info btn-sm">
+                                                                <i class="fa fa-search"></i>
+                                                                高级搜索
+                                                            </button>
+                                                        </a>
+                                                        <button type="button" class="btn btn-warning btn-sm ml10" id="btnexport" data-url="{:url('/service/Service/exportEtprs')}"  >
+                                                            <i class="fa fa-share-square-o"></i>
+                                                            导出
+                                                        </button>
+                                                        <!--<button type="button" class="btn btn-warning btn-sm">&nbsp;&nbsp;<i class="fa fa-mobile"></i>&nbsp;&nbsp;发通知&nbsp;&nbsp;</button>-->
+                                                        <!--<button type="button" class="btn btn-warning btn-sm">&nbsp;&nbsp;<i class="fa fa-file-text"></i>&nbsp;&nbsp;导出&nbsp;&nbsp;</button>-->
+                                                    </div>
+                                                </div>
+                                                <div id="wrapper">
+                                                    <!--右侧部分开始-->
+                                                    <div class="gray-bg dashbard-1" style="margin-left: 0;">
+                                                        <div class="row">
+                                                            <div class="ibox float-e-margins" style="margin-bottom:0;">
+                                                                <div id="v1" class="panel-collapse collapse ibox-content" style="border: none;"> <!--id="v1" class="panel-collapse collapse"-->
+                                                                    <form action="" class="form-horizontal" method="post" id="search">
+                                                                        <fieldset>
+                                                                            <div class="form-group">
+                                                                                <label class="col-sm-2 control-label">成立时间：</label>
+                                                                                <div class="col-sm-2">
+                                                                                    <input type="text"  placeholder="开始时间" class="form-control datepicker"  name="rgst_start" id="rgst_start">
+                                                                                </div>
+                                                                                <div class="col-sm-2">
+                                                                                    <input type="text" placeholder="结束时间" class="form-control datepicker " name="rgst_end" id="rgst_end">
+                                                                                </div>                                                                                <div class="col-sm-2"></div>                                                                                <div class="col-sm-2"></div>                                                                                <div class="col-sm-2"></div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label class="col-sm-2 control-label">入驻时间：</label>
+                                                                                <div class="col-sm-2">
+                                                                                   <input type="text"  placeholder="开始时间" class="form-control datepicker"  name="enter_start">
+                                                                                </div>
+                                                                                <div class="col-sm-2">
+                                                                                   <input type="text" placeholder="结束时间" class="form-control datepicker" name="enter_end" >
+                                                                                </div>
+                                                                                <div class="col-sm-2"></div>
+                                                                                <div class="col-sm-2"></div>
+                                                                                <div class="col-sm-2"></div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                            	
+                                                                                <label class="col-sm-2 control-label">到期时间：</label>
+                                                                                
+                                                                            	<div class="col-sm-2">
+
+                                                                                   <input type="text"  placeholder="开始时间" class="form-control datepicker"  name="quit_start">
+
+                                                                                </div>
+
+                                                                                <div class="col-sm-2">
+
+                                                                                   <input type="text" placeholder="结束时间" class="form-control datepicker" name="quit_end" >
+
+                                                                                </div>
+                                                                                <div class="col-sm-2"></div>
+                                                                                <div class="col-sm-2"></div>
+                                                                                <div class="col-sm-2"></div>
+                                                                                                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label class="col-sm-2 control-label">行业类型：</label>                                                                                <div class="col-sm-2">
+                                                                                    <select id="industry" name="industry" style="width:100%;height:35px;line-height:35px;">
+                                                                                        <option value="" selected>请选择--</option>
+                                                                                        {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1023%'),'level'=>'2'),'default'=>''])}
+                                                                                    </select>
+                                                                                </div>                                                                                <label class="col-sm-2 control-label">技术领域：</label>                                                                                <div class="col-sm-2">                                                                                    <select id="technical" name="technical" style="width:100%;height:35px;line-height:35px;">                                                                                        <option value="" selected>请选择--</option>                                                                                        {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1024%'),'level'=>'2'),'default'=>''])}                                                                                    </select>                                                                                </div>                                                                                <label class="col-sm-2 control-label">申请类型：</label>                                                                                <div class="col-sm-2">                                                                                    <select class="input-sm form-control input-s-sm inline" name="apltype" id="apltype" style="width:100%;height:35px;line-height:35px;">                                                                                        <option value="">全部</option>                                                                                        <option value="0">企业</option>                                                                                        <option value="1">项目</option>                                                                                    </select>                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group man">
+                                                                                <label class="col-sm-2 control-label">人员情况：</label>
+                                                                                <div class="col-sm-10" id="people">
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="people1" name="people"  value="total" class="singlechx">
+                                                                                        <label for="people1">人员数量</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="people2" name="people" value="doctor" class="singlechx">
+                                                                                        <label for="people2">博士</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="people3" name="people" value="junior" class="singlechx">
+                                                                                        <label for="people3">大专以上</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="people4" name="people" value="overseas" class="singlechx">
+                                                                                        <label for="people4">留学人员</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="people5" name="people" value="thousand" class="singlechx">
+                                                                                        <label for="people5">千人计划</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="people6" name="people" value="student" class="singlechx">
+                                                                                        <label for="people6">应届毕业生</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group mannum">
+                                                                                <label class="col-sm-2 control-label"></label>
+                                                                                <div class="col-sm-10">
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="peoplenum1" name="peoplenum" value="1" class="singlechx">
+                                                                                        <label for="peoplenum1">1-5</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="peoplenum2" name="peoplenum" value="2" class="singlechx">
+                                                                                        <label for="peoplenum2">6-10</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox"  id="peoplenum3" name="peoplenum" value="3" class="singlechx">
+                                                                                        <label  for="peoplenum3">10-20</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox"  id="peoplenum4" name="peoplenum" value="4" class="singlechx">
+                                                                                        <label  for="peoplenum4">20-50</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox"  id="peoplenum5" name="peoplenum" value="5" class="singlechx">
+                                                                                        <label  for="peoplenum5">50以上</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label class="col-sm-2 control-label">知识产权：</label>
+                                                                                <div class="col-sm-10">
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="iprapl1" name="iprapl" value="1" class="singlechx">
+                                                                                        <label for="iprapl1">1-5</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="iprapl2" name="iprapl" value="2" class="singlechx">
+                                                                                        <label for="iprapl2">6-10</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="iprapl3" name="iprapl" value="3" class="singlechx">
+                                                                                        <label for="iprapl3">10-20</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="iprapl4" name="iprapl" value="4" class="singlechx">
+                                                                                        <label for="iprapl4">20-50</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="iprapl5" name="iprapl" value="5" class="singlechx">
+                                                                                        <label for="iprapl5">50以上</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group" >
+                                                                                <label class="col-sm-2 control-label">导师：</label>
+                                                                                <div class="col-sm-10" id="tutor">
+                                                                                        {:widget("user/HtmlWidget/initCommonCheckbox",['tutorIds[]','table'=>'tutor','con'=>array('iqbtId'=>session('iqbtId')),'default'=>'','field'=>'id,name'])}
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label class="col-sm-2 control-label">是否高新企业：</label>
+                                                                                <div class="col-sm-2">
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="highetprs1" name="highetprs" value="1" class="singlechx">
+                                                                                        <label for="highetprs1">是</label>
+                                                                                    </div>
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                                                        <input type="checkbox" id="highetprs2" name="highetprs" value="0" class="singlechx">
+                                                                                        <label for="highetprs2">否</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <label class="col-sm-2 control-label">欠费企业：</label>
+
+                                                                                <div class="col-sm-2">
+
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+
+                                                                                        <input type="checkbox" id="fee_status1" name="fee_status" value="0" class="singlechx">
+
+                                                                                        <label for="fee_status1">是</label>
+
+                                                                                    </div>
+
+                                                                                </div>
+                                                                                <label class="col-sm-2 control-label">待缴费企业：</label>
+
+                                                                                <div class="col-sm-2">
+
+                                                                                    <div class="checkbox checkbox-success checkbox-inline">
+
+                                                                                        <input type="checkbox" id="fee_status11" name="fee_status" value="0" class="singlechx">
+
+                                                                                        <label for="fee_status1">是</label>
+
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label class="col-sm-2 control-label">分配房间：</label>
+                                                                                <div class="col-sm-2">
+                                                                                    <select class="input-sm form-control input-s-sm inline" id="build" name="build" style="width:100%;height:35px;line-height:35px;">
+                                                                                        <option value="">选择办公楼</option>
+                                                                                        {:widget("user/HtmlWidget/initCommonSelect",['table'=>'estateBuilding','con'=>array(),'default'=>'','field'=>'id,name'])}
+                                                                                    </select>
+                                                                                </div>
+                                                                                <div class="col-sm-2" >
+                                                                                    <select class="input-sm form-control input-s-sm inline" id="floor" name="floor" style="width:100%;height:35px;line-height:35px;">
+                                                                                        <option value="">选择楼层</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                                <div class="col-sm-2">
+                                                                                    <select class="input-sm form-control input-s-sm inline" id="roomNo" name="roomNo" style="width:100%;height:35px;line-height:35px;">
+                                                                                        <option value="">选择房间</option>
+                                                                                    </select>
+                                                                                </div>                                                                                <div class="col-sm-2"></div>                                                                                <div class="col-sm-2"></div>
+                                                                            </div>
+                                                                        </fieldset>
+                                                                        <input type="hidden" value="all" name="schflag" id="schflag" />
+                                                                    </form>
+                                                                    <!--<div class="form-group gray-bg" style="font-size:14px;height:40px;line-height:40px;font-weight:bold;">
+                                                                        <div class="col-sm-12">
+                                                                            <p>搜索条件：<sapn>条件1</sapn>&nbsp;&nbsp;>&nbsp;&nbsp;<sapn>条件2</sapn>&nbsp;&nbsp;>&nbsp;&nbsp;<sapn>条件3</sapn></p>
+                                                                        </div>
+                                                                    </div>-->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table id="pactTable" class="resettable" data-toggle="table" data-url="{:url('/service/Service/getEtprsList')}" data-search="false"
+                                                           data-show-refresh="false" data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                        <thead>
+                                                        <tr>
+                                                            <th  data-field="etprsName"> 企业名称</th>
+                                                            <th data-field="contact">联系人</th>
+                                                            <th data-field="mobile">联系电话</th>
+                                                            <th data-field="industryText">行业类型</th>
+                                                            <th data-field="tutors">导师</th>
+                                                            <th data-field="roomNos">已分配房间</th>
+                                                            <th data-field="total">团队人数</th>
+                                                            <th data-field="endTime">到期时间</th>
+                                                            <th data-field="apltype" data-formatter="aplFmt">申请类型</th>
+                                                            <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><script>	$(".mannum").css("display","none");	$(".man").click(function(){		$(".mannum").css("display","block");	})</script>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

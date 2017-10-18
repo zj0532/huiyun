@@ -1,0 +1,72 @@
+{include file="index@index/header" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $("#btnsave").on("click",function(){
+            var regExp=/^(?![\d]+$)(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{6,20}$/;
+            if(!regExp.test($("#newpassword").val())){
+                toastr.error("密码必须为6-20位字母、数字或符号组合");
+            }else {
+                var a = $("#userform"), b = a.prop("action"), c = a.attr("id"), d = custom_validate(c);
+                0 != d && $.post(b, serializeJson(a.serializeArray()), function (a) {
+                    if (a.code == 1) {
+                        toastr.success(a.msg);
+                        location.href = "{:url('/user/Login/logout')}";
+                    } else {
+                        toastr.error(a.msg)
+                    }
+                })
+            }
+        })
+    });
+</script>
+
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <!-- Example Events -->
+            <form id="userform" action="{:url('/user/User/savepwd')}" method="post" tableId="usertable" class="form-horizontal">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="password">原密码</label>
+                        <div class="col-sm-4">
+                            <input type="password" class="form-control require" name="password" id="password" placeholder="原密码">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="newpassword">新密码</label>
+                        <div class="col-sm-4">
+                            <input type="password" class="form-control require" name="newpassword" id="newpassword" placeholder="新密码：必须为6-20位字母、数字或符号组合">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="confirmpassword">确认密码</label>
+                        <div class="col-sm-4">
+                            <input type="password" class="form-control require eqConfirm" forfield="newpassword" name="confirmpassword" id="confirmpassword" placeholder="确认密码">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="float:left;margin-left:25%;">
+                    <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                            class="bold">保存</span></button>
+                    <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+                    </button>
+                </div>
+            </form>
+            <!-- End Example Events -->
+        </div>
+    </div>
+
+
+<!--右侧部分结束-->
+{include file="index@index/footer" /}
+
+
+
+

@@ -1,0 +1,499 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<link href="__CSS__/plugins/chosen/chosen.min.css" rel="stylesheet">
+<script src="__JS__/plugins/chosen/chosen.jquery.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $(".chosen-user").chosen();
+        $("#btnuadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加用户","modal-lg");
+        });
+        $("#btneadd").click(function(){
+            var url=$(this).attr("data-url");
+            //baseadd(url,"添加用户","modal-lg");
+            location.href =url;
+        });
+        $("#btntadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加用户","modal-lg");
+        });
+        $("#btnoadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加用户","modal-lg");
+        });
+        $("#btnaadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加用户","modal-lg");
+        });
+        $("#btnwadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加用户","modal-lg");
+        });
+        $("#btncadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加用户","modal-lg");
+        });
+
+        $("#btnuedit,#btneedit,#btntedit,#btnoedit,#btnwedit,#btncedit,#btnaedit").click(function(){
+            var table = $(this).attr("table");
+            var url=$(this).attr("data-url");
+            baseedit(table,url,"修改用户信息","modal-lg");
+        });
+
+        $("#btnudelete,#btnedelete,#btntdelete,#btnodelete,#btnwdelete,#btncdelete,#btnadelete").click(function(){
+            var table = $(this).attr("table");
+            var url=$(this).attr("data-url");
+            id = mulitecheck(table);
+            if (id != null) {
+                basefreeze(table, id);
+            }
+        });
+    });
+
+    function userFmt(value, row, index) {
+        var html="";
+        html=html+'<a class="edit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>';
+        if(row.status=='1012005'){
+            html = html + '&nbsp;<a class="noremove ml10" href="javascript:void(0)" title="冻结"><i class="fa fa-times text-danger"></i>&nbsp;解除冻结</a>';
+        }else{
+            html = html + '&nbsp;<a class="remove ml10" href="javascript:void(0)" title="冻结"><i class="fa fa-times text-danger"></i>&nbsp;冻结</a>';
+        }
+
+        html = html + '&nbsp;<a class="resetpwd ml10" href="javascript:void(0)" title="重置密码"><i class="fa fa-reply"></i>&nbsp;重置密码</a>';
+        {if condition="$Think.session.user.roleIds neq 1 && $Think.session.user.roleIds neq 3"}
+        html = html + '&nbsp;<a class="etprs ml10" href="javascript:void(0)" title="分配拜访企业"><i class="fa fa-cog"></i>&nbsp;分配拜访企业</a>';
+        {/if}
+        return html;
+    }
+    function cuserFmt(value, row, index) {
+        var html="";
+        html=html+'<a class="edit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>';
+        if(row.status=='1012003'){
+            html = html + '&nbsp;<a class="cnoremove ml10" href="javascript:void(0)" title="解除冻结"><i class="fa fa-times text-danger"></i>&nbsp;解除冻结</a>';
+        }else{
+            html = html + '&nbsp;<a class="cremove ml10" href="javascript:void(0)" title="冻结"><i class="fa fa-times text-danger"></i>&nbsp;冻结</a>';
+        }
+        html = html + '&nbsp;<a class="resetpwd ml10" href="javascript:void(0)" title="重置密码"><i class="fa fa-reply"></i>&nbsp;重置密码</a>';
+        return html;
+    }
+    function etprsFmt(value, row, index) {
+        var html="";
+        html = html + '&nbsp;<a class="resetpwd ml10" href="javascript:void(0)" title="重置密码"><i class="fa fa-reply"></i>&nbsp;重置密码</a>';
+
+        return html;
+    }
+    function tutorFmt(value, row, index) {
+        var html="";
+        html = html + '&nbsp;<a class="resetpwd ml10" href="javascript:void(0)" title="重置密码"><i class="fa fa-reply"></i>&nbsp;重置密码</a>';
+        return html;
+    }
+    function otherFmt(value, row, index) {
+        var html="";
+        html = html + '&nbsp;<a class="resetpwd ml10" href="javascript:void(0)" title="重置密码"><i class="fa fa-reply"></i>&nbsp;重置密码</a>';
+        return html;
+    }
+
+    window.userEvt = {
+
+        'click .edit': function (e, value, row, index) {
+            var tab=$(this).closest("table").prop("id");
+            var cate=row.userCate;
+            var url="{:url('/user/User/addUser/id/"+row.id+"/tab/"+tab+"/cate/"+cate+"')}";
+            $.post(url, function(data) {
+                show_modal("修改用户信息",data,"modal-lg");
+            });
+        },
+        'click .etprs': function (e, value, row, index) {
+            var url="{:url('/user/User/setUserEtprs/userId/"+row.id+"')}";
+            $.post(url, function(data) {
+                show_modal("设置用户对应企业",data,"modal-lg");
+            });
+        },
+        'click .remove': function (e, value, row, index) {
+            basefreeze("usertable",  row.id);
+        },
+        'click .noremove': function (e, value, row, index) {
+            basenofreeze("usertable",  row.id);
+        },
+        'click .cnoremove': function (e, value, row, index) {
+            basenofreeze("cusertable",  row.id);
+        },
+        'click .cremove': function (e, value, row, index) {
+            basefreeze("cusertable", row.id);
+        },
+        'click .resetpwd': function (e, value, row, index) {
+            var url="{:url('/user/User/resetpwd')}";
+            var id=row.id;
+            var name=row.name;
+            var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要重置么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="resetpwd(\''+url+'\',\''+id+'\',\''+name+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+            show_modal("提示",data,"modal-sm");
+        }
+    };
+    function basefreeze(tableId,id){
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要冻结选中用户么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="freeze(\''+id+'\',\''+tableId+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",data,"modal-sm");
+    }
+    function freeze(id,tableId){
+        var url="{:url('/user/User/freezeUser')}";
+        $.post(url, {id: id}, function (data) {
+            if (data.code == 1) {
+                toastr.success(data.msg);
+                $("#" + tableId).bootstrapTable('refresh');
+                $('#myModal').modal('hide');
+            }else if(data.code == 0){
+                toastr.warning(data.msg);
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+    function basenofreeze(tableId,id){
+        var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要解除冻结选中用户么？</div><div class="modal-footer"><button class="btn btn-primary" onclick="nofreeze(\''+id+'\',\''+tableId+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",data,"modal-sm");
+    }
+    function nofreeze(id,tableId){
+        var url="{:url('/user/User/nofreezeUser')}";
+        $.post(url, {id: id}, function (data) {
+            if (data.code == 1) {
+                toastr.success(data.msg);
+                $("#" + tableId).bootstrapTable('refresh');
+                $('#myModal').modal('hide');
+            }else if(data.code == 0){
+                toastr.warning(data.msg);
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+    function resetpwd(url,id,name){
+        $.post(url,{name:name,id:id}, function(data) {
+            if(data.code==1){
+                toastr.success(data.msg);
+                $('#myModal').modal('hide');
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+    function initOther(){
+
+    }
+</script>
+
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        {if condition="$usercate=='1011001'"}
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">管理员</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">企业用户</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">导师用户</a></li>
+
+                        {elseif condition="$usercate=='1011003'"/}
+                        <li class="active"><a data-toggle="tab" href="#tab-5" aria-expanded="true">系统维护员</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-6" aria-expanded="false">超级管理员</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-7" aria-expanded="false">区域用户</a></li>
+                        {/if}
+                    </ul>
+
+                    <div class="tab-content">
+                        {if condition="$usercate=='1011001'"}
+                        <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="row">
+                                <!-- Example Events -->
+                                <div id="usertoolbar" class="col-sm-12 m-b-xs">
+                                    <button type="button" class="btn btn-primary btn-sm" id="btnuadd" data-url="{:url('/user/User/addUser',array('cate'=>'1011001','tab'=>'usertable'))}" role-tag2="adduser">
+                                        <i class="glyphicon glyphicon-plus "></i>&nbsp;新增
+                                    </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-info btn-sm ml10" id="btnuedit" data-url="{:url('/user/User/addUser',array('cate'=>'1011001','tab'=>'usertable'))}" role-tag="edituser" table="usertable">
+                                        <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                    </button>&nbsp;
+                                    <button type="button" class="btn btn-danger btn-sm ml10" id="btnudelete" data-url="{:url('/user/User/freezeUser')}" role-tag="deleteuser" table="usertable">
+                                        <i class="glyphicon glyphicon-trash"></i>&nbsp;冻结
+                                    </button>
+                                    <!--<select data-placeholder="请选择用户类别...&nbsp;" style="width:150px;" class="chosen-user" tabindex="2" id="userCateSel">
+                                        <option value="">请选择用户类别</option>
+                                        {:widget("HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1011%'),'level'=>'2','flag'=>0),'default'=>'1011001'])}
+                                    </select>-->
+                                </div>
+                                <table id="usertable" class="resettable" data-toggle="table" data-url="{:url('/user/User/getUsers',array('cate'=>'1011001'))}" data-search="true"
+                                           data-show-refresh="true" data-show-toggle="false" data-show-columns="false" data-toolbar="#usertoolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                        <thead>
+                                        <tr>
+                                            <th data-field="state" data-checkbox="true"></th>
+                                            <th data-field="name" data-sortable="true">登录名</th>
+                                            <th data-field="realname" data-sortable="true">真实姓名</th>
+                                          <!--  <th data-field="userCateText" data-sortable="true">用户分类</th> -->
+                                            <th data-field="roleText" data-sortable="true">角色
+
+                                            </th>
+                                            <th data-field="mobile" data-sortable="true">电话</th>
+                                          <!--  <th data-field="email" data-sortable="true">电子邮件</th> -->
+                                            <!--<th data-field="etprsText" data-sortable="true">企业</th>-->
+                                            <th data-field="iqbtName" data-sortable="true">孵化器</th>
+                                            <th data-field="statusText" data-sortable="true">状态</th>
+                                            <th data-field="action" data-formatter="userFmt" data-events="userEvt" >操作
+
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                <!-- End Example Events -->
+                            </div>
+                        </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <!-- Example Events -->
+                                    <div id="etprstoolbar" class="col-sm-12 m-b-xs">
+                                        <button type="button" class="btn btn-primary btn-sm" id="btneadd" data-url="{:url('/user/User/addQuitEtprs')}" role-tag2="adduser">
+                                            <i class="glyphicon glyphicon-plus "></i>&nbsp;新增毕业企业
+                                        </button>&nbsp;&nbsp;&nbsp;&nbsp;
+
+                                     <!--   <button type="button" class="btn btn-info btn-sm ml10" id="btneedit" data-url="{:url('/user/User/addUser',array('cate'=>'1011002','tab'=>'etprsusertable'))}" role-tag="edituser" table="etprsusertable">
+                                            <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                        </button>&nbsp;-->
+                                        <button type="button" class="btn btn-danger btn-sm ml10" id="btnedelete" data-url="{:url('/user/User/freezeUser')}" role-tag="deleteuser" table="etprsusertable">
+                                            <i class="glyphicon glyphicon-trash"></i>&nbsp;冻结
+                                        </button>
+                                        <!--<select data-placeholder="请选择用户类别...&nbsp;" style="width:150px;" class="chosen-user" tabindex="2" id="userCateSel">
+                                            <option value="">请选择用户类别</option>
+                                            {:widget("HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1011%'),'level'=>'2','flag'=>0),'default'=>'1011001'])}
+                                        </select>-->
+                                    </div>
+                                    <table id="etprsusertable" class="resettable" data-toggle="table" data-url="{:url('/user/User/getUsers',array('cate'=>'1011002'))}" data-search="true"
+                                           data-show-refresh="true" data-show-toggle="false" data-show-columns="false" data-toolbar="#etprstoolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="state" data-checkbox="true"></th>
+                                            <th data-field="name" data-sortable="true">登录名</th>
+                                            <th data-field="realname" data-sortable="true">真实姓名</th>
+                                           <!-- <th data-field="userCateText" data-sortable="true">用户分类</th>
+                                            <th data-field="roleText" data-sortable="true">角色-->
+                                            <th data-field="etprsName" data-sortable="true">所属企业
+
+                                            </th>
+                                            <th data-field="mobile" data-sortable="true">电话</th>
+                                            <th data-field="email" data-sortable="true">电子邮件</th>
+                                            <th data-field="iqbtName" data-sortable="true">孵化器</th>
+                                            <!--<th data-field="etprsText" data-sortable="true">企业</th>-->
+                                            <th data-field="statusText" data-sortable="true">状态</th>
+                                            <th data-field="action" data-formatter="etprsFmt" data-events="userEvt">操作
+
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <!-- End Example Events -->
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-3" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <!-- Example Events -->
+                                    <div id="tutortoolbar" class="col-sm-12 m-b-xs">
+                                        <!--<button type="button" class="btn btn-primary btn-sm" id="btntadd" data-url="{:url('/user/User/addUser',array('cate'=>'1011005','tab'=>'tutorusertable'))}" role-tag2="adduser">
+                                            <i class="glyphicon glyphicon-plus "></i>&nbsp;新增
+                                        </button>&nbsp;&nbsp;&nbsp;&nbsp;-->
+                                      <!--  <button type="button" class="btn btn-info btn-sm ml10" id="btntedit" data-url="{:url('/user/User/addUser',array('cate'=>'1011005','tab'=>'tutorusertable'))}" role-tag="edituser" table="tutorusertable">
+                                            <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                        </button>&nbsp;-->
+                                        <button type="button" class="btn btn-danger btn-sm ml10" id="btntdelete" data-url="{:url('/user/User/freezeUser')}" role-tag="deleteuser" table="tutorusertable">
+                                            <i class="glyphicon glyphicon-trash"></i>&nbsp;冻结
+                                        </button>
+                                        <!--<select data-placeholder="请选择用户类别...&nbsp;" style="width:150px;" class="chosen-user" tabindex="2" id="userCateSel">
+                                            <option value="">请选择用户类别</option>
+                                            {:widget("HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1011%'),'level'=>'2','flag'=>0),'default'=>'1011001'])}
+                                        </select>-->
+                                    </div>
+                                    <table id="tutorusertable" class="resettable" data-toggle="table" data-url="{:url('/user/User/getUsers',array('cate'=>'1011005'))}" data-search="true"
+                                           data-show-refresh="true" data-show-toggle="false" data-show-columns="false" data-toolbar="#tutortoolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                        <thead>
+                                        <tr>
+                                            <th data-field="state" data-checkbox="true"></th>
+                                            <th data-field="name" data-sortable="true">登录名</th>
+                                            <th data-field="realname" data-sortable="true">真实姓名</th>
+                                            <th data-field="userCateText" data-sortable="true">用户分类</th>
+                                            <th data-field="roleText" data-sortable="true">角色
+
+                                            </th>
+                                            <th data-field="mobile" data-sortable="true">电话</th>
+                                            <th data-field="email" data-sortable="true">电子邮件</th>
+                                            <th data-field="iqbtName" data-sortable="true">孵化器</th>
+                                            <!--<th data-field="etprsText" data-sortable="true">企业</th>-->
+                                            <th data-field="statusText" data-sortable="true">状态</th>
+                                            <th data-field="action" data-formatter="tutorFmt" data-events="userEvt">操作
+
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <!-- End Example Events -->
+                                </div>
+                            </div>
+                        </div>
+
+                        {elseif condition="$usercate=='1011003'"/}
+                        <div id="tab-5" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <!-- Example Events -->
+                                    <div id="wtoolbar" class="col-sm-12 m-b-xs">
+                                        <button type="button" class="btn btn-primary btn-sm " id="btnwadd" data-url="{:url('/user/User/addUser',array('cate'=>'1011003','tab'=>'wusertable'))}" role-tag2="adduser">
+                                            <i class="glyphicon glyphicon-plus "></i>&nbsp;新增
+                                        </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-info btn-sm ml10" id="btnwedit" data-url="{:url('/user/User/addUser',array('cate'=>'1011003','tab'=>'wusertable'))}" role-tag="edituser" table="wusertable">
+                                            <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                        </button>&nbsp;
+                                        <button type="button" class="btn btn-danger btn-sm ml10" id="btnwdelete" data-url="{:url('/user/User/freezeUser')}" role-tag="deleteuser" table="wusertable">
+                                            <i class="glyphicon glyphicon-trash"></i>&nbsp;冻结
+                                        </button>
+                                        <!--<select data-placeholder="请选择用户类别...&nbsp;" style="width:150px;" class="chosen-user" tabindex="2" id="userCateSel">
+                                            <option value="">请选择用户类别</option>
+                                            {:widget("HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1011%'),'level'=>'2','flag'=>0),'default'=>'1011001'])}
+                                        </select>-->
+                                    </div>
+                                    <table id="wusertable" class="resettable" data-toggle="table" data-url="{:url('/user/User/getUsers',array('cate'=>'1011003'))}" data-search="true"
+                                           data-show-refresh="true" data-show-toggle="false" data-show-columns="false" data-toolbar="#wtoolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                        <thead>
+                                        <tr>
+                                            <th data-field="state" data-checkbox="true"></th>
+                                            <th data-field="name" data-sortable="true">登录名</th>
+                                            <th data-field="realname" data-sortable="true">真实姓名</th>
+                                            <th data-field="userCateText" data-sortable="true">用户分类</th>
+                                            <th data-field="roleText" data-sortable="true">角色
+
+                                            </th>
+                                            <th data-field="mobile" data-sortable="true">电话</th>
+                                            <th data-field="email" data-sortable="true">电子邮件</th>
+                                            <!--<th data-field="iqbtName" data-sortable="true">孵化器</th>-->
+                                            <!--<th data-field="etprsText" data-sortable="true">企业</th>-->
+                                            <th data-field="statusText" data-sortable="true">状态</th>
+                                            <th data-field="action" data-formatter="userFmt" data-events="userEvt">操作
+
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <!-- End Example Events -->
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-6" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <!-- Example Events -->
+                                    <div id="ctoolbar" class="col-sm-12 m-b-xs">
+                                        <button type="button" class="btn btn-primary btn-sm " id="btncadd" data-url="{:url('/user/User/addUser',array('cate'=>'1011001','tab'=>'cusertable'))}" role-tag2="adduser">
+                                            <i class="glyphicon glyphicon-plus "></i>&nbsp;新增
+                                        </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-info btn-sm ml10" id="btncedit" data-url="{:url('/user/User/addUser',array('cate'=>'1011001','tab'=>'cusertable'))}" role-tag="edituser" table="cusertable">
+                                            <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                        </button>&nbsp;
+                                        <button type="button" class="btn btn-danger btn-sm ml10" id="btncdelete" data-url="{:url('/user/User/freezeUser')}" role-tag="deleteuser" table="cusertable">
+                                            <i class="glyphicon glyphicon-trash"></i>&nbsp;冻结
+                                        </button>
+                                        <!--<select data-placeholder="请选择用户类别...&nbsp;" style="width:150px;" class="chosen-user" tabindex="2" id="userCateSel">
+                                            <option value="">请选择用户类别</option>
+                                            {:widget("HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1011%'),'level'=>'2','flag'=>0),'default'=>'1011001'])}
+                                        </select>-->
+                                    </div>
+                                    <table id="cusertable" class="resettable" data-toggle="table" data-url="{:url('/user/User/getUsers',array('cate'=>'1011001','roleIds'=>'1'))}" data-search="true"
+                                           data-show-refresh="true" data-show-toggle="false" data-show-columns="false" data-toolbar="#ctoolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                        <thead>
+                                        <tr>
+                                            <th data-field="state" data-checkbox="true"></th>
+                                            <th data-field="name" data-sortable="true">登录名</th>
+                                            <th data-field="realname" data-sortable="true">真实姓名</th>
+                                            <th data-field="userCateText" data-sortable="true">用户分类</th>
+                                            <th data-field="roleText" data-sortable="true">角色
+
+                                            </th>
+                                            <th data-field="mobile" data-sortable="true">电话</th>
+                                            <th data-field="email" data-sortable="true">电子邮件</th>
+                                            <th data-field="etprsIqbtName" data-sortable="true">孵化器企业</th>
+                                            <!--<th data-field="etprsText" data-sortable="true">企业</th>-->
+                                            <th data-field="statusText" data-sortable="true">状态</th>
+                                            <th data-field="action" data-formatter="cuserFmt" data-events="userEvt">操作
+
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <!-- End Example Events -->
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-7" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <!-- Example Events -->
+                                    <div id="atoolbar" class="col-sm-12 m-b-xs">
+                                        <button type="button" class="btn btn-primary btn-sm " id="btnaadd" data-url="{:url('/user/User/addUser',array('cate'=>'1011004','tab'=>'ausertable'))}" role-tag2="adduser">
+                                            <i class="glyphicon glyphicon-plus "></i>&nbsp;新增
+                                        </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-info btn-sm ml10" id="btnaedit" data-url="{:url('/user/User/addUser',array('cate'=>'1011004','tab'=>'ausertable'))}" role-tag="edituser" table="ausertable">
+                                            <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                        </button>&nbsp;
+                                            <button type="button" class="btn btn-danger btn-sm ml10" id="btnadelete" data-url="{:url('/user/User/freezeUser')}" role-tag="deleteuser" table="ausertable">
+                                            <i class="glyphicon glyphicon-trash"></i>&nbsp;冻结
+                                        </button>
+                                        <!--<select data-placeholder="请选择用户类别...&nbsp;" style="width:150px;" class="chosen-user" tabindex="2" id="userCateSel">
+                                            <option value="">请选择用户类别</option>
+                                            {:widget("HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1011%'),'level'=>'2','flag'=>0),'default'=>'1011001'])}
+                                        </select>-->
+                                    </div>
+                                    <table id="ausertable" class="resettable" data-toggle="table" data-url="{:url('/user/User/getUsers',array('cate'=>'1011004'))}" data-search="true"
+                                           data-show-refresh="true" data-show-toggle="false" data-show-columns="false" data-toolbar="#atoolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                        <thead>
+                                        <tr>
+                                            <th data-field="state" data-checkbox="true"></th>
+                                            <th data-field="name" data-sortable="true">登录名</th>
+                                            <th data-field="realname" data-sortable="true">真实姓名</th>
+                                            <th data-field="userCateText" data-sortable="true">用户分类</th>
+                                            <th data-field="roleText" data-sortable="true">角色
+
+                                            </th>
+                                            <th data-field="mobile" data-sortable="true">电话</th>
+                                            <th data-field="email" data-sortable="true">电子邮件</th>
+                                            <th data-field="district" data-sortable="true">区域</th>
+                                            <!--<th data-field="etprsText" data-sortable="true">企业</th>-->
+                                            <th data-field="statusText" data-sortable="true">状态</th>
+                                            <th data-field="action" data-formatter="cuserFmt" data-events="userEvt">操作
+
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <!-- End Example Events -->
+                                </div>
+                            </div>
+                        </div>
+                        {/if}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

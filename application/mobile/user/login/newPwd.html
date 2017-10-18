@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>慧云数字化园区管理云平台-找回密码</title>
+<link href="__CSS__/style.min.css?v=3.0.0" rel="stylesheet">
+<link href="__CSS__/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+
+
+<script src="__PUBLIC__/login/js/jquery.min.js"></script>
+<script src="__PUBLIC__/login/js/common.js"></script>
+<!--背景图片自动更换-->
+<script src="__PUBLIC__/login/js/supersized.3.2.7.min.js"></script>
+
+<!--表单验证-->
+<link rel="stylesheet" href="__PUBLIC__/login/css/style.css">
+<script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+<script src="__JS__/base.js"></script>
+<!-- toastr CSS -->
+<!-- toastr CSS -->
+<link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+<!-- toastr Theme JavaScript -->
+<script src="__PLUG__/toastr/toastr.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $.supersized({
+
+            // 功能
+            slide_interval     : 4000,    // 转换之间的长度
+            transition         : 1,    // 0 - 无，1 - 淡入淡出，2 - 滑动顶，3 - 滑动向右，4 - 滑底，5 - 滑块向左，6 - 旋转木马右键，7 - 左旋转木马
+            transition_speed   : 1000,    // 转型速度
+            performance        : 1,    // 0 - 正常，1 - 混合速度/质量，2 - 更优的图像质量，三优的转换速度//（仅适用于火狐/ IE浏览器，而不是Webkit的）
+
+            // 大小和位置
+            min_width          : 0,    // 最小允许宽度（以像素为单位）
+            min_height         : 0,    // 最小允许高度（以像素为单位）
+            vertical_center    : 1,    // 垂直居中背景
+            horizontal_center  : 1,    // 水平中心的背景
+            fit_always         : 0,    // 图像绝不会超过浏览器的宽度或高度（忽略分钟。尺寸）
+            fit_portrait       : 1,    // 纵向图像将不超过浏览器高度
+            fit_landscape      : 0,    // 景观的图像将不超过宽度的浏览器
+
+            // 组件
+            slide_links        : 'blank',    // 个别环节为每张幻灯片（选项：假的，'民'，'名'，'空'）
+            slides             : [    // 幻灯片影像
+                {image : '__PUBLIC__/login/images/1.jpg'},
+                {image : '__PUBLIC__/login/images/2.jpg'},
+                //{image : './images/3.jpg'}
+            ]
+
+        });
+        //回车自动提交
+        $('#cfmpassword').keyup(function(event){
+            if(event.keyCode===13){
+                $("#btnreset").click();
+            }
+        });
+
+
+
+        $("#btnreset").click(function () {
+            if($("#password").val()==""){
+                $("#msg").html("密码必填");
+                return;
+            }
+            if($("#password").val()!=$("#cfmpassword").val()){
+                $("#msg").html("密码不一致");
+                return;
+            }
+            var regExp=/^(?![\d]+$)(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{6,20}$/;
+            if(!regExp.test($("#password").val())){
+                $("#msg").html("密码必须为6-20位字母，数字，符号组合");
+                return;
+            }
+            var pwd = $("#password").val();
+            var cfmpwd = $("#cfmpassword").val();
+            var phone = $("#phone").val();
+            var url = "{:url('/user/Login/findPassword')}" ;
+            /*$.post(url, {'phone':phone,'password':pwd,'cfmpassword':cfmpwd}, function(data){
+                if (data.code == 1) {
+                    toastr.success('重置密码成功，请用新密码登录');
+                    setInterval(function() {
+                        location.href="{:url('/user/Login/login')}";
+                    },2000)
+                } else {
+                    toastr.error(data.msg);
+                }
+            });*/
+        });
+    });
+
+</script>
+<body>
+
+<div class="register-container">
+    <h1>慧云数字化园区管理云平台</h1>
+
+    <div class="connect">
+        <p>重置新密码</p>
+    </div>
+
+    <form action="{:url('/user/User/findPassword')}" method="post" id="reset">
+
+        <div>
+            <input type="password" name="password" id="password" class="password" placeholder="新密码：必须为6-20位字母、数字或符号组合" onfocus="this.placeholder=''" onblur="this.placeholder='新密码：必须为6-20位字母、数字或符号组合'"  />
+        </div>
+        <div>
+            <input type="password"  name="cfmpassword" id="cfmpassword" placeholder="再次输入密码"  onfocus="this.placeholder=''" onblur="this.placeholder='再次输入密码'" />
+        </div>
+
+        <input type="hidden" id="phone" name="phone" value="{$phone|default=''}">
+
+        <button type="button" id="btnreset">确定重置</button>
+        <span style="color: #ff0000;" id="msg">{$msg|default=''}</span>
+    </form>
+
+
+</div>
+
+</body>
+</html>

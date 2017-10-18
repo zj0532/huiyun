@@ -1,0 +1,162 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/jBootPage/jBootsrapPage.css" rel="stylesheet">
+<script src="__PLUG__/jBootPage/jBootstrapPage.js"></script>
+<script type="text/javascript">
+    $(function(){
+        initResult(1);
+        $("#btnSearch").click(function(){
+            var searchText=$("#search").val();
+            initResult("1");
+        });
+    });
+
+    function createPage(pageSize, buttons, total) {
+        $(".pagination").jBootstrapPage({
+            pageSize : pageSize,
+            total : total,
+            maxPageButton:buttons,
+            onPageClicked: function(obj, pageIndex) {
+                initResult(pageIndex+1);
+            }
+        });
+    }
+    function viewContact(resosId,etprsId){
+        var type=$("#type").val();
+        var url="{:url('/service/Resos/getContact')}";
+        $.post(url,{resosId:resosId,type:type}, function(data) {
+            if(data.code=="1"){
+                //合作中，或者资源/需求用户跟当前用户是一个用户
+                showCotact(data.data.id,data.data.etprsId,data.data.contact,data.code);
+            }else if(data.code=="2"){
+                //新合作
+                var vdata='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要查看联系方式么？查看后将生成合作记录，方便后期跟进。</div>' +
+                        '<div class="modal-footer"><button class="btn btn-primary" onclick="showCotact(\''+data.data.id+'\',\''+data.data.etprsId+'\',\''+data.data.contact+'\',\''+data.code+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+                show_modal("提示",vdata,"modal-sm");
+                //showCotact(data.data.id,data.data.etprsId,data.data.contact,data.code);
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+    function showCotact(resosId,etprsId,contact,code){
+        if(code=="2"){
+            $('#myModal').modal('hide');
+            //完全隐藏时候触发。
+            $('#myModal').on('hidden.bs.modal', function () {
+                var type=$("#type").val();
+                var url="{:url('/service/Resos/coperate')}";
+                $.post(url,{resosId:resosId,etprsId:etprsId,type:type}, function(data) {
+                    if(data.code=="1"){
+                        toastr.success("已生成合作记录");
+                        model_contact(contact);
+                    }
+                });
+            })
+        }else{
+            model_contact(contact);
+        }
+
+    }
+    function model_contact(contact){
+        var vdata='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>' +
+                '<div class="modal-body"><p>' +
+                contact+
+                '</p></div>' +
+                '<div class="modal-footer">' +
+                    /*'<button class="btn btn-primary" onclick="coperate(\''+resosId+'\',\''+etprsId+'\')">确定</button>' +*/
+                '<button class="btn btn-glyph" data-dismiss="modal" onclick="return false;">关闭</span></button></div>';
+        show_modal("提示",vdata,"");
+    }
+
+    function initResult(page){
+        var searchText=$("#search").val();
+        var type=$("#type").val();
+        var url="{:url('/service/Resos/getPlatResos')}";
+        var stime=new Date();
+        $.post(url,{search:searchText,page:page,type:type}, function(data) {
+            $("#result_view").html("");
+            if(data.code=="0"){
+                $("#title").html('检索不到'+(type=="0"?"资源":"需求"));
+                var etime=new Date();
+                $("#spend").html((etime-stime)/1000);
+                $("#datasize").html("0");
+            }
+            if(data.code=="1"){
+                $("#datasize").html();
+                if(page==1){
+                    createPage(data.pageSize, 7, data.total);
+                }
+                if(data.total==0){
+                    $("#title").html('检索不到'+(type=="0"?"资源":"需求"));
+                    var etime=new Date();
+                    $("#spend").html((etime-stime)/1000);
+                }else{
+                    if(searchText==""){
+                        $("#title").html('为您找到 <span class="text-navy">'+data.total+'</span> 个'+(type=="0"?"资源":"需求"));
+                    }else{
+                        $("#title").html('为您找到相关结果 <span class="text-navy">'+data.total+'</span> 个： “<span class="text-navy">'+searchText+'</span>”');
+                    }
+                    var resulthtml="";
+                    var resultdata=data.data;
+
+                    for(var i=0;i<resultdata.length;i++){
+                        var detailid=resultdata[i].id;
+                        var detailurl="{:url('/service/Resos/detail')}?id="+detailid;
+                        var rs_title=resultdata[i].name.replace(searchText,"<span style='color:red;'>"+searchText+"</span>");
+                        var rs_desc=resultdata[i].desc.replace(searchText,"<span style='color:red;'>"+searchText+"</span>");
+                        resulthtml=resulthtml+'<div class="search-result"> <h3><a href="javascript:void(0)">'+rs_title+'</a><a class="pull-right btn btn-default" href="javascript:void(0)" onclick="viewContact(\''+resultdata[i].id+'\',\''+resultdata[i].etprsId+'\')" title="查看联系方式"><i class="glyphicon glyphicon-eye-open">联系</i></a></h3> <a href="#" class="search-link">截至时间：'+resultdata[i].deadlineTime+'</a> <p>'+rs_desc+'<a target="_blank" href="'+detailurl+'">【详情】</a></p></div>';
+                    }
+                    var etime=new Date();
+                    $("#spend").html((etime-stime)/1000);
+                    $("#result_view").html(resulthtml);
+                }
+            }
+        });
+    }
+</script>
+
+
+</head>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <input type="hidden" id="type" value="{$type}">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <h2 id="title">
+
+                    </h2>
+                    <small>搜索用时  (<span class="text-navy" id="spend"></span>秒)</small>
+
+                    <div class="search-form">
+                        <form action="#" method="get">
+                            <div class="input-group">
+                                <input type="text" placeholder="检索资源" name="search" id="search" class="form-control input-lg">
+                                <div class="input-group-btn">
+                                    <input type="button"class="btn btn-lg btn-primary" id="btnSearch" value="搜索">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <span id="result_view">
+
+                    </span>
+
+                    <div class="text-center">
+                        <ul class="pagination"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}
+
+

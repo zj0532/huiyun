@@ -1,0 +1,258 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css'  rel='stylesheet'/>
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datetimepicker({
+            minView: "month",
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: true,//今日按钮
+            forceParse : true,
+            format: "yyyy-mm-dd"
+        });
+
+        $("#item").change(function () {
+            var item=$("#item").val();
+            if(item!=''){
+                var url="{:url('/fice/Fice/getFeeItemsOpt')}";
+                var html='<option value="">--收费标准--</option>';
+                $.post(url,{item:item},function(data) {
+                    for (var i = 0; i < data.length; i++) {
+                        var obj = data[i];
+                        html=html+'<option value="'+obj.id+'">'+obj.name+'</option>'
+                    }
+                    $("#itemopt").html(html);
+                });
+            }else{
+                $("#itemopt").html('<option value="">--收费标准--</option>');
+                //先隐藏所有
+                $("#numrationfield").hide();
+                $("#cyclefield").hide();
+                $("#pricefield").hide();
+                $("#feefield").hide();
+                $("#startdata").hide();
+                $("#enddata").hide();
+                $("#numfield").hide();
+                $("#feestylefield").hide();
+            }
+
+        });
+
+        $("#itemopt").change(function () {
+            $("#showfeestyle").html("");
+            $("#shownumration").html("");
+            $("#showcycle").html("");
+            var itemopt=$("#itemopt").val();
+
+            //先隐藏所有
+            $("#numrationfield").hide();
+            $("#cyclefield").hide();
+            $("#pricefield").hide();
+            $("#feefield").hide();
+            $("#startdata").hide();
+            $("#enddata").hide();
+            $("#numfield").hide();
+            $("#feestylefield").hide();
+            if(itemopt!=''){
+                $("#feestylefield").show();
+                var url="{:url('/fice/Fice/getItemsOptDetail')}";
+                $.post(url,{optId:itemopt},function(data) {
+                    $("#showfeestyle").html(data.feestyleText);
+                    $("#shownumration").html(data.numrationText);
+                    $("#price").html(data.price);
+                    $("#fee").val(data.fee);
+                    if(data.cycle!='0'){
+                        $("#showcycle").html(data.cycle+"个月");
+                    }
+                    //单价*数量
+                    if(data.feestyle=="num_price"){
+                        $("#numrationfield").show();//计量方式（单价计算方式）
+
+                        var numration=data.numration;//计量方式
+                        if(numration=="data") {
+                            $("#numfield").show();
+                        }else{
+                            $("#numfield").hide();
+                        }
+                        //缴费周期
+                        if(data.cycle=='0'||data.cycle==''){
+                            $("#startdata").hide(); //开始时间
+                            $("#enddata").hide(); //结束时间
+                            $("#cyclefield").hide(); //缴费周期 （月）
+                        }else{
+                            $("#startdata").show(); //开始时间
+                            $("#enddata").show(); //结束时间
+                            $("#cyclefield").show(); //缴费周期 （月）
+                        }
+                        $("#pricefield").show(); //单价
+                        //$("#pricefield").show(); //单价
+
+                        $("#total").val(data.fee);
+                        $("#total").attr("readonly",true);
+                    }
+                    //指定金额
+                    if(data.feestyle=="numration"){
+                        //计量方式 ,指定金额，单价其实没什么意义。留着吧
+                        if(data.numration!=''){
+                            $("#numrationfield").show();//计量方式（单价计算方式）
+                            var numration=data.numration;//计量方式
+                            if(numration=="data") {
+                                $("#numfield").show();
+                            }else{
+                                $("#numfield").hide();
+                            }
+                        }
+                        //缴费周期
+                        if(data.cycle=='0'||data.cycle==''){
+                            $("#startdata").hide(); //开始时间
+                            $("#enddata").hide(); //结束时间
+                            $("#cyclefield").hide(); //缴费周期 （月）
+                        }else{
+                            $("#startdata").show(); //开始时间
+                            $("#enddata").show(); //结束时间
+                            $("#cyclefield").show(); //缴费周期 （月）
+                        }
+                        $("#feefield").show(); //开始时间
+                        $("#total").val(data.fee); //开始时间
+                        $("#total").attr("readonly",true);
+                    }
+                    //每户单独录入
+                    if(data.feestyle=="input"){
+                        //计量方式
+                        if(data.numration!=''){
+                            $("#numrationfield").show();//计量方式（单价计算方式）
+                            var numration=data.numration;//计量方式
+                            if(numration=="data") {
+                                $("#numfield").show();
+                            }else{
+                                $("#numfield").hide();
+                            }
+                        }
+                        //缴费周期
+                        if(data.cycle=='0'||data.cycle==''){
+                            $("#startdata").hide(); //开始时间
+                            $("#enddata").hide(); //结束时间
+                            $("#cyclefield").hide(); //缴费周期 （月）
+                        }else{
+                            $("#startdata").show(); //开始时间
+                            $("#enddata").show(); //结束时间
+                            $("#cyclefield").show(); //缴费周期 （月）
+                        }
+                        $("#feefield").show(); //指定金额
+
+                        $("#total").attr("readonly",true);
+                    }
+                });
+            }else{
+                $("#msg").html('');
+            }
+        });
+
+        $("#btntotal").click(function () {
+            var fee =$("#fee").val();
+            var url="{:url('/fice/Fice/getFeeTotal')}";
+            var startTime=$("#startTime").val();
+            var endTime=$("#endTime").val();
+            var optid=$("#itemopt").val();
+            var etprsId=$("#etprsId").val();
+            var num=$("#num").val();
+
+            $.post(url,{optId:optid,etprsId:etprsId,start:startTime,end:endTime,fee:fee,tmpnum:num},function(data) {
+                $("#total").val(data.total);
+                $("#num").val(data.num);
+                $("#total").attr("readonly",false);
+            });
+        });
+    });
+</script>
+
+
+<form action="{:url('/fice/Fice/saveFeeRcd')}" method="post" tableId="feeTable" class="form-horizontal m-t" id="feeForm">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">选择企业：</label>
+        <div class="col-sm-8">
+            <select data-placeholder="企业..." class="form-control chosen-select col-sm-12" tabindex="2" name="etprsId" id="etprsId">
+                <option value="">请选择企业</option>
+                {:widget("user/HtmlWidget/initCommonSelect",['table'=>'enterprise','con'=>array('iqbtId'=>session('iqbtId'),'status'=>'1001016'),'default'=>isset($data['etprsId'])?$data['etprsId']:'0','field'=>'id,name'])}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">收费项目：</label>
+        <div class="col-sm-8">
+
+            <select class="inline" id="item" name="itemId">
+                <option value="">--临时性收费项目--</option>
+                {:widget("user/HtmlWidget/initCommonSelect",['table'=>'feeItem','con'=>array('iqbtId'=>session('iqbtId'),'cate'=>array('eq','1029003')),'field'=>'id,name'])}
+            </select>
+            <select class="inline" id="itemopt" name="optId">
+                <option value="">--收费标准--</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group" id="feestylefield" style="display: none;">
+        <label class="col-sm-3 control-label">收费方式：</label>
+        <div class="col-sm-8" id="showfeestyle">
+
+        </div>
+    </div>
+    <div class="form-group" id="numrationfield" style="display: none;">
+        <label class="col-sm-3 control-label">计量方式：</label>
+        <div class="col-sm-8" id="shownumration">
+
+        </div>
+    </div>
+    <div class="form-group" id="cyclefield" style="display: none;">
+        <label class="col-sm-3 control-label">缴费周期：</label>
+        <div class="col-sm-8" id="showcycle">
+
+        </div>
+    </div>
+    <div class="form-group" id="pricefield" style="display: none;">
+        <label class="col-sm-3 control-label">单价(元)：</label>
+        <div class="col-sm-8" id="price">
+        </div>
+    </div>
+    <div class="form-group" id="feefield">
+        <label class="col-sm-3 control-label">金额(元)：</label>
+        <div class="col-sm-8">
+            <input id="fee" type="text" class="form-control" value="{$data.fee|default=''}">
+        </div>
+    </div>
+   <!-- <div class="form-group" id="startdata">
+        <label class="col-sm-3 control-label">开始时间：</label>
+        <div class="col-sm-8">
+            <input id="startTime" type="text" class="form-control datepicker opt-require" name="startTime" value="{$data.startTime|default=time()|date='Y-m-d',###}">
+        </div>
+    </div>
+    <div class="form-group" id="enddata">
+        <label class="col-sm-3 control-label">结束时间：</label>
+        <div class="col-sm-8">
+            <input id="endTime" type="text" class="form-control datepicker opt-require" name="endTime" value="{$data.endTime|default=time()|date='Y-m-d',###}">
+        </div>
+    </div>  -->
+    <div class="form-group" id="numfield">
+        <label class="col-sm-3 control-label">数量：</label>
+        <div class="col-sm-8">
+            <input id="num" type="text" class="form-control" name="num" value="{$data.num|default=''}">
+        </div>
+    </div>
+    <div class="form-group" id="totalfield">
+        <label class="col-sm-3 control-label">缴费金额(元)：</label>
+        <div class="col-sm-8">
+            <input id="total" type="text" class="form-control" name="total" value="{$data.total|default=''}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-3">
+            <span style="color: red" id="msg"></span>
+            <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+            <!--<input type="hidden" id="etprsId" name="etprsId" value="{$etprsId|default='0'}">-->
+            <button type="button" class="btn btn-primary btn-sm" id="btntotal">计算</button>
+            <button type="button" class="btn btn-primary btn-sm btn-save">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+        </div>
+    </div>
+</form>

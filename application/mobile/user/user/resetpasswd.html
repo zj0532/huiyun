@@ -1,0 +1,83 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<title>修改密码</title>
+<meta name="Keywords" content="" />
+<meta name="Description" content="" />
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/css/public.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/font-awesome/css/font-awesome.min.css" media="all">
+<script src="__PUBLIC__/mobile/js/jquery_1_11_2_min.js"></script>
+<script src="__PUBLIC__/mobile/js/jquery-2.1.1.min.js"></script>
+<script src="__PUBLIC__/mobile/js/bootstrap.min.js?v=3.4.0"></script>
+<script src="__JS__/base.js"></script>
+<script src="__JS__/bootstrap_validate.js"></script>
+<!-- toastr CSS -->
+<link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+<!-- toastr Theme JavaScript -->
+<script src="__PLUG__/toastr/toastr.js"></script>
+<script>
+    $(function(){
+        $("#btnsave").on("click",function(){
+            var regExp=/^(?![\d]+$)(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{6,20}$/;
+            if(!regExp.test($("#newpassword").val())){
+                toastr.error("密码必须为6-20位字母，数字，符号组合");
+            }else{
+                var a=$("#userform"),b=a.prop("action"),c=a.attr("id"),d=custom_validate(c);0!=d&&$.post(b,serializeJson(a.serializeArray()),function(a){
+                    if(a.code ==1){
+                        toastr.success(a.msg);
+                        location.href="{:url('/user/Login/logout')}";
+                    }else{
+                        toastr.error(a.msg)
+                    }
+                })
+            }
+
+        });
+
+        $('.close').click(function(){
+            $(this).siblings('input').val("");
+
+        })
+    });
+</script>
+<body>
+<style>
+    .user_com{margin-top:15px;}
+	.Wallet dl dt{float:left;width:23%;}
+	.Wallet dl input{font-size:15px;float:left;width:68%;height:35px;line-height:35px;margin-top:5px;background: none;border:none;}
+    .Wallet dl img{float:left;width:17px;height:17px;margin-top:14px;}
+</style>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+       <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">修改密码</div>
+    <div class="h-right" id ="btnsave">保存</div>
+</div>
+<div class="user_com">
+    <form id="userform" action="{:url('/user/User/savepwd')}" method="post" tableId="usertable" >
+        <div class="Wallet">
+            <dl>
+                <dt>密码</dt>
+                <input type="password" class="form-control " name="password" id="password" placeholder="密码">
+                <img src="__PUBLIC__/mobile/images/delete.png" class="close">
+            </dl>
+            <dl>
+                <dt>新密码</dt>
+                <input type="password" class="form-control " name="newpassword" id="newpassword" placeholder="新密码">
+                <img src="__PUBLIC__/mobile/images/delete.png" class="close">
+            </dl>
+            <dl>
+                <dt>确认密码</dt>
+                <input  type="password" class="form-control eqConfirm" forfield="newpassword" name="confirmpassword" id="confirmpassword" placeholder="确认密码">
+                <img src="__PUBLIC__/mobile/images/delete.png" class="close">
+            </dl>
+        </div>
+    </form>
+</div>
+</body>
+</html>

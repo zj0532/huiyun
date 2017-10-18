@@ -1,0 +1,110 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script src="__JS__/content.min.js?v=1.0.0"></script>
+<script type="text/javascript">
+    $(function(){
+        $("#btnback").click(function(){
+            window.history.go(-1);
+        });
+    });
+    function addLine(id){
+
+        var etprsId=$("#etprsId").val();
+        var url="{:url('/tutor/Tutor/addLine')}?etprsId="+etprsId;
+        $.post(url,{"id":id},function(data) {
+            show_modal("新增孵化阶段", data, "");
+        });
+    }
+    function addEvt(id,planId){
+       // alert(planId);return;
+        var etprsId=$("#etprsId").val();
+        var url="{:url('/tutor/Tutor/addEvt')}?etprsId="+etprsId;
+        $.post(url,{"id":id,"planId":planId},function(data) {
+            show_modal("新增孵化阶段", data, "");
+        });
+    }
+
+    function initOther(){
+        var etprsId=$("#etprsId").val();
+        var rurl = "{:url('/tutor/Tutor/tutorplan')}?etprsId="+etprsId;
+        location.href = rurl;
+    }
+</script>
+
+<input type="hidden" id="etprsId" value="{$etprsId|default=0}">
+<input type="hidden" id="usercate" value="{$userCate|default=0}">
+ <div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div>
+                                    {if condition="$userCate=='1011002'"}
+                                            <a href="#" class="btn btn-sm btn-primary" onclick="addLine(0)"> <i class="fa fa-plus"></i>&nbsp;新增</a>
+                                    {/if}
+                                       <!-- <a href="#" class="btn btn-sm btn-primary" id="btnback"> <i class="fa fa-backward"></i>&nbsp;返回</a>-->
+                                    </div>
+                                    <div id="vertical-timeline" class="vertical-container light-timeline">
+                                        {volist name="lines" id="data"}
+                                        <div class="vertical-timeline-block">
+                                            <div class="vertical-timeline-icon navy-bg">
+                                                <i class="fa fa-file-text"></i>
+                                            </div>
+
+                                            <div class="vertical-timeline-content">
+                                                <h2>{$data.name|default=''}
+                                                    {if condition="$userCate=='1011002'"}
+                                                    <a href="#" onclick="addLine({$data['id']})"> <i class="fa fa-edit text-navy"></i></a>
+                                                    {/if}
+                                                </h2>
+                                                <h4>{$data.goal|default=''}</h4>
+                                                {if condition='!empty($data.evts)'}
+                                                {volist name="$data.evts" id="evt"}
+                                                <p>
+                                                    <span class="vertical-date">
+                                                    <small>{$evt.eventTime|default=''}&nbsp;&nbsp;</small>
+                                                    </span>
+                                                    <small>
+                                                        {$evt.tutors|default=''}&nbsp;&nbsp;
+                                                    </small>
+                                                    {$evt.desc|default=''}
+                                                    {if condition="$userCate=='1011002'"}
+                                                    <a href="#"  onclick="addEvt({$evt['id']|default=0},{$data['id']|default=0})"> <i class="fa fa-edit text-navy"></i></a>
+                                                    {/if}
+                                                </p>
+                                                {/volist}
+                                                {/if}
+                                                {if condition="$userCate=='1011002'"}
+                                                <a href="#" class="btn btn-sm btn-info" onclick="addEvt(0,{$data['id']|default=0})"> 新增孵化事件</a>
+                                                {/if}
+                                                <span class="vertical-date">
+                                                    <small>{$data.startTime|default=''} 至 {$data.endTime|default=''}</small>
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                        {/volist}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

@@ -1,0 +1,202 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+<script src="__JS__/bootstrap_validate.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var chars=['taxfile','security','reward'];
+        initfile(chars);
+
+        $("#btnsave").click(function () {
+            var form = $("#roomaplForm");
+            var err=custom_validate("roomaplForm");
+            var url="{:url('/index/Apply/saveRoomApl')}";
+            if(err==0){
+                return;
+            }else {
+                var data = form.serialize();
+                $.post(url, data, function (data) {
+                    if (data.code == 1) {
+                        toastr.success(data.msg);
+                        location.href="{:url('/index/Apply/etprsroomapl')}";
+                    } else {
+                        toastr.error(data.msg);
+                    }
+                });
+            }
+        });
+
+
+    });
+
+    function initfile(fields){
+        var ctmparams=new Array();
+        $.each(fields,function(index,value){
+            var tmp = new Object();
+            tmp.name=value;
+            tmp.value=$("#h"+value).val();
+            ctmparams[ctmparams.length] = tmp;
+        });
+        var fileUrl="{:url('/index/Index/initfiles')}";
+        var oFileInput = new FileInput();
+        var url="{:url('/user/Login/saveaplfile')}";
+        $.post(fileUrl,serializeJson(ctmparams),function(data) {
+            $.each(fields,function(index,value){
+                var tmpText=data[value];
+                if(tmpText==""||tmpText==undefined||tmpText==null){
+                    oFileInput.Init(value,url,[],"h"+value);
+                }else{
+                    oFileInput.Init(value,url,["<img src='__PUBLIC__/"+tmpText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"h"+value);
+                }
+            });
+
+        });
+    }
+    function FileInput() {
+        var oFile = new Object();
+        //初始化fileinput控件（第一次初始化）
+        oFile.Init = function(ctrlName,url,initImg,hidefield) {
+            //alert(JSON.stringify(initImg));
+            var control = $('#' + ctrlName);
+            //初始化上传控件的样式
+            control.fileinput({
+                showPreview:false,
+                language: 'zh', //设置语言
+                uploadUrl:url+"?cate="+ctrlName, //上传的地址..
+                allowedFileExtensions: ['jpg','jpeg','gif','png',"doc","docx","xls","xlsx","ppt","pptx"],//接收的文件后缀
+                showUpload: false, //是否显示上传按钮
+                showCaption: true,//是否显示标题
+                browseClass: "btn btn-primary btn-inline", //按钮样式
+                dropZoneEnabled: false,//是否显示拖拽区域
+                initialPreview: initImg,
+                maxFileSize: 3100,//单位为kb，如果为0表示不限制文件大小
+                maxFileCount:0, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount:false,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！"
+            }).on("filebatchselected", function(event, files) {
+                $(this).fileinput("upload");
+            });
+
+            //导入文件上传完成之后的事件
+            $("#"+ctrlName).on("fileuploaded", function (event, data, previewId, index) {
+                if(hidefield!=""){
+                    $("#"+hidefield).val(data["response"]["data"]);
+                }
+                toastr.success("上传成功");
+            });
+        }
+        return oFile;
+    };
+</script>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">续约服务</div>
+</div>
+<div class="user_com">
+
+    <div class="row">
+                    <div class="ibox-content">
+                        <form class="form-horizontal m-t" id="roomaplForm" method="post" action="">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">现入驻房间号：</label>
+                                <div class="col-sm-7">
+                                    <input id="roomNo" type="text" class="form-control text" name="roomNo" value="{$data.roomNo|default=''}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">现入驻面积（㎡）：</label>
+                                <div class="col-sm-7">
+                                    <input id="currarea" type="text" class="form-control require decimal" name="currarea" value="{$data.currarea|default=''}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">申请增加面积（㎡）：</label>
+                                <div class="col-sm-7">
+                                    <input id="plusarea" type="text" class="form-control require decimal" placeholder="申请增加面积" name="plusarea" value="{$data.plusarea|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">联系电话：</label>
+                                <div class="col-sm-7">
+                                    <input id="mobile" type="text" class="form-control mobile require" name="mobile" value="{$data.mobile|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">本年度营业额(万元)：</label>
+                                <div class="col-sm-7">
+                                    <input id="turnover" type="text" class="form-control require decimal" name="turnover" value="{$data.turnover|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">本入驻年度上缴税收(万元)：</label>
+                                <div class="col-sm-7">
+                                    <input id="tax" type="text" class="form-control require decimal" name="tax" value="{$data.tax|default=''}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">本入驻年度财务报表：</label>
+                                <div class="col-sm-7" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                    <input type="file" class="" id="taxfile" value="">
+                                    <input type="hidden"  name="taxfile" id="htaxfile" value="{$data.taxfile|default=''}" class="opt-require">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">吸纳就业人数：</label>
+                                <div class="col-sm-7">
+                                    <input id="emplmt" type="text" class="form-control require number" name="emplmt" value="{$data.emplmt|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">上传社保证明：</label>
+                                <div class="col-sm-7" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                    <input type="file" class="" id="security" value="">
+                                    <input type="hidden"  name="security" id="hsecurity" class="opt-require" value="{$data.security|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">吸纳见习人数：</label>
+                                <div class="col-sm-7">
+                                    <input id="trainee" type="text" class="form-control require number" name="trainee" value="{$data.trainee|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">入驻期间有无特殊贡献或受特别奖励（上传）：</label>
+                                <div class="col-sm-7" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .pdf">
+                                    <input type="file" class="" id="reward" value="">
+                                    <input type="hidden"  name="reward" id="hreward" class="" value="{$data.reward|default=''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">企业发展情况：</label>
+                                <div class="col-sm-7">
+                                    <textarea style="width:100%;" class="" id="dvlp" name="dvlp">{$data.dvlp|default=''}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">申请原因：</label>
+                                <div class="col-sm-7">
+                                    <textarea style="width:100%;" id="reason" name="reason" class="require">{$data.reason|default=''}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <input type="hidden" id="id" name="id" value="{$data.id|default=''}">
+                                    <button class="btn btn-primary" type="button" id="btnsave">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交申请</button>
+                                    <span style="color: #ff0000;" id="msg">{$msg|default=''}</span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+</body>
+</html>

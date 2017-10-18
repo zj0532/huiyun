@@ -1,0 +1,148 @@
+<link href="__CSS__/plugins/chosen/chosen.min.css" rel="stylesheet">
+<script src="__JS__/plugins/chosen/chosen.jquery.min.js"></script>
+<!-- toastr CSS -->
+<link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+<!-- toastr Theme JavaScript -->
+<script src="__PLUG__/toastr/toastr.js"></script>
+<script src="__JS__/bootstrap_validate.js"></script>
+<script type="text/javascript">
+    $(function () {
+        initIqbt();
+        $("#etprsiqbtId").on("change",function(){
+            initIqbt();
+        });
+
+        $("#btnnext").click(function () {
+            var url="{:url('/index/Apply/setEtprsIqbt')}";
+            var iqbtId=$("#iqbtId").val();
+            if(iqbtId==""){
+                toastr.error("必须选择一个入驻孵化器");
+                return;
+            }
+            var apltype=$('input:radio[name="apltype"]:checked').val();
+            $.post(url, {"iqbtId":iqbtId,"apltype":apltype}, function (data) {
+                if(data.code=="1"){
+                    if(apltype==0){
+                        location.href="{:url('/index/Apply/teamapl')}";
+                    }else if(apltype==1){
+                        location.href="{:url('/index/Apply/etprsapl')}";
+                    }
+                }else{
+                    toastr.error("保存失败,请重新提交");
+                }
+            });
+        });
+
+        $("#btnlogin").click(function () {
+            var iqbtId=$("#iqbtId").val();
+            var etprsIqbtId=$("#etprsIqbtId").val();
+            location.href="{:url('/user/Login/login')}?iqbtId="+iqbtId+"&etprsIqbtId="+etprsIqbtId;
+        });
+        $("#ciqbtId").change(function () {
+            $("#iqbtId").val($(this).val());
+        });
+    });
+
+    function initIqbt(){
+        if($("#etprsiqbtId").length>0){
+            var etprsIqbtId=$("#etprsiqbtId").val();
+            if(etprsIqbtId!=""){
+                var url="{:url('/index/Index/initIqbt')}";
+                $.post(url, {"etprsIqbtId":etprsIqbtId}, function (data) {
+                    /*alert($("#iqbtId").html());*/
+                    /*alert(data.length);
+                     alert($("#iqbtId").length);*/
+                    $("#ciqbtId").html("");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#ciqbtId").append("<option value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>");
+                    }
+                    $("#iqbtId").val($("#ciqbtId option:checked").val());
+                });
+            }
+        }
+
+    }
+</script>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#FFF;">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">关闭</span></button>
+                <h4 class="modal-title" id="myModalLabel">用户注册成功，请完善入驻信息。</h4>
+            </div>
+
+            <div class="modal-body" style="text-align:center;">
+                
+                <div class="row">
+                    <form action="{:url('/user/Login/teamapl')}" class="form-horizontal" method="post">
+                        <fieldset>
+                        {if condition="!empty($iqbtName)"}
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">入驻孵化器 </label>
+                                <div class="col-sm-8" style="text-align: left;">
+                                    {$iqbtName}
+                                </div>
+                            </div>
+                        {else/}
+                            {if condition="empty($etprsIqbtId)"}
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">选择孵化器 </label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="etprsiqbtId" class="form-control">
+                                        {:widget("user/HtmlWidget/initCommonSelect",['table'=>'EtprsIqbt','con'=>array(),'default'=>'','field'=>'id,name'])}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">入驻孵化器 </label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="ciqbtId" name="iqbtId" class="form-control require">
+
+                                    </select>
+                                </div>
+                            </div>
+                            {else/}
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">入驻孵化器 </label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="ciqbtId" class="form-control require">
+                                        {volist name="iqbts" id="iqbt"}
+                                        <option value="{$iqbt.id}">{$iqbt.name}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                            {/if}
+                         {/if}
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">申请类型：</label>
+                                <div class="col-sm-8" style="text-align: left;">
+                                    <div class="radio radio-success radio-inline">
+                                        <input type="radio" id="apltype1" value="0" name="apltype" checked>
+                                        <label for="apltype1" class="text-success"><b>企业申请</b></label>
+                                    </div>
+                                    <div class="radio radio-success radio-inline">
+                                        <input type="radio" id="apltype2" name="apltype" value="1">
+                                        <label for="apltype2" class="text-success"><b>团队申请</b></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" name="iqbtId" id="iqbtId" value="{$iqbtId|default=0}">
+                <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+                <button type="button" class="btn btn-default" id="btnlogin"><i class="fa fa-save"></i> <span
+                        class="bold">返回登录</span></button>
+                <button type="button" class="btn btn-primary" id="btnnext"><i class="fa fa-save"></i> <span
+                        class="bold">下一步</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

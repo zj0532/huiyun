@@ -1,0 +1,68 @@
+{include file="user@login/addheader" /}
+<script type="text/javascript">
+    $(function(){$("#parentId").change(function(){var a=$(this).find("option:selected").val();$("#level").val(a?2:1)}),$("#isRole").change(function(){$(this).is(":checked")?$("#chkParent").css("display","block"):$("#chkParent").css("display","none")});var a=document.querySelector(".js-switch");new Switchery(a,{size:"small"})});
+</script>
+<form id="userform" action="{:url('/user/User/saveRole')}" method="post" tableId="roletable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="rolename">角色名称</label>
+            <div class="col-sm-6">
+                <input class="form-control require" table="user" name="rolename" id="rolename" placeholder="角色名称" value="{$data.rolename|default=''}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="isRole">可设置权限</label>
+            <div class="col-sm-6">
+                    <input type="checkbox" class="js-switch" id="isRole" name="isRole" value="1"  {if condition="isset($data.isRole) AND $data.isRole eq '1'"}checked{/if} />
+            </div></span>
+        </div>
+
+        <div class="form-group" style="display: {if condition='isset($data.isRole)'}{if condition='$data.isRole eq 1'}block{else /}none{/if}{else /}none{/if};" id="chkParent">
+            <span><label class="col-sm-4 control-label" for="parentId">上级角色</label>
+            <div class="col-sm-6">
+                <select data-placeholder="上级角色..." class="chosen-select col-sm-12" tabindex="2" name="parentId" id="parentId">
+                    <option value="">选择上级角色</option>
+                    {:widget("user/HtmlWidget/initCommonSelect",['table'=>'UserRole','con'=>array('level'=>'1','isRole'=>'0','iqbtId'=>['in','0,'.session('iqbtId')]),'default'=>isset($data['parentId'])?$data['parentId']:'0','field'=>'id,rolename'])}
+                </select>
+            </div></span>
+        </div>
+        {if condition="!empty($iqbts)&&(isset($data['id'])&&$data['id']>6)||(empty($data['id'])&&session('user.userCate')=='1011001')"}
+        <div class="form-group">
+            <span>
+                <label class="col-sm-4 control-label" for="sort">孵化器</label>
+                <div class="col-sm-6">
+                    <select data-placeholder="请选择孵化器..."  placeholder="孵化器" class="chosen-select form-control col-sm-12"  tabindex="6" id="iqbtId" name="iqbtId">
+                    {volist name="iqbts" id="iqbt"}
+                    <option value="{$iqbt.id}" >{$iqbt.name}</option>
+                    {/volist}
+                    </select>
+                </div>
+            </span>
+        </div>
+        {/if}
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="sort">排序</label>
+            <div class="col-sm-6">
+                <input class="form-control require number" name="sort" id="sort" placeholder="排序" value="{$data.sort|default='0'}">
+            </div></span>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="desc">说明</label>
+            <div class="col-sm-6">
+                <textarea class="form-control" name="desc" id="desc">{$data.desc|default=''}</textarea>
+            </div></span>
+        </div>
+
+        <div class="form-group">
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="level" name="level" value="{$data.level|default='1'}">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

@@ -1,0 +1,70 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+
+    });
+    function dosubmit(){
+        var form = $("#batchform");
+        var url = form.prop("action");
+        var tableId = form.attr("tableId");
+        var formId = form.attr("id");
+        var err=custom_validate(formId);
+
+        if(err==0){
+            return;
+        }else {
+            var data=form.serializeArray();
+            if( form.find(".summernote").length>0){
+                form.find(".summernote").each(function(){
+                    var obj=new Object();
+                    var smntId=$(this).attr("id");
+                    obj.name=smntId;
+                    obj.value=$("#"+smntId).summernote('code');
+                    data[data.length]=obj;
+                });
+            }
+            $.post(url, serializeJson(data), function (data) {
+                if (data.code == 1) {
+                    toastr.success(data.msg);
+
+                    $('#myModal').modal('hide');
+
+                    try {
+                        if (typeof(eval("initOther")) == "function") {
+                            initOther();
+                        }
+                    } catch(e) {}
+                } else {
+                    toastr.error(data.msg);
+                }
+            });
+
+        };
+    }
+</script>
+
+<form id="batchform" action="{:url('/index/Apply/passQuitApl')}" method="post" tableId="batchTable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">退出企业：</label>
+            <div class="col-sm-8">
+                {$etprsName|default=''}
+            </div>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="adminDesc">说明</label>
+            <div class="col-sm-8">
+                <textarea name="adminDesc" id="adminDesc" class="form-control"></textarea>
+            </div></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <span style="color: #ff0000;" id="msg">{if condition="$status=='1028002'"}确认后，企业退出将通过 {/if}</span>
+        <input type="hidden" id="status" name="status" value="{$status|default=''}">
+        <input type="hidden" id="id" name="id" value="{$id|default='0'}">
+        <button type="button" class="btn btn-primary btnsave" id="c_btn-save" onclick="dosubmit()"><i class="fa fa-save"></i> <span class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span></button>
+    </div>
+</form>

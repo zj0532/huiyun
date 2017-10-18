@@ -1,0 +1,182 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnsearch").click(function () {
+            var key = $("#key").val();
+            var param = new Object();
+            if (key != "") {
+                param.key = key;
+            }
+            $('#tutorTable').bootstrapTable('refresh', {query: param});
+        });
+        $("#btnadd").click(function () {
+            var url = "{:url('/tutor/Tutor/addTutor')}";
+            $.post(url, function (data) {
+                show_modal("新增导师信息", data, "");
+            });
+        });
+        $("#btnexport").click(function(){
+            var url = $(this).attr('data-url');
+            location.href = url ;
+        });
+    });
+
+    function detailView(index, row){
+        var desc = row.desc;
+        if(desc==undefined){
+            desc="";
+        }
+        var etprslist="";
+        var etprsdata = row.etprs;
+        if(etprsdata.length>0){
+            $('#recordtable').bootstrapTable('destroy');
+            $('#recordtable').bootstrapTable({
+                data: etprsdata
+            });
+            etprslist=$("#view_record").html();
+        }
+
+        var gradetprslist="";
+        var gradetprsdata = row.gradetprs;
+        if(gradetprsdata.length>0){
+            $('#recordtable').bootstrapTable('destroy');
+            $('#recordtable').bootstrapTable({
+                data: gradetprsdata
+            });
+            gradetprslist=$("#view_record").html();
+        }
+
+        var quitetprslist="";
+        var quitetprsdata = row.quitetprs;
+        if(gradetprsdata.length>0){
+            $('#recordtable').bootstrapTable('destroy');
+            $('#recordtable').bootstrapTable({
+                data: quitetprsdata
+            });
+            quitetprslist=$("#view_record").html();
+        }
+        var html='<div class="tabs-container"> <ul class="nav nav-tabs"> ' +
+                '<li class="active"><a data-toggle="tab" href="#tab1">企业列表  </a> </li> '+
+                '<li class=""><a data-toggle="tab" href="#tab2">毕业企业 </a> </li> '+
+                '<li class=""><a data-toggle="tab" href="#tab4">导师简介  </a> </li> '+
+                '</ul>' +
+                '<div class="tab-content "> ' +
+                '<div id="tab1" class="tab-pane active"><div class="panel-body"> '+etprslist+' </div> </div>' +
+                '<div id="tab2" class="tab-pane"><div class="panel-body"> '+gradetprslist+' </div> </div>' +
+                '<div id="tab3" class="tab-pane"><div class="panel-body"> '+quitetprslist+' </div> </div>' +
+                '<div id="tab4" class="tab-pane"><div class="panel-body"> '+desc+' </div> </div>' +
+                '</div></div>';
+        return html;
+    }
+    function etprsFmt(value, row, index) {
+        return [
+            '<a href="javascript:void(0)" class="edit ml10" onclick="iqbtplan(\''+row.id+'\')"><i class="fa fa-file-photo-o text-navy"></i>&nbsp;孵化规划</a>&nbsp;&nbsp;'
+        ].join('');
+    }
+    function iqbtplan(id){
+        var url = "{:url('/tutor/Tutor/tutorplan')}?etprsId="+id;
+        location.href=url;
+    }
+    function actFmt(value, row, index) {
+        return [
+            '<a href="javascript:void(0)" class="edit ml10"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;',
+            '<a class="remove ml10" href="javascript:void(0)" title="删除" onclick="deltTutor(' + row.id + ')"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;'
+        ].join('');
+    }
+    function deltTutor(id) {
+        var url = "{:url('/tutor/Tutor/deltTutor')}";
+        basedelete("tutorTable", url, id);
+    }
+    window.actEvt = {
+        'click .edit': function (e, value, row, index) {
+            var url = "{:url('/tutor/Tutor/addTutor')}";
+            var id = row.id;
+            $.post(url, {"id": id}, function (data) {
+                show_modal("编辑导师信息", data, "");
+            });
+        }
+    };
+</script>
+<div id="view_record" style="display:none;">
+    <table id="recordtable"  data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+        <thead>
+        <tr>
+            <th data-field="name">企业名称</th>
+            <th data-field="lealPerson">法人</th>
+            <th data-field="contact">联系人</th>
+            <th data-field="mobile">联系电话</th>
+            <th data-field="action"  data-formatter="etprsFmt">操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content" style="border:none;">
+                                            <div class="row">
+                                                <div class="col-sm-12 m-b-xs">
+                                                    <span>关键字：</span>
+                                                    <input type="text" placeholder="请输入关键字" class="input-sm form-control" id="key">
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btnsearch">
+                                                        <i class="fa fa-search"></i>
+                                                        查询
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary btn-sm" id="btnadd">
+                                                       <i class="fa fa-plus"></i>
+                                                        新增
+                                                    </button>
+                                                    <button type="button" class="btn btn-warning btn-sm ml10" id="btnexport" data-url="{:url('/tutor/Tutor/exportTutor')}">
+                                                        <i class="fa fa-share-square-o"></i>
+                                                        导出
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table id="tutorTable" class="resettable" data-toggle="table"
+                                                       data-url="{:url('/tutor/Tutor/getTutorlist')}" data-search="false"
+                                                       data-show-refresh="false" data-pagination="true"
+                                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true"
+                                                       data-detail-view="true" data-detail-formatter="detailView">
+
+                                                    <thead>
+                                                        <tr>
+                                                            <th data-field="name" data-sortable="true"> 导师名称</th>
+                                                            <th data-field="logname" data-sortable="true"> 登录名</th>
+                                                            <th data-field="sexText" data-sortable="true"> 性别</th>
+                                                            <th data-field="email" data-sortable="true"> 电子邮件</th>
+                                                            <th data-field="mobile" data-sortable="true"> 电话</th>
+                                                            <th data-field="field" data-sortable="true"> 擅长领域</th>
+                                                            <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

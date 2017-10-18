@@ -1,0 +1,58 @@
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script>
+    $(function(){
+        $(".btn-save").on("click",function(){
+            var data,form=$(this).closest("form"),url=form.prop("action"),tableId=form.attr("tableId");
+            data=form.serializeArray();b=$(this).attr("id");
+            $.post(url,serializeJson(data),function(data){
+                if(1==data.code){
+                    toastr.success(data.msg);$("#"+tableId).bootstrapTable("refresh");$("#myModal").modal("hide");
+                    $('#scoreTable').bootstrapTable('refresh',{});
+                }else {toastr.error(data.msg)}
+            });
+        });
+    });
+
+</script>
+
+<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>
+
+<form id="scoreform" action="{:url('/index/Score/saveScore')}" method="post" tableId="scoretable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >指标名称</label>
+            <div class="col-sm-9">
+                <input type="text" name="title"  class="form-control" value="{$data.title|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <span><label class="col-sm-3 control-label" >指标说明</label>
+            <div class="col-sm-9">
+                <textarea  name="desc" rows="5" class="form-control" >{$data.desc|default=""}</textarea>
+            </div></span>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >所占分值</label>
+            <div class="col-sm-9">
+                <input type="text" name="score"  class="form-control" value="{$data.score|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >指标排序</label>
+            <div class="col-sm-9">
+                <input type="text" name="sort"  class="form-control" value="{$data.sort|default=''}">
+            </div>
+        </div>
+
+
+    </div>
+    <input type="hidden" name="id" value="{$data.id|default=0}">
+    <input type="hidden"  name="parentId" value="{$data.parentId|default=0}">
+    <div class="modal-footer">
+
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

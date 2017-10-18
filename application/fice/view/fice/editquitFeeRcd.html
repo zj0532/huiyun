@@ -1,0 +1,32 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+
+
+<form action="{:url('/fice/Fice/savequitFeeRcdLog')}" method="post" tableId="feeItemTable" class="form-horizontal m-t" id="feeItemForm">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">退费金额：</label>
+        <div class="col-sm-8">
+            <input id="fee_final" name="fee_final" type="text" class="form-control require" required aria-required="true" value="{$data.total|default='0'}" >
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">备注说明：</label>
+        <div class="col-sm-8">
+            <textarea name="desc" type="text" class="form-control require" required aria-required="true" rows="3"></textarea>
+        </div>
+    </div>
+
+
+
+    <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-3">
+            <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+            <input type="hidden" id="iqbtId" name="iqbtId" value="{$data.iqbtId|default='0'}">
+            <input type="hidden" id="etprsId" name="etprsId" value="{$data.etprsId|default='0'}">
+            <input type="hidden" id="optId" name="optId" value="{$data.optId|default='0'}">
+            <input type="hidden" id="itemId" name="itemId" value="{$data.itemId|default='0'}">
+            <input type="hidden" id="roomId" name="roomId" value="{$data.roomId|default='0'}">
+            <button type="button" class="btn btn-primary btn-sm btn-save">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;确定&nbsp;&nbsp;</button>
+        </div>
+    </div>
+</form>

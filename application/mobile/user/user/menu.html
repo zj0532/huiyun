@@ -1,0 +1,128 @@
+{include file="index@index/header" /}
+    <link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btnadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加菜单","");
+        });
+
+        $("#btnedit").click(function(){
+            var url=$(this).attr("data-url");
+            baseedit("menutable",url,"修改菜单信息","");
+        });
+
+        $("#btndelete").click(function(){
+            var url=$(this).attr("data-url");
+            id = mulitecheck("menutable");
+            if (id != null) {
+                basedelete("menutable", url, id);
+            }
+        });
+
+        $("button[name='refresh']").click(function(){
+            $("#btnall").css("display","none");
+        });
+
+
+    });
+
+    function actionFormatter(value, row, index) {
+        return [
+            '<a class="edit ml10" href="javascript:void(0)" title="编辑">',
+            '<i class="fa fa-edit text-navy"></i>&nbsp;编辑',
+            '</a>',
+            '<a class="remove ml10" href="javascript:void(0)" title="删除">',
+            '<i class="fa fa-times text-danger"></i>&nbsp;删除',
+            '</a>'
+        ].join(' ');
+    }
+
+    window.actionEvents = {
+        'click .edit': function (e, value, row, index) {
+            var url="{:url('/user/User/addMenu/id/"+row.id+"')}";
+            $.post(url, function(data) {
+                show_modal("修改菜单信息",data,"");
+            });
+        },
+        'click .remove': function (e, value, row, index) {
+            var url="{:url('/user/User/deleteMenu')}";
+            basedelete("menutable", url, row.id);
+        }
+    };
+
+    function nameFormatter(value, row, index) {
+        if(row.parentId>0){
+            if(row.level=="2"){
+                return "&nbsp;&nbsp;<i class='fa fa-level-up'>&nbsp;"+row.name;
+            }else if(row.level=="3"){
+                return "&nbsp;&nbsp;&nbsp;&nbsp;<i class='fa fa-level-up'>&nbsp;"+row.name+"</i>";
+            }
+        }else{
+            //return '<a class="review" href="javascript:void(0)">'+row.name+'</a>';
+            return "<b>"+row.name+"</b>";
+        }
+    }
+    window.nameEvents = {
+        'click .review': function (e, value, row, index) {
+            var url="{:url('/user/User/getCldMenus')}";
+            $('#menutable').bootstrapTable('refresh',{'url':url,query: {rootId: row.id}});
+            $("#btnall").css("display","block");
+        }
+    };
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div id="toolbar" class="col-sm-12 m-b-xs">
+                                    <button type="button" class="btn btn-success btn-sm" id="btnadd" data-url="{:url('/user/User/addMenu')}">
+                                        <i class="glyphicon glyphicon-plus"></i>&nbsp;新增
+                                    </button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-info btn-sm" id="btnedit" data-url="{:url('/user/User/addMenu')}">
+                                        <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                    </button>&nbsp;
+                                    <button type="button" class="btn btn-danger btn-sm" id="btndelete" data-url="{:url('/user/User/deleteMenu')}">
+                                        <i class="glyphicon glyphicon-trash"></i>&nbsp;删除
+                                    </button>
+                                    <!--<button type="button" class="btn btn-info btn-sm" id="btnall" name="refresh" data-url="{:url('/user/User/setRoleMenu')}" style="display: none;">
+                                        <i class="fa fa-reply">上级</i>
+                                    </button>-->
+                                </div>
+                                <table id="menutable" class="resettable" data-toggle="table" data-url="{:url('/user/User/getMenus')}" data-search="true"
+                                       data-show-refresh="false" data-show-toggle="false" data-show-columns="false" data-toolbar="#toolbar" data-pagination="true"
+                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" >
+                                    <thead>
+                                    <tr>
+                                        <th data-field="state" data-checkbox="true"></th>
+                                        <th data-field="name" data-sortable="true" data-formatter="nameFormatter" data-events="nameEvents">菜单名称</th>
+                                        <th data-field="level">层级</th>
+                                        <th data-field="tag">权限标识</th>
+                                        <th data-field="url">URL</th>
+                                        <th data-field="ourl">相关URL</th>
+                                        <th data-field="desc">说明</th>
+                                        <th data-field="parentText" data-sortable="true">上级</th>
+                                        <th data-field="sort" data-sortable="true">排序</th>
+                                        <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <script src="__JS__/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#dataul li").each(function(index){
+                var nid=$(this).attr("nid");
+                var liid=$(this).attr("id");
+                getNews(nid,liid,1);
+            })
+        });
+
+        function getNews(nid,liid,nowpage){
+            var url="{:url('/user/Test/getNews')}";
+            $.post(url,{'nid':nid,'nowpage':nowpage}, function(data) {
+                var html="";
+                var datas=data.data;
+                for(var i=0;i<datas.length;i++){
+                    html+="<div class='tabdata'>"+
+                    "<a href=''>"+datas[i]["title"]+"</a>"+
+                    "</div>";
+                }
+                html+="<div class='tabpage'> ";
+                html+="<div>当前第"+data.nowpage+"页，共"+data.pagetotal+"页</div>";
+                if(data.prepage!=0){
+                    html+="<div><a href='javascript:void(0);' onclick='getNews("+nid+ ",\"" +liid+"\","+data.prepage+")'>上一页</a> </div>";
+                }
+                if(data.nextpage!=0) {
+                    html += "<div><a href='javascript:void(0);' onclick='getNews(" + nid + ",\"" +liid+"\","+ data.nextpage + ")'>下一页</a> </div>";
+                }
+                html+="</div>";
+               $("#"+liid).html(html);
+            });
+        }
+    </script>
+</head>
+<body class="fixed-sidebar full-height-layout gray-bg">
+<ul id="dataul">
+    <li id="lia" nid="0">
+
+    <hr>
+    <li id="lib" nid="1">
+
+    </li>
+</ul>
+</body>
+</html>

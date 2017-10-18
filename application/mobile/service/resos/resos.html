@@ -1,0 +1,110 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+
+    $(function(){
+        $("#rsbtnsearch").click(function () {
+            var param = new Object();
+            var key=$("#rskey").val();
+            if (key != "") {
+                param.key = key;
+            }
+            $('#resostable').bootstrapTable('refresh', {query: param});
+        });
+
+        $("#rs1btnsearch").click(function () {
+            var param = new Object();
+            var key=$("#rs1key").val();
+            if (key != "") {
+                param.key = key;
+            }
+            $('#resos1table').bootstrapTable('refresh', {query: param});
+        });
+
+    });
+
+    function resosfmt(value, row, index) {
+        var url = "{:url('/service/Resos/detail/id/" + row.id + "')}";
+        var html='<a class="handle ml10" href="'+url+'" title="详情"><i class="fa fa-file-text text-blue"></i>详情</a>';
+        return html;
+    }
+
+</script>
+<style>
+    .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}
+    .user_com .row{width:92%;margin:20px auto;padding:0;}
+    /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<body>
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">供需资源平台</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">资源管理</a></li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">需求管理</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="rskey">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-primary" id="rsbtnsearch">搜索</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="resostable" class="resettable" data-toggle="table" data-url="{:url('/service/Resos/getResos/type/0')}" data-search="false"
+                                   data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+                                <thead>
+                                <tr>
+                                    <th data-field="name" data-sortable="true">资源名称</th>
+                                    <th data-field="action" data-formatter="resosfmt">操作</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="rs1key">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-primary" id="rs1btnsearch">搜索</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="resos1table" class="resettable" data-toggle="table" data-url="{:url('/service/Resos/getResos/type/1')}" data-search="false"
+                                   data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView" >
+                                <thead>
+                                <tr>
+                                    <th data-field="name" data-sortable="true">资源名称</th>
+                                    <th data-field="action" data-formatter="resosfmt">操作</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

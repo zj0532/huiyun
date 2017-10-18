@@ -1,0 +1,202 @@
+{include file="index@index/header" /}
+
+<link href="__CSS__/plugins/iCheck/custom.css" rel="stylesheet">
+<script src="__JS__/plugins/iCheck/icheck.min.js"></script>
+
+<script type="text/javascript">
+    var status = "{$status}";
+    $(function () {
+        $("#pagepre,#pagenext").click(function () {
+            initResult($(this).attr("data-page"),status,"");
+        });
+        initResult(1,status,"");
+        $("#btnSearch").click(function () {
+            var searchText = $("#search").val();
+                searchText = $.trim(searchText);
+
+            initResult(1,status,searchText);
+        });
+        $("#btnRefresh").click(function () {
+            initResult(1,status,"");
+        });
+        $("#btnrecycle").click(function () {
+            if(confirm("确定要删除吗")){
+                deloutmsg();
+            }
+
+        });
+    });
+
+    function deloutmsg() {
+        var ids = "";
+        if ($(".i-checks:checked").length > 0) {
+            $(".i-checks:checked").each(function () {
+                if (ids == "") {
+                    ids = $(this).val();
+                } else {
+                    ids = ids + "," + $(this).val();
+                }
+            });
+        }
+        var url = "{:url('/index/Index/delOutMsg')}";
+        $.post(url, {'ids': ids}, function (data) {
+            if (data.code == "1") {
+                initResult($("#currpage").val(),status,"");
+            }
+        });
+    }
+
+    function createPage(pageSize, page, total) {
+        if (total % pageSize == 0) {
+            var totalpage = Math.floor(total / pageSize);
+        } else {
+            var totalpage = Math.floor(total / pageSize) + 1;
+        }
+        if (page == 1) {
+            $("#pagepre").addClass("disabled");
+        } else {
+            $("#pagepre").removeClass("disabled");
+            $("#pagepre").attr("data-page", parseInt(page) - 1);
+        }
+        if (totalpage == page) {
+            $("#pagenext").addClass("disabled");
+        } else {
+            $("#pagenext").removeClass("disabled");
+            $("#pagenext").attr("data-page", parseInt(page) + 1);
+        }
+    }
+    function initResult(page, status,searchText) {
+        $("#currpage").val(page);
+        var url = "{:url('/index/Index/getOutMsg')}";
+        $.post(url, {
+            'search': searchText,
+            'page': page,
+            'status': status
+        }, function (data) {
+            if (data.code == "1") {
+                createPage(data.pageSize, data.page, data.total);
+
+                var resulthtml = '<tr class=""><th>&nbsp;&nbsp;</th><th >标题</th><th >接收联系人</th><th class="text-right">添加时间&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th></tr>';
+                var resultdata = data.data;
+                for (var i = 0; i < resultdata.length; i++) {
+
+                    resulthtml = resulthtml + '<tr class="">' +
+                    '<td class="check-mail"><input type="checkbox" class="i-checks" value="' + resultdata[i]["id"] + '"></td>' +
+                    '<td class="mail-subject"><a href={:url("/index/Index/outMsgDetail")}?id=' + resultdata[i]["id"] + '>' + resultdata[i]["title"] + '</a></td>' +
+                    '<td class="">' +  resultdata[i]["toUserName"] + '</td>' +
+                    '<td class="text-right mail-date">' + resultdata[i]["addtime"] + '</td>' +
+                    '</tr>';
+                }
+                $("#tab-mail tbody").html(resulthtml);
+
+                $(".i-checks").iCheck({checkboxClass: "icheckbox_square-green", radioClass: "iradio_square-green"});
+            }
+        });
+    }
+    function initStatMsg(stat) {
+        initResult(1, "", stat, "");
+    }
+    function initRecycleMsg(recycle) {
+        initResult(1, "", "", recycle);
+    }
+    function initTypeMsg(type) {
+        initResult(1, type, "", "");
+    }
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                     
+                            <div class="col-sm-3">
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-content mailbox-content">
+                                        <div class="file-manager">
+                                            <input type="hidden" id="currpage" value="1">
+                                            <a class="btn btn-block btn-primary compose-mail" href="{:url('/index/Index/addMsg')}">写信</a>
+                                            <div class="space-25"></div>
+                                         
+                                            <h5>文件夹</h5>
+                                            <ul class="folder-list m-b-md" style="padding: 0">
+                                              
+                                                <li><a href="{:url('index/Index/outMsg',array('status'=>1))}"><i class="fa fa-envelope-o"></i> 发件箱<span class="label label-primary pull-right">{$out_send}</span></a></li>
+                                            
+                                                <li><a href="{:url('index/Index/outMsg',array('status'=>0))}"><i class="fa fa-file-text-o"></i> 草稿箱 <span class="label label-danger pull-right">{$out_draft}</span></a></li>
+                                                <li><a href="{:url('index/Index/msg')}"><i class="fa fa-file-text-o"></i> 收件箱 <span class="label label-info pull-right">{$in_all}</span></a></li>
+                                            
+                                            </ul>
+                                           
+                                            <div class="hr-line-dashed"></div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-9 animated fadeInRight">
+                                <div class="mail-box-header">
+
+                                    <form class="pull-right mail-search">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control input-sm" id="search"
+                                                   placeholder="搜索标题，正文">
+
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-sm btn-primary" type="button"
+                                                        id="btnSearch">搜索
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <h2>
+                                        {eq name="status" value="1"}发件箱({$out_send}){else/}草稿箱({$out_draft}){/eq}
+                                    </h2>
+
+                                    <div class="mail-tools tooltip-demo m-t-md">
+                                        <div class="btn-group pull-right">
+                                            <button class="btn btn-white btn-sm" id="pagepre" data-page="1"><i
+                                                    class="fa fa-arrow-left"></i>
+                                            </button>
+                                            <button class="btn btn-white btn-sm" id="pagenext" data-page="2"><i
+                                                    class="fa fa-arrow-right"></i>
+                                            </button>
+                                        </div>
+                                        <button class="btn btn-white btn-sm" title="刷新邮件列表" id="btnRefresh"><i
+                                                class="fa fa-refresh"></i> 刷新列表
+                                        </button>
+                                     <!--   <button class="btn btn-white btn-sm" title="标为已读" id="btnread"><i
+                                                class="fa fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-white btn-sm" title="标为重要" id="btnimpt"><i
+                                                class="fa fa-exclamation"></i>
+                                        </button>
+                                    -->
+                                        <button class="btn btn-white btn-sm" title="删除邮件" id="btnrecycle"><i
+                                                class="fa fa-trash-o"></i>
+                                        </button>
+
+                                    </div>
+                                </div>
+                                <div class="mail-box">
+
+                                    <table class="table table-hover table-mail" id="tab-mail">
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

@@ -1,0 +1,323 @@
+{include file="user@login/addheader" /}
+<script src="__JS__/bootstrap_validate.js"></script>
+
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<link href="__PLUG__/fileinput/css/fileinput.min.css" rel="stylesheet" >
+<script src="__PLUG__/fileinput/js/fileinput.min.js"></script>
+<script src="__PLUG__/fileinput/js/locales/zh.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $(".datepicker").datetimepicker({minView:"month",autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd"});
+
+        $("#province").change(function(){
+            $("#city").html("<option value=''>--市--</option>");
+            $("#district").html("<option value=''>--区（县）--</option>");
+            var id=$(this).val();
+            if(id!='') {
+                initRegion(id, "city", $("#hc").val(), '', '');
+            }else{
+                emptyRegion('','');
+            }
+        });
+        $("#city").change(function(){
+            $("#district").html("<option value=''>--区（县）--</option>");
+            var id=$(this).val();
+            if(id!='') {
+                initRegion(id, "district", $("#hd").val(), 'province', '');
+            }else{
+                emptyRegion('province','');
+            }
+        });
+        $("#district").change(function(){
+            var id=$(this).val();
+            if(id!=''){
+                initRegion(id,"",'','city','province');
+            }else{
+                emptyRegion('city','province');
+            }
+        });
+        if($("#province").val()!=''){
+            $("#province").change();
+        }
+        var url="{:url('/user/User/uploadFile')}";
+        var oFileInput = new FileInput();
+        var heaaderText=$("#hbgimg").attr('data-path');
+        if(heaaderText==""||heaaderText==undefined||heaaderText==null){
+            oFileInput.Init("bgimg",url,[],"hbgimg");
+        }else{
+            oFileInput.Init("bgimg",url,["<img src='__PUBLIC__/"+heaaderText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"hbgimg");
+        }
+
+        var logoText = $("#hlogo").attr('data-path');
+        if(logoText =="" || logoText==undefined ||logoText==null){
+            oFileInput.Init("logo",url,[],"hlogo");
+        }else{
+            oFileInput.Init("logo",url,["<img src='__PUBLIC__/"+logoText+"' class='kv-preview-data file-preview-image' style='width:100%;height:160px;' />"],"hlogo");
+        }
+
+    });
+    function initRegion(id,htmlid,val,phtmlid,pphtmlid){
+        if(val!=''){
+            $("#hdistrictId").val(val);
+        }else{
+            if(id!=''){
+                $("#hdistrictId").val(id);
+            }
+        }
+        if(id!=''){
+            if(htmlid!=''){
+                var url="{:url('/user/User/initRegion/id/"+id+"')}";
+                var text=$("#"+htmlid).attr("data-placeholder");
+                $("#"+htmlid).html("<option value=''>--"+text+"--</option>");
+                $.post(url, function(data) {
+                    for(var i=0;i<data.length;i++){
+                        var ischk='';
+                        if(data[i]["id"]==val){
+                            ischk="selected";
+                        }
+                        $("#"+htmlid).append("<option "+ischk+" value='"+data[i]["id"]+"'>"+data[i]["name"]+"</option>")
+                    }
+                    if(val!=""){
+                        $("#"+htmlid).change();
+                    }
+                });
+            }
+        }else{
+            if($("#"+phtmlid).val()!=""){
+                $("#hdistrictId").val($("#"+phtmlid).val());
+            }
+            else{
+                if($("#"+pphtmlid).val()!=""){
+                    $("#hdistrictId").val($("#"+pphtmlid).val());
+                }else{
+                    $("#hdistrictId").val("");
+                }
+            }
+            $("#"+htmlid).find("option[value='']").attr("selected",true);
+            $("#"+htmlid).change();
+        }
+    }
+    function emptyRegion(phtmlid,pphtmlid){
+        $("#hdistrictId").val("");
+        if($("#"+phtmlid).val()!=""){
+            $("#hdistrictId").val($("#"+phtmlid).val());
+        }
+        else{
+            if($("#"+pphtmlid).val()!=""){
+                $("#hdistrictId").val($("#"+pphtmlid).val());
+            }else{
+                $("#hdistrictId").val("");
+            }
+        }
+    }
+
+
+
+
+
+
+    function FileInput() {
+        var oFile = new Object();
+        //初始化fileinput控件（第一次初始化）
+        oFile.Init = function(ctrlName,url,initImg,hidefield) {
+            //alert(JSON.stringify(initImg));
+            var control = $('#' + ctrlName);
+            //初始化上传控件的样式
+            control.fileinput({
+                showPreview:true,
+                showRemove :true,
+                language: 'zh', //设置语言
+                uploadUrl:url+"?cate="+ctrlName, //上传的地址..
+                allowedFileExtensions: ['jpg','jpeg','gif','png'],//接收的文件后缀
+                showUpload: false, //是否显示上传按钮
+                showCaption: true,//是否显示标题
+                browseClass: "btn btn-primary btn-inline", //按钮样式
+                dropZoneEnabled: false,//是否显示拖拽区域
+                initialPreview: initImg,
+                maxFileSize: 8192,//单位为kb，如果为0表示不限制文件大小
+                maxFileCount:0, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount:false,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！"
+            }).on("filebatchselected", function(event, files) {
+                $(this).fileinput("upload");
+            });
+
+            //导入文件上传完成之后的事件
+            $("#"+ctrlName).on("fileuploaded", function (event, data, previewId, index) {
+                if(hidefield!=""){
+                   // var origin = $("#"+hidefield).val()+','+data['response']['data'];
+                  //  $("#"+hidefield).val(origin);
+                  $("#"+hidefield).val(data["response"]["data"]);
+                }
+                toastr.success("上传成功");
+            });
+            //导入文件上传完成之后的事件
+            $("#"+ctrlName).on("filecleared", function (event, data,msg) {
+                if(hidefield!=""){
+                    $("#"+hidefield).val('');
+                }
+
+            });
+        }
+        return oFile;
+    };
+
+</script>
+
+<form id="historyform" action="{:url('/user/User/saveIqbt')}" method="post" tableId="historytable" class="form-horizontal">
+    <div class="modal-body">
+        {if condition='empty($data.etprsIqbtId)'}
+        <div class="form-group">
+            <label class="col-sm-2 control-label">孵化器企业：</label>
+            <div class="col-sm-10">
+                <select data-placeholder="孵化器企业" class="form-control" tabindex="2" id="etprsIqbtId" name="etprsIqbtId">
+                    <option value="0">--孵化器企业--</option>
+                    {:widget("user/HtmlWidget/initCommonSelect",['table'=>'etprsIqbt','con'=>array(),'default'=>isset($data['etprsIqbtId'])?$data['etprsIqbtId']:'0','field'=>'id,name'])}
+                </select>
+            </div>
+        </div>
+        {else/}
+        <input type="hidden" name="etprsIqbtId" value="{$data['etprsIqbtId']}">
+        {/if}
+
+        <div class="form-group">
+            <div class="col-sm-6">
+                <label class="col-sm-4 control-label">孵化器名称：</label>
+                <div class="col-sm-8">
+                    <input type="text" placeholder="孵化器名称" class="form-control require" id="name" name="name" value="{$data.name|default=''}">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label class="col-sm-4 control-label">联系人：</label>
+                <div class="col-sm-8">
+                    <input type="text" placeholder="联系人" class="form-control require" id="leader" name="leader" value="{$data.leader|default=''}">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-6">
+                <label class="col-sm-4 control-label">联系电话：</label>
+                <div class="col-sm-8">
+                    <input type="text" placeholder="联系电话" class="form-control require" id="mobile" name="mobile" value="{$data.mobile|default=''}">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label class="col-sm-4 control-label">邮箱：</label>
+                <div class="col-sm-8">
+                    <input type="text" placeholder="邮箱" class="form-control require email" id="email" name="email" value="{$data.email|default=''}">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+                <label class="col-sm-2 control-label">选择地区：</label>
+                <div class="col-sm-10">
+                    <div class="col-sm-4">
+                        <select data-placeholder="省" class="form-control" tabindex="2" id="province">
+                            <option value="">--省--</option>
+                            {:widget("user/HtmlWidget/initCommonSelect",['table'=>'region','con'=>array('level'=>1),'default'=>isset($data['province'])?$data['province']:'','field'=>'id,name'])}
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <select data-placeholder="市" class="form-control" tabindex="2" id="city">
+                            <option value="">--市--</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <select data-placeholder="区（县）" class="form-control" tabindex="2" id="district">
+                            <option value="">--区（县）--</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="hp" value="{$data.province|default=''}">
+                    <input type="hidden" id="hc" value="{$data.city|default=''}">
+                    <input type="hidden" id="hd" value="{$data.district|default=''}">
+                    <input type="hidden" name="districtId" id="hdistrictId" class="opt-require" value="{$data.districtId|default=''}">
+                </div>
+        </div>
+        <div class="form-group">
+                <label class="col-sm-2 control-label">详细地址：</label>
+                <div class="col-sm-10">
+                    <input type="text" placeholder="详细地址" class="form-control require" id="address" name="address" value="{$data.address|default=''}">
+                </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-6">
+                <label class="col-sm-4 control-label">孵化器级别：</label>
+                <div class="col-sm-8">
+                    <select data-placeholder="孵化器级别..."  placeholder="孵化器级别" class="chosen-select form-control col-sm-12" tabindex="6" id="level" name="level">
+                        {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1031%'),'level'=>'2'),'default'=>isset($data['level'])?$data['level']:'1031001'])}
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label class="col-sm-4 control-label">孵化器分类：</label>
+                <div class="col-sm-8">
+                    <select data-placeholder="孵化器分类..."  placeholder="孵化器分类" class="chosen-select form-control col-sm-12" tabindex="6" id="type" name="type">
+                        {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1034%'),'level'=>'2'),'default'=>isset($data['type'])?$data['type']:'1034001'])}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">配套设施：</label>
+            <div class="col-sm-8">
+                {:widget("user/HtmlWidget/initDictCheckbox",['iptname'=>'facility[]','con'=>['level'=>'2','code'=>['like','1033%']],'default'=>isset($data['facility'])?$data['facility']:''])}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">基础服务：</label>
+            <div class="col-sm-8">
+                {:widget("user/HtmlWidget/initDictCheckbox",['iptname'=>'services[]','con'=>['level'=>'2','code'=>['like','1032%']],'default'=>isset($data['services'])?$data['services']:''])}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-6">
+                <label class="col-sm-4 control-label">功能套餐：</label>
+                <div class="col-sm-8">
+                    <select data-placeholder="功能套餐..."  placeholder="功能套餐" class="chosen-select form-control col-sm-12 opt-require" tabindex="6" id="packageId" name="packageId">
+                        <option value="">--选择套餐--</option>
+                        {:widget("user/HtmlWidget/initCommonSelect",['table'=>'UserPackages','con'=>array(),'default'=>isset($data['packageId'])?$data['packageId']:'','field'=>'id,name'])}
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label class="col-sm-4 control-label">到期时间：</label>
+                <div class="col-sm-8">
+                    <input type="text" placeholder="到期时间" class="form-control datepicker" id="exptime" name="exptime" value="{:empty($data.exptime)?'':date('Y-m-d',$data.exptime)}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">孵化器Logo：</label>
+        <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png">
+            <input type="file" class="form-control" id="logo" value="" multiple>
+            <input type="hidden" placeholder="上传logo" class=""  name="logo" id="hlogo" data-path="{$data.logoPath|default=''}" value="{$data.logo|default=''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">绑定二级域名：</label>
+        <div class="col-sm-8">
+            <input type="text" placeholder="二级域名，不带http或https" class="form-control " id="domain" name="domain" value="{$data.domain|default=''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">登录背景图片：</label>
+        <div class="col-sm-8" title="允许上传文件后缀：.jpg, .jpeg, .gif, .png">
+            <input type="file" class="form-control" id="bgimg" value="" multiple>
+            <input type="hidden" placeholder="上传背景图片" class=""  name="bgimg" id="hbgimg" data-path="{$data.savePath|default=''}" value="{$data.bgimg|default=''}">
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <input type="hidden" id="status" name="status" value="1">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

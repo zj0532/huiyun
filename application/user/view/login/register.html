@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{$name|default="中联慧云孵化器管理系统"}-注册</title>
+<link href="__PUBLIC__/login/css/login.css" rel="stylesheet" type="text/css">
+
+   <script src="__PUBLIC__/login/js/jquery.min.js"></script>
+   <!-- toastr CSS -->
+   <!-- toastr CSS -->
+   <link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+   <!-- toastr Theme JavaScript -->
+   <script src="__PLUG__/toastr/toastr.js"></script>
+   <script type="text/javascript">
+      var countdown = 60;
+      var tt;
+      $(function () {
+
+         //回车自动提交
+         $('#cfmpassword').keyup(function(event){
+            if(event.keyCode===13){
+               $("#btnrgst").click();
+            }
+         });
+
+         $("#sms").click(function(){
+            var isPhone = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
+            var isMob=/^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|17[012356789][0-9]{8}|15[012356789][0-9]{8}|18[012356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
+            var phone_str=$("#mobile").val();
+            if(phone_str==""){
+               $("#msg").html("联系电话必填");
+               $("#user").css('display','none');
+               $("#error").css('display','block');
+               return;
+            }else if(!(isPhone.test(phone_str)||isMob.test(phone_str))){
+               $("#msg").html("电话号码格式错误");
+               $("#user").css('display','none');
+               $("#error").css('display','block');
+               return;
+            }
+
+            $("#msg").html("");
+            $("#user").css('display','block');
+            $("#error").css('display','none');
+            var url = "{:url('user/Login/sendSmsCode')}";
+            $.post(url,{mobile:phone_str},function(data){
+               if(data.code ==1){
+                  toastr.success(data.data);
+                  tt = setInterval(function() {
+                     settime();
+                  },1000)
+               }else {
+                  toastr.error(data.msg);
+               }
+            })
+         })
+
+
+         $("#btnrgst").click(function () {
+
+            var isPhone = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
+            var isMob=/^((\+?86)|(\(\+86\)))?(13[012356789][0-9]{8}|17[012356789][0-9]{8}|15[012356789][0-9]{8}|18[012356789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$/;
+            var phone_str=$("#mobile").val();
+            if(phone_str==""){
+               $("#msg").html("联系电话必填");
+               $("#user").css('display','none');
+               $("#error").css('display','block');
+               return;
+            }else if(!(isPhone.test(phone_str)||isMob.test(phone_str))){
+               $("#msg").html("电话号码格式错误");
+               $("#user").css('display','none');
+               $("#error").css('display','block');
+               return;
+            }
+            if($("#password").val()==""){
+               $("#msg").html("密码必填");
+               $("#user").css('display','none');
+               $("#error").css('display','block');
+               return;
+            }
+            if($("#password").val()!=$("#cfmpassword").val()){
+               $("#msg").html("密码不一致");
+               $("#user").css('display','none');
+               $("#error").css('display','block');
+               return;
+            }
+
+            var regExp=/^(?![\d]+$)(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{6,20}$/;
+            if(!regExp.test($("#password").val())){
+               $("#msg").html("密码必须为6-20位字母、数字或符号组合");
+               $("#user").css('display','none');
+               $("#error").css('display','block');
+               return;
+            }
+
+            var form = $("#rgst");
+            var url = form.prop("action");
+            var formId = form.attr("id");
+            var data=form.serialize();
+            $.post(url, data, function (data) {
+               if (data.code == 1) {
+
+
+                  var iqbtId=$("#iqbtId").val();
+                  var etprsIqbtId=$("#etprsIqbtId").val();
+                  var paramstr="";
+                  if(iqbtId!=''&&iqbtId!=0){
+                     if(paramstr==''){
+                        paramstr="?iqbtId="+iqbtId;
+                     }else{
+                        paramstr+="&iqbtId="+iqbtId;
+                     }
+                  }
+                  if(etprsIqbtId!=''&&etprsIqbtId!=0){
+                     if(paramstr==''){
+                        paramstr="?etprsIqbtId="+etprsIqbtId;
+                     }else{
+                        paramstr+="&etprsIqbtId="+etprsIqbtId;
+                     }
+                  }
+                  location.href="{:url('/index/Apply/checkApl')}"+paramstr;
+               } else {
+                  toastr.error(data.msg);
+               }
+
+            });
+
+         });
+      });
+
+      function settime() {
+         if (countdown == 0) {
+            $("#sms").val("没收到？重新获取");
+            countdown = 60;
+            clearInterval(tt);
+         } else {
+            $("#sms").val(countdown);
+            countdown--;
+         }
+      }
+   </script>
+</head>
+<body>
+
+<div class="top">
+   <div class="top1">
+      <img src="__PUBLIC__/login/images/logo1.png">
+      <div class="border"></div>
+      <p class="p0">{$name|default="中联慧云孵化器管理系统"}</p>
+   </div>
+</div>
+<div class="center">
+   <img src="__PUBLIC__{$img|default='/login/images/2.jpg'}"><!--背景图片-->
+   <div class="login slogin">
+      <div class="login1">
+         <div class="ts" style="display:none" id="error">
+            <div class="sp1">-</div>
+            <span class="sp2" id="msg">{$msg|default=''}</span>
+         </div>
+         <div id="user">
+            <p class="p1"><span>用户注册</span></p>
+         </div>
+         <form action="{:url('/user/Login/saveUser')}" method="post" id="rgst">
+            <div class="login2">
+               <input type="text" name="mobile" id="mobile" placeholder="联系电话（登录名必填）" onfocus="this.placeholder=''" onblur="this.placeholder='联系电话（登录名必填）'">
+            </div>
+            {eq name="open_sms" value="1"}
+            <div class="login2 slogin2">
+               <input class="yzm" type="text"  name="verify" placeholder="校验码" onfocus="this.placeholder=''" onblur="this.placeholder='校验码'">
+               <input class="hq" type="button" id="sms" value="点击获取">
+            </div>
+            {/eq}
+            <div class="login2">
+               <input  type="password" name="password" id="password" placeholder="密码（6-20位字母、数字、符号组合）" onfocus="this.placeholder=''" onblur="this.placeholder='密码（6-20位字母、数字、符号组合）'"><!--&nbsp;<span style="color:red;">*</span>-->
+            </div>
+            <div class="login2">
+               <input  type="password"  name="cfmpassword" id="cfmpassword" placeholder="再次输入密码" onfocus="this.placeholder=''" onblur="this.placeholder='再次输入密码'">
+            </div>
+            <input type="hidden" id="etprsIqbtId" name="etprsIqbtId" value="{$etprsIqbtId|default=0}">
+            <input type="hidden" id="iqbtId" name="iqbtId" value="{$iqbtId|default=0}">
+            <input type="hidden" id="open_sms" name="open_sms" value="{$open_sms|default=1}">
+         </form>
+         <div class="login4" style="margin-top:20px;">
+            <input type="button" id="btnrgst" value="注册">
+         </div>
+         <p class="last">
+                               已经有账号？
+            <a href="{:url('/user/Login/login',array('iqbtId'=>$iqbtId,'etprsIqbtId'=>$etprsIqbtId))}">登录</a>
+         </p>
+      </div>
+   </div>
+</div>
+<!--底部-->
+<div class="bottom">
+   <div class="bottom1">
+        <p class="p1"> 
+           <a href="https://www.zlhuiyun.com" target="_blank">技术支持 : 青岛中联慧云信息科技有限公司</a>
+        </p>
+        <p class="p2">服务热线：400-0073-137</p>
+   </div>
+</div>
+</body>
+</html>

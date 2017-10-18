@@ -1,0 +1,204 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>慧云孵化器园区管理云平台</title>
+    <meta name="Keywords" content="" />
+    <meta name="Description" content="" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/font-awesome/css/font-awesome.min.css" media="all">
+    <link href="__PUBLIC__/mobile/css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/mobile/css/public.css"/>
+    <script src="__PUBLIC__/mobile/js/jquery_1_11_2_min.js"></script>
+    <script src="__PUBLIC__/mobile/js/fontscroll.js"></script>
+</head>
+<script>
+	function newsList(){
+		var url = "{:url('/oa/Oa/etprsNewsMobile')}";
+		$.post(url,{},function(data){
+			var num = data.length;
+			var html = '';
+			for(var i=0;i<num;i++){
+				html += '<li> <a href="'+data[i]['url']+'"><span>[最新]</span>&nbsp;'+data[i]['title']+'</a></li>';
+			}
+			$('#news').html(html);
+		})
+	}
+    $(function () {
+        var url = "{:url('/oa/Oa/getmtaplNum')}";
+        $.post(url ,function(data){
+            if(data.code=='1'){
+                if(data.num>0){
+                    $("#metapl").html(data.num);
+                    $("#metapl").css("display","block");
+                }
+
+            }
+        })
+    });
+</script>
+<style>
+    .menu ul li{position:relative;padding-top:4px;}
+    .menu ul li span.label{position:absolute;top:0;right:4px;padding:2px 6px;font-size:12px;}
+</style>
+<div class="xqtab">
+   <div class="xqtab1">
+       <div class="xqword"><span>公告</span></div>
+       <div id="FontScroll">
+           <ul id="news">
+
+           </ul>
+       </div>
+       <a href="{:url('/oa/Oa/etprsNewsList')}" class="xqmore">更多</a>
+   </div>
+</div>
+<script>
+    $(function(){
+        newsList();
+        $('#FontScroll').FontScroll({time: 3000,num: 1});
+    });
+</script>
+<!--园区服务-->
+<div class="menu">
+	<p>
+		<i class="fa fa-star" aria-hidden="true"></i>
+		园区服务
+	</p>
+	<ul>
+        {if condition="in_array(29, $mobileroles)"}
+	    <li>
+	   	  <a href="{:url('/service/Service/meetrooms')}">
+		   	  <img src="__PUBLIC__/mobile/images/icon1.png" />
+		   	  <p>会议室申请</p>
+	   	  </a>
+          <span class="label label-warning" id="metapl" style="display: none;"></span>
+	    </li>
+        {/if}
+        {if condition="in_array(30, $mobileroles)"}
+	    <li>
+	   	  <a href="{:url('/service/Service/activity')}">
+		   	  <img src="__PUBLIC__/mobile/images/icon2.png">
+		   	  <p>园区活动</p>
+	   	  </a>
+	    </li>
+        {/if}
+        {if condition="in_array(28, $mobileroles)"}
+	    <li>
+	   	  <a href="{:url('/oa/Oa/suggest')}">
+		   	  <img src="__PUBLIC__/mobile/images/icon3.png">
+		   	  <p>互动平台</p>
+	   	  </a>
+	    </li>
+        {/if}
+	    <!--<li>
+	   	  <a href="{:url('/index/Apply/enterapl')}">
+		   	  <img src="__PUBLIC__/mobile/images/icon4.png">
+		   	  <p>导师团队</p>
+	   	  </a>
+	    </li>-->
+        {if condition="in_array(358, $mobileroles)"}
+        <li>
+            <a href="{:url('/service/Visit/index')}">
+                <img src="__PUBLIC__/mobile/images/icon10.png">
+                <p>拜访联络</p>
+            </a>
+        </li>
+        {/if}
+        {if condition="in_array(359, $mobileroles)"}
+        <li>
+            <a href="{:url('/service/Visit/manageVisit')}">
+                <img src="__PUBLIC__/mobile/images/icon10.png">
+                <p>拜访管理</p>
+            </a>
+        </li>
+        {/if}
+	</ul>
+</div>
+<!--资源平台-->
+<div class="menu">
+	<p>
+		<i class="fa fa-star" aria-hidden="true"></i>
+		资源平台
+	</p>
+	<ul>
+        {if condition="in_array(81, $mobileroles)"}
+	    <li>
+	   	  <a href="{:url('/service/Resos/resos')}">
+		   	  <img src="__PUBLIC__/mobile/images/icon5.png">
+		   	  <p>内部供需</p>
+	   	  </a>
+	    </li>
+        {/if}
+        {if condition="in_array(61, $mobileroles)"}
+	    <li>
+	   	  <a href="{:url('/service/External/external')}">
+		   	  <img src="__PUBLIC__/mobile/images/icon6.png">
+		   	  <p>第三方服务</p>
+	   	  </a>
+	    </li>
+        {/if}
+	    <li></li>
+	    <li></li>
+	</ul>
+</div>
+<!--租赁服务-->
+<div class="menu last">
+	<p>
+		<i class="fa fa-star" aria-hidden="true"></i>
+		租赁服务
+	</p>
+	<ul>
+        {if condition="in_array(36, $mobileroles)"}
+	   <li>
+	   	  <a href="{:url('/index/Apply/renewapl')}">
+		   	  <img src="__PUBLIC__/mobile/images/icon8.png">
+		   	  <p>续约服务</p>
+	   	  </a>
+	   </li>
+        {/if}
+	   <!--<li>
+	   	  <a href="{:url('/index/Apply/apllist')}">
+		   	  <img src="__PUBLIC__/mobile/images/icon7.png">
+		   	  <p>加租服务</p>
+	   	  </a>
+	   </li>-->
+        {if condition="in_array(33, $mobileroles)"}
+	   <li>
+	   	  <a href="{:url('/index/Apply/adminquitapl')}">
+		   	  <img src="__PUBLIC__/mobile/images/icon9.png">
+		   	  <p>退出服务</p>
+	   	  </a>
+	   </li>
+        {/if}
+        {if condition="in_array(34, $mobileroles)"}
+        <li>
+            <a href="{:url('/index/Apply/estatequitapl')}">
+                <img src="__PUBLIC__/mobile/images/icon9.png">
+                <p>退出服务</p>
+            </a>
+        </li>
+        {/if}
+        {if condition="in_array(35, $mobileroles)"}
+        <li>
+            <a href="{:url('/index/Apply/ficequitapl')}">
+                <img src="__PUBLIC__/mobile/images/icon9.png">
+                <p>退出服务</p>
+            </a>
+        </li>
+        {/if}
+	   <li></li>
+	</ul>
+</div>
+<!--底部悬浮菜单-->
+<div class="v_nav">
+    <div class="vf_nav">
+        <ul>
+            <li><a href="{:url('/index/Index/index')}"><i class="vf_1"></i> <span>服务</span></a></li>
+            <li><a href="{:url('/service/Service/monthState')}"><i class="vf_3"></i> <span>月报</span></a></li>
+            <li><a href="{:url('user/User/impvInfo')}"><i class="vf_5"></i> <span>我的</span></a></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

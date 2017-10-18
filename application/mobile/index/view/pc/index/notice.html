@@ -1,0 +1,107 @@
+{include file="index@index/header" /}
+<!--日历控件-->
+<link href='__PLUG__/fullcalendar/fullcalendar.min.css' rel='stylesheet' />
+<script src='__PLUG__/fullcalendar/lib/moment.min.js'></script>
+<script src='__PLUG__/fullcalendar/fullcalendar.min.js'></script>
+<script src='__PLUG__/fullcalendar/locale/zh-cn.js'></script>
+<style type="text/css">
+    #addnote {
+        cursor: pointer;
+    }
+    .sidebard-panel{
+        padding-left: 0px;;
+    }
+    ul.notes{
+        padding-left: 15px;;
+    }
+    ul.notes li {
+        float: left;
+        margin: 20px 10px 25px 10px;
+    }
+    ul.notes li div a.notedelt {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        color: inherit;
+    }
+    ul.notes li div a.noteedit {
+        position: absolute;
+        right: 30px;
+        bottom: 10px;
+        color: inherit;
+    }
+</style>
+<script type="text/javascript">
+    $(function(){
+        $("#addnote").click(function(){
+            var url="{:url('/index/Index/addnotes')}";
+            baseadd(url,"添加便签","");
+        });
+        initNotes();
+    });
+    function initOther(){
+        initNotes();
+    }
+    function initNotes(){
+        var url="{:url('/index/Index/getNotes')}";
+        $.post(url, function(data) {
+            var html="";
+            if(data.length>0){
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+                    html=html+'<li>'+
+                    '<div>'+
+                    '<small>'+obj.addtime+'</small>'+
+                    '<h4>'+obj.title+'</h4>'+
+                    '<p>'+obj.desc+'</p>'+
+                    '<a href="#" onclick="deltnote('+obj.id+')" class="notedelt"><i class="fa fa-trash-o"></i></a>'+
+                    '<a href="#" onclick="editnote('+obj.id+')" class="noteedit"><i class="fa fa-edit"></i></a>'+
+                    '</div>'+
+                    '</li>';
+                }
+            }
+            $("#noteul").html(html);
+        });
+    }
+
+    function editnote(id){
+        var url="{:url('/index/Index/addnotes')}";
+        if(id!=null){
+            $.post(url,{id:id}, function(data) {
+                show_modal("编辑便签",data,"");
+            });
+        }
+    }
+    function deltnote(id){
+        var url="{:url('/index/Index/delNotes')}";
+        $.post(url, {id: id}, function (data) {
+            if (data.code == 1) {
+                initNotes();
+            }else if(data.code == 0){
+                toastr.warning(data.msg);
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+</script>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+
+
+<div class="wrapper wrapper-content">
+    <div class="row" style="margin-bottom: 12px;">
+        <div class="col-sm-12">
+            <div class="">
+                <h4>便签墙 <a class="pull-right btn btn-default btn-sm" id="addnote">新增</a></h4>
+                <ul class="notes" id="noteul">
+
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>

@@ -1,0 +1,30 @@
+{include file="user@login/addheader" /}
+
+<form id="userform" action="{:url('/index/Config/saveHomepage')}" method="post" tableId="packagetable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="name">模块名称</label>
+            <div class="col-sm-6">
+                <input class="form-control require" table="user" name="name" id="name" placeholder="模块名称" value="{$data.name|default=''}">
+            </div></span>
+        </div>
+
+        <div class="form-group">
+            <span><label class="col-sm-4 control-label" for="desc">说明</label>
+            <div class="col-sm-6">
+                <textarea class="form-control" name="desc" id="desc">{$data.desc|default=''}</textarea>
+            </div></span>
+        </div>
+
+        <div class="form-group">
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

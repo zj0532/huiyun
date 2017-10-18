@@ -1,0 +1,403 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        var tag=$("#tag").val();
+        var etprsId=$("#etprsId").val();
+        var url="{:url('/service/Report/initRptFiles')}";
+        $.post(url,{'tag':tag,"etprsId":etprsId},function(data) {
+            var html="";
+            var obj=data["data"];
+            if(obj["yyzz"]!=""){
+                html+='<p style="text-indent:2em;"><a target="_blank" href="__PUBLIC__/'+obj['yyzz']+'">企业法人营业执照复印件（加盖公章）</a></p>';
+            }
+            if(obj["cwbb"]!=""){
+                html+='<p style="text-indent:2em;"><a target="_blank" href="__PUBLIC__/'+obj['cwbb']+'">企业年度财务报表（财务章）</a></p>';
+            }
+            if(obj["renyuan"]!=""){
+                html+='<p style="text-indent:2em;"><a target="_blank" href="__PUBLIC__/'+obj['renyuan']+'">人员花名册（含年龄、学历、职称、毕业院校等，以常驻申新基地人员为准）</a></p>';
+            }
+            if(obj["lxwj"]!=""){
+                html+='<p style="text-indent:2em;"><a target="_blank" href="__PUBLIC__/'+obj['lxwj']+'">项目立项文件</a></p>';
+            }
+            if(obj["zlzs"]!=""){
+                html+='<p style="text-indent:2em;"><a target="_blank" href="__PUBLIC__/'+obj['zlzs']+'">专利证书</a></p>';
+            }
+            if(obj["rjcp"]!=""){
+                html+='<p style="text-indent:2em;"><a target="_blank" href="__PUBLIC__/'+obj['rjcp']+'">软件产品（企业）认定证书</a></p>';
+            }
+            if(obj["gxjs"]!=""){
+                html+='<p style="text-indent:2em;"><a target="_blank" href="__PUBLIC__/'+obj['gxjs']+'">高新技术企业认定证书</a></p>';
+            }
+            if(obj["xmjs"]!=""){
+                html+='<p style="text-indent:2em;"><a target="_blank" href="__PUBLIC__/'+obj['xmjs']+'">项目技术鉴定证书</a></p>';
+            }
+            if(obj["cpcs"]!=""){
+                html+='<p style="text-indent:2em;"><a target="_blank" href="__PUBLIC__/'+obj['cpcs']+'">产品测试报告</a></p>';
+            }
+            if(obj["zlbz"]!=""){
+                html+='<p style="text-indent:2em;"><a target="_blank" href="__PUBLIC__/'+obj['zlbz']+'">质量标准体系认证证书</a></p>';
+            }
+            if(obj["zzry"]!=""){
+                html+='<p style="text-indent:2em;"><a target="_blank" href="__PUBLIC__/'+obj['zzry']+'">企业获得的资质和荣誉等证书复印件</a></p>';
+            }
+
+            $("#rptfiles").html(html);
+        });
+    });
+    function pdtfmt(value, row, index) {
+        var html='<a class="pdtdetail ml10" href="javascript:void(0)"><i class="fa fa-file-text text-blue">&nbsp;详情&nbsp;</i></a>';
+        return html;
+    }
+    function pjtfmt(value, row, index) {
+        var html='<a class="pjtdetail ml10" href="javascript:void(0)"><i class="fa fa-file-text text-blue">&nbsp;详情&nbsp;</i></a>';
+        return html;
+    }
+    window.actevt = {
+        'click .pdtdetail': function (e, value, row, index) {
+            location.href="{:url('/service/Report/product')}?id="+row.id;
+        },
+        'click .pjtdetail': function (e, value, row, index) {
+            location.href="{:url('/service/Report/project')}?id="+row.id;
+        }
+    }
+    function exportfmt(value,row,index){
+        if(value=='1'){
+            return "是";
+        }else{
+            return "否";
+        }
+    }
+</script>
+
+
+
+<input type="hidden" id="tag" value="{$data.tag}" />
+<input type="hidden" id="etprsId" value="{$data.etprsId}" />
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+<div id="view_detail" style="display:none;">
+    <table id="detailtable">
+        <thead>
+        <tr>
+            <th data-field="requireEtprsText" data-formatter="requireEtprsFmt">需求企业</th>
+            <th data-field="resosEtprsText" data-formatter="resosEtprsFmt">资源企业</th>
+            <th data-field="statusText">合作状态</th>
+            <th data-field="cprtReason">合作/不合作 原因</th>
+            <th data-field="action" data-formatter="coperateFormatter" data-events="coperateEvents">操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h3 style="text-align:center;">在孵企业考核表</h3></div>
+                <div class="ibox-content">
+                    <div class="tabs-container">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">企业基本情况</a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">经营管理</a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">主要产品</a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">研发能力</a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-5" aria-expanded="false">在研项目</a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-6" aria-expanded="false">融资情况</a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-7" aria-expanded="false">附件</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="tab-1" class="tab-pane active">
+                                <div class="panel-body">
+                                    <table class="table table-bordered table-hover">
+                                        <style>
+                                            .table tbody tr td{line-height:35px;font-size:14px;}
+                                        </style>
+                                        <tbody>
+                                        <tr>
+                                            <td><strong>企业名称</strong></td>
+                                            <td colspan="5">{$data['name']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>成立时间</strong></td>
+                                            <td>{$data['rgsttime']|default=''}</td>
+                                            <td><strong>入驻时间</strong></td>
+                                            <td>{$data['entertime']|default=''}</td>
+                                            <td><strong>入驻面积</strong></td>
+                                            <td>{$data['area']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>注册资本</strong></td>
+                                            <td>{$data['rgstment']|default=''}</td>
+                                            <td><strong>法定代表人</strong></td>
+                                            <td>{$data['lealPerson']|default=''}</td>
+                                            <td><strong>联系电话</strong></td>
+                                            <td>{$data['mobile']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>注册地址</strong></td>
+                                            <td colspan="5">{$data['address']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>生产场地</strong></td>
+                                            <td colspan="5">{$data['factory']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>所属行业</strong></td>
+                                            <td colspan="5">互联网</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>总经理</strong></td>
+                                            <td colspan="2">{$data['gm']|default=''}</td>
+                                            <td><strong>联系电话</strong></td>
+                                            <td colspan="2">{$data['gmmobile']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>固定联络员</strong></td>
+                                            <td colspan="2">{$data['liaison']|default=''}</td>
+                                            <td><strong>联系电话</strong></td>
+                                            <td colspan="2">{$data['lsmobile']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td rowspan="6" colspan="2"><strong>企业从业人员情况</strong></td>
+                                            <td><strong>总数</strong></td>
+                                            <td>{$data['total']|default=''}</td>
+                                            <td><strong>留学人员</strong></td>
+                                            <td>{$data['overseas']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>博士</strong></td>
+                                            <td>{$data['doctor']|default=''}</td>
+                                            <td><strong>管理人员</strong></td>
+                                            <td>{$data['manage']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>硕士</strong></td>
+                                            <td>{$data['postgrad']|default=''}</td>
+                                            <td><strong>研发人员</strong></td>
+                                            <td>{$data['rd']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>本科</strong></td>
+                                            <td>{$data['undgrad']|default=''}</td>
+                                            <td><strong>销售人员</strong></td>
+                                            <td>{$data['market']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>大专</strong></td>
+                                            <td>{$data['junior']|default=''}</td>
+                                            <td><strong>高级职称</strong></td>
+                                            <td>{$data['senior']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>其他</strong></td>
+                                            <td>{$data['other']|default=''}</td>
+                                            <td><strong>中级或初级</strong></td>
+                                            <td>{$data['itmedate']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td rowspan="4" colspan="2"><strong>主要财务指标(万元)</strong></td>
+                                            <td><strong>总资产</strong></td>
+                                            <td>{$data['assets']|default=''}</td>
+                                            <td><strong>总资产较上一年度增长率%</strong></td>
+                                            <td>{$data['growth']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>销售收入</strong></td>
+                                            <td>{$data['income']|default=''}</td>
+                                            <td><strong>销售收入较上一年度增长率%</strong></td>
+                                            <td>{$data['incomerate']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>净利润</strong></td>
+                                            <td>{$data['profit']|default=''}</td>
+                                            <td><strong>研发经费</strong></td>
+                                            <td>{$data['profitrate']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>研发经费占产品销售收入比例（%）</strong></td>
+                                            <td>{$data['develop']|default=''}</td>
+                                            <td><strong>上缴税金</strong></td>
+                                            <td>{$data['developrate']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"><strong>企业获荣誉资质情况</strong></td>
+                                            <td colspan="4">{$data['honor']|default=''}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div id="tab-2" class="tab-pane">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary btn-md">主要负责人基本情况</button>
+                                    </div>
+                                    <table class="table table-bordered table-hover">
+                                        <tbody>
+                                        <tr>
+                                            <td><strong>企业负责人</strong></td>
+                                            <td>{$data['gm']|default=''}</td>
+                                            <td><strong>联系电话</strong></td>
+                                            <td>{$data['gmmobile']|default=''}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>企业联系人</strong></td>
+                                            <td>{$data['liaison']|default=''}</td>
+                                            <td><strong>联系电话</strong></td>
+                                            <td>{$data['lsmobile']|default=''}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary btn-md">企业管理制度建设情况</button>
+                                    </div>
+                                    <table id="systable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getSys',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="name" data-sortable="true">制度名称</th>
+                                            <th data-field="createtime" data-sortable="true">时间</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <div class="form-group" style="margin-top:20px;">
+                                        <button type="button" class="btn btn-primary btn-md">企业配合基地情况（参加基地组织的活动）</button>
+                                    </div>
+                                    <table id="acttable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getAct',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="name" data-sortable="true">活动名称</th>
+                                            <th data-field="acttime" data-sortable="true">活动时间</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="tab-3" class="tab-pane">
+                                <div class="panel-body">
+                                    <table id="pdttable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getPdts',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="name" data-sortable="true">产品名称</th>
+                                            <th data-field="technical" data-sortable="true">技术领域</th>
+                                            <th data-field="export" data-sortable="true" data-formatter="exportfmt">是否出口</th>
+                                            <th data-field="action" data-formatter="pdtfmt" data-events="actevt">操作</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+
+                                    <p style="text-indent:2em;">注：1. 技术水平须附鉴定证书复印件</p>
+                                    <p style="text-indent:2em;">2. 与产品相关的专利和软件著作权须附证书复印件；</p>
+                                    <p style="margin-bottom: 30px;text-indent:2em;">3．市场前景主要描述产品市场需求程度、市场竞争优势。</p>
+                                </div>
+                            </div>
+                            <div id="tab-4" class="tab-pane">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary btn-md">入驻以来承担的国家、省市科技计划项目情况</button>
+                                    </div>
+                                    <table id="itemtable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getItems',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="name" data-sortable="true">项目名称</th>
+                                            <th data-field="no" data-sortable="true">项目编号</th>
+                                            <th data-field="type" data-sortable="true">资助方式</th>
+                                            <th data-field="total" data-sortable="true">资助金额</th>
+                                            <th data-field="projecttype" data-sortable="true">项目种类</th>
+                                            <th data-field="year" data-sortable="true">立项年度</th>
+                                            <th data-field="progress" data-sortable="true">完成情况</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <div class="form-group" style="margin-top:20px;">
+                                        <button type="button" class="btn btn-primary btn-md">入驻以来企业专利（申请）情况</button>
+                                    </div>
+                                    <table id="patenttable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getPatent',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="name" data-sortable="true">专利(申请)名称</th>
+                                            <th data-field="type" data-sortable="true">类型</th>
+                                            <th data-field="approval" data-sortable="true" data-formatter="exportfmt">是否审批</th>
+                                            <th data-field="no" data-sortable="true">批准（申请）号</th>
+                                            <th data-field="time" data-sortable="true">批准（申请）时间</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <div class="form-group" style="margin-top:20px;">
+                                        <button type="button" class="btn btn-primary btn-md">入驻以来获得企业软件著作权情况</button>
+                                    </div>
+                                    <table id="softtable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getSoft',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="name" data-sortable="true">名称</th>
+                                            <th data-field="no" data-sortable="true">编号</th>
+                                            <th data-field="time" data-sortable="true">时间</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="tab-5" class="tab-pane">
+                                <div class="panel-body">
+                                    <table id="pjttable" class="resettable" data-toggle="table" data-url="{:url('/service/Report/getProject',array('etprsId'=>$data['etprsId'],'tag'=>$data['tag']))}" data-search="false"
+                                           data-show-refresh="false" data-toolbar="#toolbar" data-pagination="true"
+                                           data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false" data-detail-formatter="detailView" >
+                                        <thead>
+                                        <tr>
+                                            <th data-field="name" data-sortable="true">项目名称</th>
+                                            <th data-field="technical" data-sortable="true">技术领域</th>
+                                            <th data-field="action" data-formatter="pjtfmt" data-events="actevt">操作</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+
+                                    <p style="text-indent:2em;">注：1.技术水平须附鉴定证书复印件；</p>
+                                    <p style="text-indent:2em;">2.与项目相关的专利及软件著作权需附证书复印件；</p>
+                                    <p style="margin-bottom: 30px;text-indent:2em;">3.市场前景主要描述该项目的市场需求程度、未来实现产业化的可能性。</p>
+
+                                </div>
+                            </div>
+                            <div id="tab-6" class="tab-pane">
+                                <div class="panel-body">
+                                    <table class="table table-bordered table-hover">
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                {$fls['desc']|default=''}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="tab-7" class="tab-pane">
+                                <div class="panel-body" id="rptfiles">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-sm" type="button" onclick="window.history.go(-1);">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;返回</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

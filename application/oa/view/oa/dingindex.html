@@ -1,0 +1,81 @@
+{include file="index@index/header" /}
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<link href="__PUBLIC__/ding/css/index.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/ding/css/font-awesome.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+$(function () {
+    $("#btnrefrash").click(function () {
+        var url = "{:url('/oa/Oa/initdinginfo')}";
+        $.post(url, function(data) {
+            if(data.code=='1'){
+                location.reload();
+            }
+        });
+    });
+});
+
+</script>
+
+
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="box">
+                                            <div class="box1">
+                                                <h4>{$data["name"]|default=""}</h4>
+                                                <h4><i class="fa fa-sitemap" aria-hidden="true"></i>&nbsp;&nbsp;下级部门【<a href="#" id="btnrefrash">更新</a>】 </h4>
+
+                                                <!--<div class="btn">
+                                                    <button value="" style="margin-left:20px;">添加子部门</button>
+                                                    <button value="">调整位置</button>
+                                                </div>-->
+                                                {if condition="isset($data.deptlist)"}
+                                                <ul>
+                                                    {volist name="data.deptlist" id="dept"}
+                                                        <li><p><a href="{:url('/oa/Oa/dingcldDepts',array('deptId'=>$dept['dingId']))}">{$dept.name}</a></p><span> ＞ </span></li>
+                                                    {/volist}
+                                                </ul>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}
+
+{if condition="isset($menu.sub)"}
+<ul class="nav nav-second-level">
+    {volist name="menu.sub" id="sub"}
+    <li  {if condition="$sub.act==1"}class="active"{/if}>
+    <a class="" href="{:url($sub['url'])}">{$sub.name}
+        {neq name="sub.noticenum" value="0"}
+        <span class="label label-danger pull-right">{$sub.noticenum}</span>
+        {/neq}
+    </a>
+    </li>
+    {/volist}
+</ul>
+{/if}

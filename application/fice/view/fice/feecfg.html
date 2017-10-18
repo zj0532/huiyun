@@ -1,0 +1,384 @@
+{include file="index@index/header" /}
+
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<!--右侧部分开始-->
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#btnbasesave").click(function () {
+            var form=$("#cfgForm");
+            var fdata=form.serialize();
+            var url = form.prop("action");
+            $.post(url, fdata, function (data) {
+                if (data.code == 1) {
+                    toastr.success(data.msg);
+                } else {
+                    toastr.error(data.msg);
+                }
+
+
+            });
+        });
+    });
+
+    function detailView(index, row){
+        var data = row.cfgs;
+        var cfghtml="";
+        if(data.length>0){
+            $('#itemtable').bootstrapTable('destroy');
+            $('#itemtable').bootstrapTable({
+                data: data
+            });
+            cfghtml=$("#view_record").html();
+        }
+        var html='<div class="tabs-container"> <ul class="nav nav-tabs"> ' +
+                '<li class="active"><a data-toggle="tab" href="#tab1">缴费项目  </a> </li> '+
+                '</ul>' +
+                '<div class="tab-content "> ' +
+                '<div id="tab1" class="tab-pane active"><div class="panel-body"> '+cfghtml+' </div> </div>' +
+                '</div></div>';
+        return html;
+    }
+
+    function actFmt(value, row, index){
+        var html='<a href="javascript:void(0)" class="ml10 item" href="javascript:void(0)"><i class="fa fa-edit text-navy"></i>&nbsp;新增缴费项目</a>&nbsp;&nbsp;';
+        return html;
+    }
+
+    window.actEvt = {
+        'click .item': function (e, value, row, index) {
+            var url = "{:url('/fice/Fice/addFeeCfg')}";
+            var code = row.code;
+            $.post(url, {"feetype": code}, function (data) {
+                show_modal("添加缴费项目", data, "");
+            });
+        }
+    }
+    function removeItem(id){
+        var url = "{:url('/fice/Fice/removeFeeCfg')}";
+        basedelete("feetable",url,id)
+    }
+    function optFmt(value, row, index) {
+        return [
+            '<a class="remove ml10" href="javascript:void(0)" title="删除" onclick="removeItem(\''+row.id+'\')"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;'
+        ].join('');
+    }
+
+    function initOther(){
+        $('#feetable').bootstrapTable('refresh');
+    }
+</script>
+<script>
+    //原来的itemlist的js
+    $(function () {
+        $("#btnsearch").click(function () {
+            var cate = $("#itemtype").val();
+            var name = $("#itemname").val();
+
+            var param = new Object();
+            if (cate != "") {
+                param.cate = cate;
+            }
+            if (name != "") {
+                param.name = name;
+            }
+            $('#feeItemTable').bootstrapTable('refresh', {query: param});
+        });
+        $("#btnadd").click(function () {
+            var url = "{:url('/fice/Fice/addFeeItem')}";
+            $.post(url, function (data) {
+                show_modal("新增缴费项目", data, "");
+            });
+        });
+    });
+    function itemactFmt(value, row, index) {
+        return [
+            '<a href="javascript:void(0)" class="edit ml10"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;',
+            '<a class="remove ml10" href="javascript:void(0)" title="删除" onclick="deltItem(' + row.id + ')"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;',
+            '<a class="opt ml10" href="javascript:void(0)" title="添加缴费标准"><i class="fa fa-plus text-navy"></i>&nbsp;添加缴费标准</a>&nbsp;&nbsp;'
+        ].join('');
+    }
+    function deltItem(id) {
+        var url = "{:url('/fice/Fice/deltFeeItem')}";
+        basedelete("feeItemTable", url, id);
+    }
+    window.itemactEvt = {
+        'click .edit': function (e, value, row, index) {
+            var url = "{:url('/fice/Fice/addFeeItem')}";
+            var id = row.id;
+            $.post(url, {"id": id}, function (data) {
+                show_modal("编辑缴费项目", data, "");
+            });
+        },
+        'click .opt': function (e, value, row, index) {
+            var url = "{:url('/fice/Fice/addItemOpt')}";
+            var id = row.id;
+            $.post(url, {"itemId": id}, function (data) {
+                show_modal("添加缴费标准", data, "");
+            });
+        }
+    };
+    function itemtypeFmt(value, row, index) {
+        if (value == '0') {
+            return "无关联";
+        } else if (value == 1) {
+            return "房间";
+        } else if (value == "2") {
+            return "工位";
+        }
+    }
+    function feeFmt(value, row, index) {
+        if (value == 'num_price') {
+            return "单价×数量";
+        } else if (value == "input") {
+            return "每户单独输入";
+        } else if (value == "numration") {
+            return "指定金额";
+        }else{
+            return "";
+        }
+    }
+    function numratFmt(value, row, index) {
+        if (value == 'etprs') {
+            return "按企业收取";
+        } else if (value == "people") {
+            return "人数";
+        } else if (value == "area") {
+            return "建筑面积";
+        } else if (value == "day") {
+            return "按天";
+        } else if (value == "room") {
+            return "房间数";
+        } else if (value == "smlroom") {
+            return "工位数";
+        } else if (value == "data") {
+            return "录入数据";
+        } else{
+            return "";
+        }
+    }
+    function itemdetailView(index, row){
+        var optsdata = row.opts;
+        var opthtml="";
+        if(optsdata.length>0){
+            $('#itemopttable').bootstrapTable('destroy');
+            $('#itemopttable').bootstrapTable({
+                data: optsdata
+            });
+            opthtml=$("#itemview_record").html();
+        }
+        var html='<div class="tabs-container"> <ul class="nav nav-tabs"> ' +
+                '<li class="active"><a data-toggle="tab" href="#tab1">收费标准  </a> </li> '+
+                '</ul>' +
+                '<div class="tab-content "> ' +
+                '<div id="tab1" class="tab-pane active"><div class="panel-body"> '+opthtml+' </div> </div>' +
+                '</div></div>';
+        return html;
+    }
+    function itemoptFmt(value, row, index) {
+        var html='<a href="javascript:void(0)" class="ml10" href="javascript:void(0)" onclick="editItemOpt(' + row.id + ')"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;'+
+                '<a class="ml10" href="javascript:void(0)" title="删除" onclick="deltItemOpt(' + row.id + ')"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;';
+
+        return html;
+    }
+
+    function deltItemOpt(id) {
+        var url = "{:url('/fice/Fice/deltFeeItemOpt')}";
+        basedelete("feeItemTable", url, id);
+    }
+    function editItemOpt(id){
+        var url = "{:url('/fice/Fice/addItemOpt')}";
+        $.post(url, {"id": id}, function (data) {
+            show_modal("编辑缴费标准", data, "");
+        });
+    }
+</script>
+<!--原先的itemlist的详情页-->
+<div id="itemview_record" style="display:none;">
+    <table id="itemopttable"  data-pagination="false" data-striped="true">
+        <thead>
+        <tr>
+            <th data-field="name">收费标准</th>
+            <th data-field="feestyle" data-formatter="feeFmt">收费方式</th>
+            <th data-field="fee">指定金额</th>
+            <th data-field="price">单价</th>
+            <th data-field="numration" data-formatter="numratFmt">计量方式</th>
+            <th data-field="cycle">周期(月)</th>
+
+            <th data-field="action"  data-formatter="itemoptFmt">操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<!---->
+
+<div id="view_record" style="display:none;">
+    <table id="itemtable"  data-pagination="false" data-striped="true">
+        <thead>
+        <tr>
+            <th data-field="itemName">缴费项目</th>
+            <th data-field="optName">缴费标准</th>
+            <th data-field="action" data-formatter="optFmt" data-formatter="actEvt">操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">缴费时间设置</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">缴费项目设置</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">缴费配置</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="ibox float-e-margins">
+
+                                            <div class="ibox-content" style="border: none;">
+                                                <form action="{:url('/fice/Fice/saveBaseFeeCfg')}" class="form-horizontal" method="post" id="cfgForm">
+                                                    <fieldset>
+                                                        <div class="form-group">
+                                                            <label class="col-sm-4 control-label">缴费时间设置：</label>
+                                                            <div class="col-sm-8">
+                                                                <div class="radio radio-success radio-inline">
+                                                                    <input type="radio" id="type1" value="0" name="cycletype" {if condition="!isset($data.cycletype)||empty($data.cycletype)"}checked{/if}>
+                                                                    <label for="type1" class="text-success"><b>按合同时间</b></label>
+                                                                </div>
+                                                                <div class="radio radio-success radio-inline">
+                                                                    <input type="radio" id="type2" value="1" name="cycletype" {if condition="isset($data.cycletype)&&!empty($data.cycletype)"}checked{/if}>
+                                                                    <label for="type2" class="text-success"><b>固定月初</b></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="width:100%;overflow:hidden;text-align:center;">
+                                                            <!--<input type="hidden" name="apltype" value="1">-->
+                                                            <input type="hidden" id="id" value="{$data.id|default=0}" name="id">
+                                                            <button type="button" class="btn btn-primary btn-sm" id="btnbasesave">
+                                                                <i class="fa fa-check"></i>
+                                                                提交
+                                                            </button>
+                                                            <!--<button type="button" class="btn btn-danger btn-sm">-->
+                                                                <!--<i class="fa fa-remove"></i>-->
+                                                                <!--重置-->
+                                                            <!--</button>-->
+                                                        </div>
+                                                    </fieldset>
+                                                </form>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content">
+                                            <div class="tabs-container">
+                                                <div class="tab-content">
+                                                    <div class="panel-body">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="ibox float-e-margins">
+                                                                    <div class="ibox-content" style="border:none;">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12 m-b-xs"><span>项目名称：</span>
+                                                                                <input type="text" placeholder="请输入项目名称"
+                                                                                       class="input-sm form-control" id="itemname">
+                                                                                <span>项目类型：</span>
+                                                                                <select class="form-control inline" id="itemtype">
+                                                                                    <option value="">--请选择--</option>
+                                                                                    {:widget("user/HtmlWidget/initDictSelect",['con'=>array('code'=>array('like','1029%'),'level'=>'2'),'default'=>''])}
+                                                                                </select>
+                                                                                <button type="button" class="btn btn-primary btn-sm" id="btnsearch">
+                                                                                    &nbsp;&nbsp;<i class="fa fa-search"></i>&nbsp;&nbsp;查询&nbsp;&nbsp;
+                                                                                </button>
+                                                                                <button type="button" class="btn btn-primary btn-sm" id="btnadd">
+                                                                                    &nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增&nbsp;&nbsp;
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="table-responsive">
+                                                                            <table id="feeItemTable" class="resettable" data-toggle="table"
+                                                                                   data-url="{:url('/fice/Fice/getItemlist')}" data-search="false"
+                                                                                   data-show-refresh="false" data-pagination="true"
+                                                                                   data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true"
+                                                                                   data-detail-view="true" data-detail-formatter="itemdetailView">
+                                                                                <thead>
+                                                                                <tr>
+                                                                                    <th data-field="name" data-sortable="true"> 缴费项目名称</th>
+                                                                                    <th data-field="cateText" data-sortable="true">项目类型</th>
+                                                                                    <th data-field="about" data-formatter="itemtypeFmt" data-sortable="true">缴费关联</th>
+                                                                                    <th data-field="action" data-formatter="itemactFmt" data-events="itemactEvt">操作
+                                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                                    </th>
+                                                                                </tr>
+                                                                                </thead>
+
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-3" class="tab-pane">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="ibox float-e-margins">
+                                        <div class="ibox-content" style="border:none;">
+                                            <div class="row">
+                                                <h4>缴费分类配置</h4>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table id="feetable" class="resettable" data-toggle="table"
+                                                       data-url="{:url('/fice/Fice/getFeecfg')}" data-search="false"
+                                                       data-show-refresh="false" data-pagination="true"
+                                                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true"
+                                                       data-detail-view="true" data-detail-formatter="detailView">
+                                                    <thead>
+                                                    <tr>
+                                                        <th data-field="name" data-sortable="true"> 分类</th>
+                                                        <th data-field="action" data-formatter="actFmt" data-events="actEvt">操作
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

@@ -1,0 +1,67 @@
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script>
+    $(function(){
+        $(".btn-save").on("click",function(){
+            var data,form=$(this).closest("form"),url=form.prop("action"),tableId=form.attr("tableId");
+            data=form.serializeArray();b=$(this).attr("id");
+            var thisobj = $(this);
+            thisobj.attr("disabled","true");
+            $.post(url,serializeJson(data),function(data){
+                if(1==data.code){
+                    thisobj.removeAttr("disabled");
+                    toastr.success(data.msg);$("#"+tableId).bootstrapTable("refresh");$("#myModal").modal("hide");
+                    $('#quesTable').bootstrapTable('refresh',{});
+                }else {thisobj.removeAttr("disabled");toastr.error(data.msg)}
+            });
+        });
+    });
+
+</script>
+
+<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div>
+
+<form id="quesform" action="{:url('/index/Ivst/saveQues')}" method="post" tableId="questable" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >问题名称</label>
+            <div class="col-sm-9">
+                <input type="text" name="title"  class="form-control" value="{$data.title|default=''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >问题类型</label>
+                 <div class="col-sm-9">
+                     <div class="radio radio-success radio-inline">
+                         <input type="radio" id="type1" value="1" name="types" {if condition="isset($data.types)&&($data.types==1)"}checked{/if}>
+                         <label for="type1" class="text-success"><b>单选</b></label>
+                     </div>
+                     <div class="radio radio-success radio-inline">
+                         <input type="radio" id="type2" value="2" name="types" {if condition="isset($data.types)&&($data.types==2)"}checked{/if} >
+                         <label for="type2" class="text-success"><b>多选</b></label>
+                     </div>
+                <!--     <div class="radio radio-success radio-inline">
+                         <input type="radio" id="type3" value="3" name="types" {if condition="isset($data.types)&&($data.types==3)"}checked{/if} >
+                         <label for="type3" class="text-success"><b>文本</b></label>
+                     </div> -->
+                 </div>
+
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >问题排序</label>
+            <div class="col-sm-9">
+                <input type="text" name="sort"  class="form-control" value="{$data.sort|default=''}">
+            </div>
+        </div>
+
+
+    </div>
+    <input type="hidden" id="id" name="id" value="{$data.id|default=0}">
+    <input  type="hidden" name="ivstId" value="{$data.ivstId|default=0}">
+    <div class="modal-footer">
+
+        <button type="button" class="btn btn-primary btn-save" id="btnsave"><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

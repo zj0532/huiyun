@@ -1,0 +1,195 @@
+{include file="index@index/header" /}
+<!--时间选择-->
+<link href='__PLUG__/datepicker/css/bootstrap-datetimepicker.min.css' rel='stylesheet' />
+<script src="__PLUG__/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<link href="__CSS__/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<script src="__JS__/bootstrap_validate.js"></script>
+<script>
+	$(function(){
+        $('.datepicker').datetimepicker({
+            minView: "month",
+            startView: 3,
+            minView: 3,
+            autoclose: true,//选中之后自动隐藏日期选择框
+            todayBtn: true,//今日按钮
+            forceParse : true,
+            format: "yyyy-mm"
+        });
+        $(".date").datetimepicker({minView:"month",autoclose:!0,todayBtn:!0,forceParse:!0,format:"yyyy-mm-dd"});
+
+        $('#btnsave').click(function(){
+            var jumpurl = "{:url('/service/Service/statelist')}";
+            var data,form=$(this).closest("form"),url=form.prop("action");
+            data=form.serializeArray();
+            var err = custom_validate("searchform");
+            if(err==0){
+                return;
+            }else{
+                $.post(url,serializeJson(data),function(data){
+                    if(1==data.code){
+                        toastr.success(data.msg);
+                        location.href = jumpurl;
+                    }else {toastr.error(data.msg)}
+                });
+            }
+
+        })
+	});
+</script>
+<div class="header">
+    <div class="h-left">
+        <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">新增月报</div>
+</div>
+<div class="user_com">
+
+        <div class="row">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h3 style="text-align:center;">{$data.name|default=""}月报表录入</h3></div>
+                <div class="ibox-content">
+                    <form class="form-horizontal" id="searchform" action="{:url('/service/Service/saveState')}" method="post" >
+                        <fieldset>
+                            <input type="hidden" name="etprsname" value="{$data.name|default=''}">
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">报表月份：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="报表月份" class="form-control opt-require datepicker" id="month"  name="month">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">填报人：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="填报人" id="person" class="form-control require " name="person" value="{$data.contact|default=''}" >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">联系电话：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="联系电话" id="mobile" class="form-control require mobile " name="mobile" value="{$data.mobile|default=''}">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">主营业务：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="主营业务" id="mainbus" class="form-control require " name="mainbus">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">月总营业额(万元)：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="月总营业额" id="income" class="form-control require decimal" name="income" value="{$data.income|default=''}">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">月总税收(万元)：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="月总税收" id="tax" class="form-control require decimal" name="tax" value="{$data.tax|default=''}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">企业职工总数：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="企业职工总数" id="total" class="form-control require number" name="total" value="{$data.total|default=''}">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">博士：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="博士" id="doctor" class="form-control require number" name="doctor" value="{$data.doctor|default=''}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">千人计划：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="千人计划" id="thousand" class="form-control require number" name="thousand" value="{$data.thousand|default=''}">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">应届大学生人数：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="应届大学生人数" id="student" class="form-control require number" name="student" value="{$data.student|default=''}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">申请专利数（含软件著作权）：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="申请专利数（含软件著作权）" class="form-control number " name="invent">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">专利名称:</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="专利名称" class="form-control " name="inventname">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">研发经费投入强度（RD投入）万元：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="研发经费投入强度（RD投入）万元" class="form-control decimal" name="rdinput">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">获天使或风险投资额（万元）:</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="获天使或风险投资额（万元）" class="form-control decimal" name="investment">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">是否高新企业：</label>
+                                    <div class="col-sm-8">
+                                        <div class="radio radio-success radio-inline">
+                                             <input type="radio" id="type5" value="1" name="highetprs" {if condition="!empty($data.highetprs)"}checked {/if}>
+                                             <label for="type5" class="text-success"><b>是</b></label>
+                                        </div>
+                                        <div class="radio radio-success radio-inline">
+                                             <input type="radio" id="type6" value="0" name="highetprs" {if condition="empty($data.highetprs)"}checked {/if}>
+                                             <label for="type6" class="text-success"><b>否</b></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="col-sm-4 control-label">高新企业认定时间：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="高新企业认定时间" class="form-control date" name="hightime">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">获得奖励或荣誉：</label>
+                                <div class="col-sm-10">
+                                    <input type="text" placeholder="获得奖励或荣誉" class="form-control " name="honor">
+                                </div>
+                            </div>
+                           <!-- <div class="form-group">
+                                <label class="col-sm-2 control-label" style="margin:20px 0;">企业盖章：</label>
+                                <div class="col-sm-10"></div>
+                            </div>  -->
+                            <input type="hidden" name="etprsId" value="{$data.id|default=''}">
+                            <div style="width:100%;overflow:hidden;text-align:center;">
+                               <button type="button" class="btn btn-primary btn-sm" id="btnsave">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+                               <button type="reset" class="btn btn-danger btn-sm">&nbsp;&nbsp;<i class="fa fa-remove"></i>&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+</div>
+    <!--右侧部分结束-->
+    {include file="index@index/footer" /}

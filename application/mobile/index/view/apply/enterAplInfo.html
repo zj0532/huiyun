@@ -1,0 +1,455 @@
+{include file="index@index/header" /}
+    <!--右侧部分开始-->
+    <link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var chars=['patent','projectdesc','edufile','idcartfile','highetprscert','lastficereport','charter'];
+        initfile(chars);
+
+        $("#btnenter").click(function () {
+            var url="{:url('/index/Apply/saveEnterNote')}";
+            var sms = '2';
+            if($('#sms').is(':checked')) {
+                sms ='1';
+            }
+            $.post(url,{"id":$("#id").val(),"content":$("#content").val(),"status":"1001014",'sms':sms},function(data) {
+                if(data.code=="1"){
+                    if(data.msg ==0){
+                        alert('短信发送失败，请人工通知');
+                    }
+                    toastr.success("保存成功");
+                    var aplurl="{:url('/index/Apply/enterapl')}";
+                    location.href=aplurl;
+                }else{
+                    toastr.error("保存失败");
+                }
+
+            });
+        });
+        $("#btnback").click(function () {
+            var url="{:url('/index/Apply/saveEnterNote')}";
+            var sms = '2';
+            if($('#sms').is(':checked')) {
+                sms ='1';
+            }
+            $.post(url,{"id":$("#id").val(),"content":$("#content").val(),"status":"1001000",'sms':sms},function(data) {
+                if(data.code=="1"){
+                    if(data.msg ==0){
+                        alert('短信发送失败，请人工通知');
+                    }
+                    toastr.success("保存成功");
+                    var aplurl="{:url('/index/Apply/enterapl')}";
+                    location.href=aplurl;
+                }else{
+                    toastr.error("保存失败");
+                }
+            });
+        });
+
+
+
+    });
+    function initfile(fields){
+        var ctmparams=new Array();
+        $.each(fields,function(index,value){
+            var tmp = new Object();
+            tmp.name=value;
+            tmp.value=$("#h"+value).val();
+            ctmparams[ctmparams.length] = tmp;
+        });
+        var fileUrl="{:url('/index/Index/initfiles')}";
+        var url="{:url('/user/Login/saveaplfile')}";
+        $.post(fileUrl,serializeJson(ctmparams),function(data) {
+            $.each(fields,function(index,value){
+                if(data[value]!=undefined){
+                    $("#"+value).html("<a href='__PUBLIC__/"+data[value]+"' target='_blank'>下载</a>");
+                }else{
+                    $("#"+value).html("<a href='javascript:void(0);'>没有上传文件</a>");
+                }
+
+            });
+
+        });
+    }
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">指标评分</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">申请信息</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                    <div class="ibox float-e-margins">
+                                    <h3 style="text-align:center;">{$data.etprsname|default=''}评分结果</h3>                         
+                                            <div class="table-responsive">
+                                                <style>
+                                                    .label1{padding:3px 6px;}
+                                                </style>
+                                                <table class="table table-bordered table-hover" style="text-align:center;margin-top:10px;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="text-align: center;"><span>最终得分</span></th>
+                                                            {volist name="retrials" id="vo"}
+                                                            <th style="text-align: center;"><span>导师—{$vo.userName}</span></th>
+                                                            {/volist}
+                                                            <th style="text-align: center;"><span  >最低分</span></th>
+                                                            <th style="text-align: center;"><span >最高分</span></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {notempty name='total'}
+                                                    <tr>
+                                                            <td><span> {$total.avg|round=2}</span></td>
+                                                                {volist name="retrials" id="re"}
+                                                                      <td><span>{$total[$re.adduserId]}</span></td>
+                                                                {/volist}
+                                                                <td><span>{$total.min}</span></td>
+                                                                 <td><span>{$total.max}</span></td>
+                                                        </tr>
+                                                    {else/}
+                                                    <tr>
+                                                        <td colspan="3"><span>暂时没有导师打分</span></td>
+                                                    </tr>
+                                                    {/notempty}
+                                                        
+
+                                                       
+                                                    </tbody>  
+                                                </table>
+                                            </div>
+                                        </div> 
+                                        <div class="ibox float-e-margins">    
+                                          <h3 >详细评分数据</h3>                                    
+                                            <div class="table-responsive">
+                                                <style>
+                                                    .label1{padding:3px 6px;}
+                                                </style>
+                                                <table class="table table-bordered table-hover" style="text-align:center;margin-top:10px;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="text-align: center;"><span>大指标</span></th>
+                                                            <th style="text-align: center;"><span>小指标</span></th>
+                                                            {volist name="retrials" id="vo"}
+                                                            <th style="text-align: center;"><span>导师—{$vo.userName}</span></th>
+                                                            {/volist}
+                                                            <th style="text-align: center;"><span  >最低分</span></th>
+                                                            <th style="text-align: center;"><span >最高分</span></th>
+                                                            <th style="text-align: center;"><span>平均分</span></th>
+                                                        </tr>
+                                                    </thead>
+                                                    {notempty name="score"}
+                                                    <tbody>
+                                                    
+                                                        <tr>
+                                                        {volist name="score" id="sc" key="k"}
+                                                        
+                                                            <td rowspan="{$sc.count}"><span>{$sc.title}({$sc.score})</span></td>
+                                                            {notempty name="sc.child"}
+                                                                {volist name="sc.child" id="ch"}
+                                                                <td><span>{$ch.title}({$ch.score})</span></td>
+                                                                {volist name="retrials" id="re"}
+                                                                      <td><span>{$ch.teacher[$re.adduserId]}</span></td>
+                                                                {/volist}
+                                                                <td><span >{$ch.teacher['min']|default=""}</span></td>
+                                                                <td><span >{$ch.teacher['max']|default=""}</span></td>
+                                                                <td><span >{$ch.teacher['avg']|default=""}</span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                {/volist}
+                                                            {/notempty}
+                                                           
+                                    
+                                                        {/volist}
+                                                            <td colspan="2"><span >导师复审意见</span></td>
+                                                             {volist name="retrials" id="re"}
+                                                                      <td><span>{$re.content}</span></td>
+                                                                {/volist}
+                                                            <td><span></span></td>
+                                                            <td><span></span></td>
+                                                            <td><span></span></td>
+                                                        </tr>
+                                                    {else/}
+                                                        <tr>
+                                                        <td colspan="5"><span>暂时没有导师打分明细</span></td>
+                                                        </tr>
+                                                    {/notempty}
+                                                       
+                                                    </tbody>  
+                                                    
+                                                </table>
+                                            </div>
+                                        </div> 
+                                        <form action="{:url('/index/Apply/saveEnterNote')}" method="post">
+                                            <div class="row" style="text-align:left;">
+                                                <div class="col-sm-12 m-b-xs">
+                                                    <h3>确定入驻意见</h3>
+                                                    <textarea id="content" name="content" class="form-control" required aria-required="true" placeholder="备注" style="margin-bottom:20px;"></textarea>
+                                                </div>
+                                                <p style="margin-left:2em;"><input type="checkbox" name="sms" id="sms" value="1"><label for="sms">&nbsp;&nbsp;短信通知</label>
+                                            </div>
+                                            <input type="hidden" name="id" id="id" value="{$data.id|default=''}">
+                                            <button type="button" class="btn btn-primary btn-sm" id="btnenter">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;通过&nbsp;&nbsp;</button>
+                                            <button type="button" class="btn btn-danger btn-sm" id="btnback">&nbsp;&nbsp;<i class="fa fa-close"></i>&nbsp;&nbsp;退回&nbsp;&nbsp;</button>
+                                        </form>
+                                           
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="ibox float-e-margins">
+                                            <div class="ibox-content" style="border:none;">
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">申请企业名称：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.etprsname|default=''}
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">希望入驻时间：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.planintime|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">入驻期限（年）：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.timeline|default=''}
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">需求面积（㎡）：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.area|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">需求办公方式：</label>
+                                                    <div class="col-sm-10">
+                                                        {$data.workstyleText|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                {if condition="$type=='etprs'"}
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">法人代表：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.lealPerson|default=''}
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">成立时间：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.rgsttime|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">注册资本（万元）：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.capital|default=''}
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">纳税人类型：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.taxpayertypeText|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">上传营业执照：</label>
+                                                    <div class="col-sm-4">
+                                                        <span id="charter"></span>
+                                                        <input type="hidden"  name="charter" id="hcharter" value="{$data.charter|default=''}">
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">上一年度财务报表：</label>
+                                                    <div class="col-sm-4">
+                                                        <span id="lastficereport"></span>
+                                                        <input type="hidden"  name="lastficereport" id="hlastficereport" value="{$data.lastficereport|default=''}">
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">是否高新企业：</label>
+                                                    <div class="col-sm-10">
+                                                        {if condition="$data.highetprs==1"}是{else/}否{/if}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">高新企业认定时间：</label>
+                                                    <div class="col-sm-4">
+                                                        {if condition="$data.highetprs==1"}{$data.highetprstime|default=''}{else/}-----{/if}
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">高新企业认定证书：</label>
+                                                    <div class="col-sm-4">
+                                                        <span id="highetprscert"></span>
+                                                        <input type="hidden"  name="highetprscert" id="hhighetprscert" value="{$data.highetprscert|default=''}">
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                {/if}
+                                                {if condition="$type=='team'"}
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">计划何时注册企业：</label>
+                                                    <div class="col-sm-10">
+                                                        {$data.planintime|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                {/if}
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">行业类型：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.industryText|default=''}
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">技术领域：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.technicalText|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">负责人：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.leader|default=''}
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">性别：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.sexText|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">联系方式：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.mobile|default=''}
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">邮箱：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.email|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">身份证号：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.idcard|default=''}
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">最高学历：</label>
+                                                    <div class="col-sm-4">
+                                                        {$data.eduText|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">上传身份证：</label>
+                                                    <div class="col-sm-4">
+                                                        <span id="idcartfile"></span>
+                                                        <input type="hidden"  name="idcartfile" id="hidcartfile" value="{$data.idcartfile|default=''}">
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">上传学历证：</label>
+                                                    <div class="col-sm-4">
+                                                        <span id="edufile"></span>
+                                                        <input type="hidden"  name="edufile" id="hedufile" value="{$data.edufile|default=''}">
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">主要负责人创业特征：</label>
+                                                    <div class="col-sm-10">
+                                                        {$data.worktypeText|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label"><p>人员情况：</p></label>
+                                                    <div class="col-sm-10">
+                                                        <table class="basic table table-bordered table-hover">
+                                                            <tbody>
+                                                            <tr>
+                                                                <td>人员数量</td>
+                                                                <td>博士</td>
+                                                                <td>大专以上</td>
+                                                                <td>千人计划</td>
+                                                                <td>吸纳应届大学生</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>{$data.total|default=''}</td>
+                                                                <td>{$data.doctor|default=''}</td>
+                                                                <td>{$data.junior|default=''}</td>
+                                                                <td>{$data.thousand|default=''}</td>
+                                                                <td>{$data.student|default=''}</td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label"><p>主要产品及服务：</p></label>
+                                                    <div class="col-sm-10">
+                                                        <table id="aplpdtId" class="resettable" data-toggle="table" data-url="{:url('/index/Apply/getPdts',array('etprsId'=>$etprsId))}" data-search="false"
+                                                               data-show-refresh="false" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="false">
+                                                            <thead>
+                                                            <tr>
+                                                                <th data-field="pdtname">名称</th>
+                                                                <th data-field="pdtdesc">说明</th>
+                                                            </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">项目计划书：</label>
+                                                    <div class="col-sm-4">
+                                                        <span id="projectdesc"></span>
+                                                        <input type="hidden"  name="projectdesc" id="hprojectdesc" value="{$data.projectdesc|default=''}">
+                                                    </div>
+                                                    <label class="col-sm-2 control-label">知识产权情况：</label>
+                                                    <div class="col-sm-4">
+                                                        <span id="patent"></span>
+                                                        <input type="hidden"  name="patent" id="hpatent" value="{$data.patent|default=''}">
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">其它未尽事项说明：</label>
+                                                    <div class="col-sm-10">
+                                                        {$data.desc|default=''}
+                                                    </div>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-sm-6 col-sm-offset-3">
+                                                        <button class="btn btn-primary" type="button" onclick="window.history.go(-1);">&nbsp;&nbsp;<i class="fa fa-reply"></i>&nbsp;&nbsp;返回</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--右侧部分结束-->
+{include file="index@index/footer" /}

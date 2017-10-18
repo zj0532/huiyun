@@ -1,0 +1,103 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function() {
+
+    });
+
+    function statusFmt(value, row, index){
+        if(row.aplstatus=='1'){
+            return "已申请";
+        }else if(row.aplstatus=="2"){
+            return "已通过";
+        }else if(row.aplstatus=="3"){
+            return "已拒绝";
+        }else{
+            return "未申请";
+        }
+    }
+    function actionFormatter(value, row, index) {
+        html="";
+        if((row.aplstatus=='0'||row.aplstatus==null)&&row.close=='0'){
+            html='<a class="apl ml10" href="javascript:void(0)" title="申请参与"><i class="fa fa-user"></i> 申请参与</a>';
+        }
+        return html;
+    }
+
+    function statusFmter(value, row, index){
+        var html="正常";
+        if(row.close=='1'){
+            return "已结束"
+        }
+        return html;
+    }
+
+    window.actionEvents = {
+        'click .apl': function (e, value, row, index) {
+            var url="{:url('/service/Service/addAplActivity/id/"+row.id+"')}";
+            baseadd(url,'添加活动申请','');
+
+           /* var url="{:url('/service/Service/aplActivity/id/"+row.id+"')}";
+            $.post(url, function(data) {
+                if (data.code == 1) {
+                    toastr.success("申请成功，请耐心等待");
+                    $("#activitytable").bootstrapTable('refresh');
+                }else if(data.code == 0){
+                    toastr.warning(data.msg);
+                }else{
+                    toastr.error(data.msg);
+                }
+            });*/
+        }
+    };
+    function detailView(index, row){
+        return "<div><span style='font-weight:bold;'>活动详情：</span>"+row.desc+"</div>";
+    }
+
+</script>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <!-- Example Events -->
+            <div>
+                <div id="toolbar" class="btn-group">
+                    <!--<button type="button" class="btn btn-success" id="btnadd" data-url="{:url('/service/Service/addActivity')}">
+                        <i class="glyphicon glyphicon-plus">新增</i>
+                    </button>
+                    <button type="button" class="btn btn-info" id="btnedit" data-url="{:url('/service/Service/addActivity')}">
+                        <i class="glyphicon glyphicon-edit">编辑</i>
+                    </button>
+                    <button type="button" class="btn btn-default" id="btndelete" data-url="{:url('/service/Service/deleteActivity')}">
+                        <i class="glyphicon glyphicon-trash">删除</i>
+                    </button>-->
+                </div>
+                <table id="activitytable" class="resettable" data-toggle="table" data-url="{:url('/service/Service/getEtprsActivity')}" data-search="true"
+                       data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true"
+                       data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView">
+                    <thead>
+                        <tr>
+                            <th data-field="state" data-checkbox="true"></th>
+                            <th data-field="name" data-sortable="true">活动名称</th>
+                            <th data-field="startTime" data-sortable="true">报名开始时间</th>
+                            <th data-field="endTime" data-sortable="true">报名结束时间</th>
+                            <th data-field="status" data-formatter="statusFmter" data-sortable="true">活动状态</th>
+                            <th data-field="close" data-formatter="statusFmt" data-sortable="true">状态</th>
+                            <th data-field="action" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <!-- End Example Events -->
+        </div>
+    </div>
+
+   <!--右侧部分结束-->
+    {include file="index@index/footer" /}

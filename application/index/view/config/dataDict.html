@@ -1,0 +1,148 @@
+{include file="index@index/header" /}
+<link href="__PLUG__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+<script src="__PLUG__/bootstrap-table/bootstrap-table.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btnadd").click(function(){
+            var url=$(this).attr("data-url");
+            baseadd(url,"添加字典信息","");
+        });
+
+        $("#btnedit").click(function(){
+            var url=$(this).attr("data-url");
+            baseedit("datatable",url,"编辑字典信息","");
+        });
+
+    });
+    function actFmt(value, row, index){
+        var html='<a class="edit ml10" href="javascript:void(0)" title="修改" onclick="editDict(\''+row.id+'\')"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;';
+        if(row.level<3){
+            html=html+'<a class="cld ml10" href="javascript:void(0)" onclick="addChld(\''+row.code+'\',\''+row.level+'\',\''+row.flag+'\')" title="添加子项"><i class="fa fa-plus text-navy"></i>&nbsp;添加子项</a>';
+        }
+        return html;
+    }
+    function actCldFmt(value, row, index){
+        var html='<a class="edit ml10" href="javascript:void(0)" title="修改" onclick="editDict(\''+row.id+'\')"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>&nbsp;&nbsp;' +
+                '<a class="remove ml10" href="javascript:void(0)" title="删除" onclick="cfmdeltDict(\''+row.id+'\',\''+row.code+'\',\''+row.level+'\')"><i class="fa fa-times text-danger"></i>&nbsp;删除</a>&nbsp;&nbsp;';
+        return html;
+    }
+    function cfmdeltDict(id,code,level){
+        //新合作
+        var vdata='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button><h4 class="modal-title" id="myModalLabel"></h4></div><div class="modal-body">确定要删除么？删除后不可恢复</div>' +
+                '<div class="modal-footer"><button class="btn btn-primary" onclick="deltDict(\''+id+'\',\''+code+'\',\''+level+'\')">确定</button><button class="btn btn-glyph " data-dismiss="modal" onclick="return false;">取消</span></button></div>';
+        show_modal("提示",vdata,"modal-sm");
+    }
+    function deltDict(id,code,level){
+        var iqbtId=$("#iqbtId").val();
+        /*if(iqbtId==0){
+            var url="{:url('/index/Config/deleteDict')}";
+        }else{
+            var url="{:url('/index/Config/nodeleteDict')}";
+        }*/
+        var url="{:url('/index/Config/deleteDict')}";
+        $.post(url,{id:id,code:code,level:level}, function(data) {
+            if(data.code==1){
+                $('#myModal').modal('hide');
+                $('#datatable').bootstrapTable('refresh');
+                toastr.success(data.msg);
+            }else{
+                toastr.error(data.msg);
+            }
+        });
+    }
+
+    function editDict(id){
+        var url="{:url('/index/Config/addDict')}";
+        $.post(url,{id:id}, function(data) {
+            show_modal("编辑字典信息",data,"");
+        });
+    }
+    function addChld(code,level,flag){
+        var url="{:url('/index/Config/addCldDict')}";
+        $.post(url,{code:code,level:level,flag:flag}, function(data) {
+            show_modal("添加字典子项",data,"");
+        });
+    }
+    function detailView(index, row){
+        var data = row.child;
+        var html="";
+        if(data.length>0){
+            $('#recordtable').bootstrapTable('destroy');
+            $('#recordtable').bootstrapTable({
+                data: data
+            });
+            html=$("#view_record").html();
+        }
+        return html;
+    }
+    function nameFmt(value, row, index) {
+        var f=row.level-2;
+        var pre="";
+        if(f>0){
+            pre="&nbsp;&nbsp;&nbsp;&nbsp;|-";
+        }
+        return pre+value;
+    }
+</script>
+
+<input type="text" id="iqbtId" value="{$iqbtId}">
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="row">
+        {include file="index@index/nav" /}
+    </div>
+    <div id="view_record" style="display:none;">
+        <table id="recordtable"  data-pagination="true" data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true">
+            <thead>
+                <tr>
+                    <th data-field="name" data-sortable="true" data-formatter="nameFmt">文本值</th>
+                    <th data-field="code" data-sortable="true">代码</th>
+                    <th data-field="action"  data-formatter="actCldFmt" data-events="actEnt">操作</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <!-- Example Events -->
+                                    <div>
+                                        <div id="toolbar" class="col-sm-12 m-b-xs">
+                                            <!--<button type="button" class="btn btn-success" id="btnadd" data-url="{:url('/index/Config/addDict')}">
+                                                <i class="glyphicon glyphicon-plus">新增</i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-info btn-sm" id="btnedit" data-url="{:url('/index/Config/addDict')}">
+                                                <i class="glyphicon glyphicon-edit"></i>&nbsp;编辑
+                                            </button>
+                                        </div>
+                                        <table id="datatable" class="resettable" data-search="true" data-toggle="table"
+                                               data-show-refresh="true" data-toolbar="#toolbar" data-pagination="true" data-url="{:url('/index/Config/getDataDict')}"
+                                               data-page-list="[5, 10, 20, 50, 100, 200]" data-striped="true" data-detail-view="true" data-detail-formatter="detailView">
+                                            <thead>
+                                                <tr>
+                                                    <th data-field="state" data-checkbox="true"></th>
+                                                    <th data-field="name" data-sortable="true">字典名称</th>
+                                                    <th data-field="code" data-sortable="true">代码</th>
+                                                    <th data-field="action"  data-formatter="actFmt" data-events="actEnt">操作</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <!-- End Example Events -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <!--右侧部分结束-->
+{include file="index@index/footer" /}

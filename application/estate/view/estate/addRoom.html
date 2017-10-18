@@ -1,0 +1,38 @@
+{include file="user@login/addheader" /}
+<form id="dataform" action="{:url('/estate/Estate/saveRooms')}" tableId="roomTable" method="post" class="form-horizontal">
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-4 control-label" style="text-align:right;">房间编号：</label>
+            <div class="col-sm-8">
+                <input type="text" name="roomNo" id="roomno" class="form-control require" value="{$data.roomNo|default=''}" placeholder="房间编号">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label" style="text-align:right;">面积（m<sup>2</sup>）：</label>
+            <div class="col-sm-8">
+                <input type="text" name="totalarea" id="total" class="form-control require decimal" value="{$data.totalarea|default='0'}" placeholder="面积">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label" style="text-align:right;">房间类型：</label>
+            <div class="col-sm-8">
+                <div class="radio radio-success radio-inline"><input type="radio" value="1" id="type11" name="type" {if condition="!isset($data['type']) or !empty($data['type'])"}checked{/if}><label for="type11">办公室</label></div>
+                <div class="radio radio-success radio-inline"><input type="radio" value="0" id="type22" name="type" {if condition="isset($data['type']) and $data['type'] eq 0"}checked{/if}><label for="type22">工位</label></div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+    <div class="modal-footer">
+        <input type="hidden" id="id" name="id" value="{$data.id|default='0'}">
+        <input type="hidden" value="{$data.buildId|default=$buildId}" id="buildId" name="buildId">
+        <input type="hidden" value="{$floor|default='1'}" id="floor" name="floor">
+        <button type="button" class="btn btn-primary btn-save" ><i class="fa fa-save"></i> <span
+                class="bold">保存</span></button>
+        <button type="button" class="btn btn-glyph" data-dismiss="modal"><i class="fa fa-close"></i> <span class="bold">关闭</span>
+        </button>
+    </div>
+</form>

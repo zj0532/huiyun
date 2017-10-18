@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>慧云孵化器</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link href="__CSS__/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+    <!--[if lt IE 8]>
+    <script>
+        alert('H+已不支持IE6-8，请使用谷歌、火狐等浏览器\n或360、QQ等国产浏览器的极速模式浏览本页面！');
+    </script>
+    <![endif]-->
+    <!-- 全局js -->
+    <script src="__JS__/jquery-2.1.1.min.js"></script>
+    <script src="__JS__/bootstrap.min.js?v=3.4.0"></script>
+    <script src="__JS__/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="__JS__/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="__JS__/plugins/layer/layer.min.js"></script>
+    <!-- 自定义js -->
+    <script src="__JS__/hplus.min.js?v=3.0.0"></script>
+    <script src="__JS__/contabs.min.js"></script>
+    <!-- 第三方插件 -->
+    <script src="__JS__/plugins/pace/pace.min.js"></script>
+    <!--时间选择-->
+    <script src="__JS__/base.js"></script>
+
+    <!-- toastr CSS -->
+    <link href="__PLUG__/toastr/toastr.css" rel="stylesheet">
+    <!-- toastr Theme JavaScript -->
+    <script src="__PLUG__/toastr/toastr.js"></script>
+    <link rel="stylesheet" type="text/css" href="__CSS__/home.min.css">
+    <script type="text/javascript">
+        $(function(){
+            initRegion(0,"province");
+
+            jQuery(document.body).on('click','.region',function(){
+                $(this).parent().find("li").removeClass("active");
+                $(this).addClass("active");
+                var level=$(this).attr("data-level");
+                var id=$(this).attr("data-id");
+                $("#hdistrictId").val(id);
+                $("#hlevel").val(level);
+                if(level=="3"){
+                    initIqbts(id,level,$("#bat-search-box-input").val());
+                }else{
+                    initIqbts(id,level,$("#bat-search-box-input").val());
+                    if(level==1){
+                        initRegion(id,"city",level);
+                    }else if(level==2){
+                        initRegion(id,"district",level);
+                    }
+                }
+            })
+
+            $(".province .right li").click(function(){
+                $(this).addClass("active").siblings().removeClass("active")
+            })
+            $(".city .right li").click(function(){
+                $(this).addClass("active").siblings().removeClass("active")
+            })
+            $(".area .right li").click(function(){
+                $(this).addClass("active").siblings().removeClass("active")
+            })
+            
+            $("#bat-city-lable").click(function () {
+                var key=$("#bat-search-box-input").val();
+                var level=$("#hlevel").val();
+                var id=$("#hdistrictId").val();
+                if(key!=""){
+                    initIqbts(id,level,$("#bat-search-box-input").val());
+                }
+            });
+        });
+
+        function getIqbt(id){
+            var url="{:url('/index/Main/getIqbt')}?iqbtId="+id;
+            console.log(url);
+            location.href=url;
+        }
+        function apliqbt(id,status,etprsIqbtId){
+            if(status==0){
+                var url="{:url('/index/Main/aplplus')}";
+                $.post(url,{'id':id}, function(data) {});
+                var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                        '<h4 class="modal-title" id="myModalLabel"></h4></div>' +
+                        '<div class="modal-body">当前孵化器还没有被认领，我们会及时联系孵化器进行认领 </div>' +
+                        '<div class="modal-footer"></div>';
+                show_modal("提示",data,"modal-sm");
+            }else if(status==1){
+                var logurl="{:url('/user/Login/login')}?etprsIqbtId="+etprsIqbtId+"&iqbtId="+id;
+                var regurl="{:url('/user/Login/register')}?etprsIqbtId="+etprsIqbtId+"&iqbtId="+id;
+                var data='<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>' +
+                        '<h4 class="modal-title" id="myModalLabel"></h4></div>' +
+                        '<div class="modal-body"><a href="'+logurl+'" class="button">已有账号</a>&nbsp;&nbsp;&nbsp;<a href="'+regurl+'" class="button">没有账号</a> </div>' +
+                        '<div class="modal-footer"></div>';
+                show_modal("提示",data,"modal-sm");
+            }
+        }
+        function initRegion(id,htmlid,level){
+            /*if(level==undefined){
+                level=1;
+            }*/
+            var url="{:url('/index/Main/initShowRegion/id/"+id+"')}";
+            $("#"+htmlid).html("");
+            $.post(url, function(data) {
+                for(var i=0;i<data.length;i++){
+                    var cls='';
+                    if(i==0){
+                        if(data[i]["level"]<=level){
+                            cls=' active';
+                        }
+
+                        var htmid="";
+                        if(data[i]["level"]<3){
+                            if(data[i]["level"]==1){
+                                htmid="city";
+                            }else if(data[i]["level"]==2){
+                                htmid="district";
+                            }
+                            initRegion(data[i]["id"],htmid,level)
+                        }else if(data[i]["level"]=='3'){
+                            //initIqbts(data[i]["id"]);
+                        }
+                    }
+
+                    $("#"+htmlid).append("<li class='region"+cls+"' data-level="+data[i]["level"]+" data-id="+data[i]["id"]+">"+data[i]["name"]+"</li>");
+                }
+            });
+        }
+        function initIqbts(regionId,level,key){
+            var keytxt="";
+            if(key!=""){
+                keytxt="/key/"+key;
+            }
+            var url="{:url('/index/Main/initRegionIqbts/id/"+regionId+"/level/"+level+keytxt+"')}";
+            $.post(url, function(data) {
+                var html="";
+                for(var i=0;i<data.length;i++){
+                    if(data[i]["status"]=='0'){
+                        get='<a class="btn-now-bat-apply" href="javascript:void(0);" onclick="getIqbt('+data[i]["id"]+')">认领</a>';
+                    }else if (data[i]["status"]=='2'){
+                        get='<a href="javascript:void(0);" class="label-warning">待审核</a>';
+                    }
+                    get='<a class="btn-now-bat-apply" href="javascript:void(0);" onclick="getIqbt('+data[i]["id"]+')">认领</a>';
+                    html=html+'<div class="bat-bar clearfix"><a class="bat-pic hidden-sm pull-left" href=""><img  class="ly-banner-pic lazyloaded" src="__IMG__/1491902619617464.jpg" alt="">'+
+                    '<div class="tag-address">'+data[i]["districtText"]+'</div></a>'+
+                    '<div class="bat-info"><div class="bat-apply-box pull-right">'+get+'<a class="btn-now-bat-apply" href="javascript:void(0);" onclick="apliqbt('+data[i]["id"]+','+data[i]["status"]+','+data[i]["etprsIqbtId"]+')">申请入驻</a></div>'+
+                    '<div class="bat-info-box"><a class="bat-title" href="">'+data[i]["name"]+'</a><p class="bat-address">'+data[i]["address"]+'</p><p class="bat-tel">联系电话：'+data[i]["mobile"]+'</p>'+
+                    '<p class="bat-station-support" title="'+data[i]["serviceText"]+'">支持服务：'+data[i]["serviceText"]+'</p>'+
+                    '<div class="bat-station-facilities clearfix"><div class="pull-left">设施：</div><div class="bat-station-facilities-box clearfix">';
+                    var facility='';
+                    var fs=data[i]["facilityText"].split(",");
+                    for (var i = 0; i < fs.length; i++) {
+                        var obj = fs[i];
+                        facility+='<span>'+obj+'</span>';
+                    }
+                    html+=facility;
+
+                    html=html+facility;
+                    html=html+'</div></div></div></div></div>';
+
+                }
+                $("#iqbts").html(html);
+            });
+        }
+    </script>
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg">
+<input type="hidden" name="districtId" id="hdistrictId" value="">
+<input type="hidden" name="level" id="hlevel" value="">
+<div class="wrapper clearfix">
+    <div class="ly-container_mt90">
+        <div class="bat-nav-inner container clearfix" style="overflow:hidden;">
+            <div class="province">
+                <div class="left">所属省份：</div>
+                <div class="right">
+                    <ul id="province" class="ulregion">
+                    </ul>
+                </div>
+            </div>
+            <div class="city">
+                <div class="left">所属城市：</div>
+                <div class="right">
+                    <ul id="city" class="ulregion">
+
+                    </ul>
+                </div>
+            </div>
+            <div class="area">
+                <div class="left">所属区域：</div>
+                <div class="right">
+                    <ul id="district" class="ulregion">
+
+                    </ul>
+                </div>
+            </div>
+            <div class="bat-nav-right pull-right clearfix">
+                <div class="bat-search-box pull-right clearfix">
+                    <div class="bat-city-lable pull-right" id="bat-city-lable"></div>
+                    <input id="bat-search-box-input" type="text" placeholder="请输入孵化器名字">
+                </div>
+                <!--<a class="btn-apply" href="javascript:;">申请入驻</a>-->
+                <!--<a class="btn-bat-apply" href="javascript:;">孵化器申请入驻</a>-->
+            </div>
+        </div>
+        <div class="blur-container">
+            <div class="blur-container-cover"></div>
+            <div class="bat-container container" id="iqbts">
+
+            </div>
+            <div class="bat-more-container-box container">
+                <div class="more-container">
+                    <!--<div class="moreloader-more">
+                        <div class="moreloader-more-btn">加载更多</div>
+                    </div>-->
+                    <div class="moreloader-loading">
+                        <div class="loader-inner ball-pulse">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div id="wrapper">
+    &lt;!&ndash;右侧部分开始&ndash;&gt;
+    <div id="page-wrapper" class="gray-bg dashbard-1" style="margin-left: 0;">
+        <div class="row">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <div>孵化器列表</div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <select data-placeholder="省" class="form-control" tabindex="2" id="province">
+                                <option value="">--省--</option>
+                                {:widget("user/HtmlWidget/initCommonSelect",['table'=>'region','con'=>array('level'=>1),'default'=>isset($data['province'])?$data['province']:'','field'=>'id,name'])}
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <select data-placeholder="市" class="form-control" tabindex="2" id="city">
+                                <option value="">--市--</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <select data-placeholder="区（县）" class="form-control" tabindex="2" id="district">
+                                <option value="">--区（县）--</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="key" value="" placeholder="关键字">
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="radio radio-success radio-inline">
+                                <input type="radio" id="type1" value="0" name="iqbtStatus" checked>
+                                <label for="type1" class="text-success"><b>全部</b></label>
+                            </div>
+                            <div class="radio radio-success radio-inline">
+                                <input type="radio" id="type2" value="1" name="iqbtStatus">
+                                <label for="type2" class="text-success"><b>已认领</b></label>
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <input type="button" id="btnsearch" class="btn btn-info" value="搜索">
+                        </div>
+                        <input type="hidden" name="districtId" id="hdistrictId" value="">
+                    </div>
+                    <div class="ibox-content" style="border: none;">
+                        <div class="row" id="iqbthtml">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    &lt;!&ndash;右侧部分结束&ndash;&gt;
+</div>-->
+</body>
+</html>
