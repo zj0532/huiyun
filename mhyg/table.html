@@ -1,0 +1,368 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<title>慧云孵化器园区管理系统</title>
+<meta name="Keywords" content="" />
+<meta name="Description" content="" />
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css" media="all">
+<link rel="stylesheet" type="text/css" href="css/public.css"/>
+<link href="css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+<link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="css/plugins/chosen/chosen.css" rel="stylesheet">
+<link href="css/plugins/colorpicker/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+<link href="css/plugins/cropper/cropper.min.css" rel="stylesheet">
+<link href="css/plugins/switchery/switchery.css" rel="stylesheet">
+<link href="css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+<link href="css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
+<link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+<link href="css/plugins/ionRangeSlider/ion.rangeSlider.css" rel="stylesheet">
+<link href="css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
+<link href="css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<link href="css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+<link href="css/animate.min.css" rel="stylesheet">
+<link href="css/style.min.css?v=3.2.0" rel="stylesheet">
+<script src="js/jquery_1_11_2_min.js"></script>
+<script src="js/bootstrap.min.js?v=3.4.0"></script>
+<script src="js/nicescroll.js"></script>
+<style>
+   .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}	
+   .user_com .row{width:92%;margin:20px auto;padding:0;}
+   /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<body>	
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+       <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">表单信息类页面</div>
+    <div class="h-right">保存</div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" class="form-control"> 
+                <span class="input-group-btn"> 
+                    <button type="button" class="btn btn-primary">搜索</button> 
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="button" class="btn btn-primary btn-sm">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;新增&nbsp;&nbsp;</button>
+            <button type="button" class="btn btn-info btn-sm">&nbsp;&nbsp;<i class="fa fa-pencil-square-o"></i>&nbsp;&nbsp;编辑&nbsp;&nbsp;</button>
+            <button type="button" class="btn btn-danger btn-sm">&nbsp;&nbsp;<i class="fa fa-trash-o"></i>&nbsp;&nbsp;删除&nbsp;&nbsp;</button>
+        </div>
+        <div class="ibox float-e-margins">
+            <div class="form-group" id="data_1">
+                <label class="font-noraml">选择日期</label>
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input type="text" readonly="readonly" style="background:none;" class="form-control" value="选择日期">
+                </div>
+            </div>
+            <div class="form-group" id="data_5">
+                <label class="font-noraml">起始日期</label>
+                <div class="input-daterange input-group" id="datepicker">
+                    <input type="text" readonly="readonly" style="background:none;" class="input-sm form-control" name="start" value="开始日期" />
+                    <span class="input-group-addon">到</span>
+                    <input type="text" readonly="readonly" style="background:none;" class="input-sm form-control" name="end" value="结束日期" />
+                </div>
+            </div>
+        </div>
+        <div class="ibox-title  back-change" style="width:100%;border:none;margin:0;padding:0;">
+            <div class="ibox-content" style="width:100%;border:none;margin:0;padding:0;">
+                <div id="file-pretty" style="width:100%;border:none;margin:0;padding:0;">
+                    <div class="form-group" style="width:100%;">
+                        <label class="font-noraml">文件选择（单选）</label>
+                        <input type="file" class="form-control">
+                    </div>
+                    <div class="form-group" style="width:100%;">
+                        <label class="font-noraml">文件选择（多选）</label>
+                        <input type="file" multiple="multiple" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+	        <label class="font-noraml">基本示例</label>
+            <select data-placeholder="所属行业" class="chosen-select" style="width:100%;height:2.5em;line-height:2.5em;" tabindex="2">
+                <option value="">所属行业</option>
+                <option value="">IT</option>
+                <option value="">建筑</option>
+            </select>
+	    </div>
+	    <div class="form-group">
+	        <label class="font-noraml">基本示例</label>
+            <select data-placeholder="选择省份..." class="chosen-select" style="width:100%;height:2.5em;line-height:2.5em;" tabindex="2">
+                <option value="">请选择省份</option>
+                <option value="" hassubinfo="true">北京</option>
+                <option value="" hassubinfo="true">天津</option>
+            </select>
+	    </div>
+	    <div class="form-group">
+	        <label class="font-noraml">多选</label>
+            <select data-placeholder="选择省份" class="chosen-select" multiple style="width:100%;height:2.5em;line-height:2.5em;padding-left:0.5em;" tabindex="4">
+                <option value="">请选择省份</option>
+                <option value="110000" hassubinfo="true">北京</option>
+                <option value="120000" hassubinfo="true">天津</option>
+            </select>
+	    </div>
+        <form role="form">
+            <div class="form-group">
+                <label class="font-noraml">用户名</label>
+                <input type="email" placeholder="请输入您注册的E-mail" class="form-control">
+            </div>
+            <div class="form-group">
+                <label class="font-noraml">密码</label>
+                <input type="password" placeholder="请输入密码" class="form-control">
+            </div>
+        </form>
+        <div class="checkbox">
+            <input id="checkbox1" type="checkbox">
+            <label for="checkbox1">Default</label>
+        </div>
+        <div class="checkbox checkbox-primary">
+            <input id="checkbox2" type="checkbox" checked="">
+            <label for="checkbox2">Primary</label>
+        </div>
+        <div class="checkbox checkbox-success">
+            <input id="checkbox3" type="checkbox">
+            <label for="checkbox3">Success</label>
+        </div>
+        <div class="checkbox checkbox-info">
+            <input id="checkbox4" type="checkbox">
+            <label for="checkbox4">Info</label>
+        </div>
+        <div class="checkbox checkbox-warning">
+            <input id="checkbox5" type="checkbox" checked="">
+            <label for="checkbox5">Warning</label>
+        </div>
+        <div class="checkbox checkbox-danger">
+            <input id="checkbox6" type="checkbox" checked="">
+            <label for="checkbox6">Danger</label>
+        </div>
+        <p>无文本</p>
+        <div class="checkbox">
+            <input type="checkbox" id="singleCheckbox1" value="option1" aria-label="Single checkbox One">
+            <label></label>
+        </div>
+        <div class="checkbox checkbox-primary">
+            <input type="checkbox" id="singleCheckbox2" value="option2" checked="" aria-label="Single checkbox Two">
+            <label></label>
+        </div>
+        <p>行级显示</p>
+        <div class="checkbox checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox1" value="option1">
+            <label for="inlineCheckbox1"> 选项01 </label>
+        </div>
+        <div class="checkbox checkbox-success checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox2" value="option1" checked="">
+            <label for="inlineCheckbox2"> 选项02 </label>
+        </div>
+        <div class="checkbox checkbox-inline">
+            <input type="checkbox" id="inlineCheckbox3" value="option1">
+            <label for="inlineCheckbox3"> 选项03 </label>
+        </div>
+        <p>圆形显示</p>
+        <div class="checkbox checkbox-circle">
+            <input id="checkbox7" type="checkbox">
+            <label for="checkbox7">示例 01</label>
+        </div>
+        <div class="checkbox checkbox-info checkbox-circle">
+            <input id="checkbox8" type="checkbox" checked="">
+            <label for="checkbox8">示例 02</label>
+        </div>
+        <p>单选框</p>
+        <div class="radio">
+            <input type="radio" name="radio1" id="radio1" value="option1" checked="">
+            <label for="radio1"> 文本 01</label>
+        </div>
+        <div class="radio">
+            <input type="radio" name="radio1" id="radio2" value="option2">
+            <label for="radio2">文本 02</label>
+        </div>
+        <div class="radio radio-danger">
+            <input type="radio" name="radio2" id="radio3" value="option1">
+            <label for="radio3">文本 03</label>
+        </div>
+        <div class="radio radio-danger">
+            <input type="radio" name="radio2" id="radio4" value="option2" checked="">
+            <label for="radio4">文本 04</label>
+        </div>
+        <p>行级显示</p>
+        <div class="radio radio-info radio-inline">
+            <input type="radio" id="inlineRadio1" value="option1" name="radioInline" checked="">
+            <label for="inlineRadio1">选项 01</label>
+        </div>
+        <div class="radio radio-inline">
+            <input type="radio" id="inlineRadio2" value="option2" name="radioInline">
+            <label for="inlineRadio2">选项 02</label>
+        </div>
+        <p>无文本</p>
+        <div class="radio">
+            <input type="radio" id="singleRadio1" value="option1" name="radioSingle1" aria-label="Single radio One">
+            <label></label>
+        </div>
+        <div class="radio radio-success">
+            <input type="radio" id="singleRadio2" value="option2" name="radioSingle1" checked="" aria-label="Single radio Two">
+            <label></label>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>企业名称</th>
+                        <th>联系人</th>
+                        <th>联系电话</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>上海荣泰健康科技股份有限公司</td>
+                        <td>刘兵</td>
+                        <td>15862003325</td>
+                        <td>
+                        	<a href=""><i class="fa fa-file-text text-blue"></i>&nbsp;规划详情</a>&nbsp;&nbsp;
+                        	<a href=""><i class="fa fa-check text-navy"></i>&nbsp;通过</a>&nbsp;&nbsp;
+                            <a href=""><i class="fa fa-building text-navy"></i>&nbsp;入驻</a>&nbsp;&nbsp;
+                            <a href=""><i class="fa fa-times text-danger"></i>&nbsp;退回</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>上海荣泰健康科技股份有限公司</td>
+                        <td>刘兵</td>
+                        <td>15862003325</td>
+                        <td>
+                        	<a href=""><i class="fa fa-file-text text-blue"></i>&nbsp;规划详情</a>&nbsp;&nbsp;
+                        	<a href=""><i class="fa fa-check text-navy"></i>&nbsp;通过</a>&nbsp;&nbsp;
+                            <a href=""><i class="fa fa-building text-navy"></i>&nbsp;入驻</a>&nbsp;&nbsp;
+                            <a href=""><i class="fa fa-times text-danger"></i>&nbsp;退回</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>上海荣泰健康科技股份有限公司</td>
+                        <td>刘兵</td>
+                        <td>15862003325</td>
+                        <td>
+                        	<a href=""><i class="fa fa-file-text text-blue"></i>&nbsp;规划详情</a>&nbsp;&nbsp;
+                        	<a href=""><i class="fa fa-check text-navy"></i>&nbsp;通过</a>&nbsp;&nbsp;
+                            <a href=""><i class="fa fa-building text-navy"></i>&nbsp;入驻</a>&nbsp;&nbsp;
+                            <a href=""><i class="fa fa-times text-danger"></i>&nbsp;退回</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">设备详情</a></li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">申请记录</a></li>
+                <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">审批记录</a></li>
+                <li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">历史记录</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+				            <table class="table table-bordered table-hover">
+				                <thead>
+				                    <tr>
+				                        <th>企业名称</th>
+				                        <th>联系人</th>
+				                        <th>联系电话</th>
+				                        <th>操作</th>
+				                    </tr>
+				                </thead>
+				                <tbody>
+				                    <tr>
+				                        <td>上海荣泰健康科技股份有限公司</td>
+				                        <td>刘兵</td>
+				                        <td>15862003325</td>
+				                        <td><a href=""><i class="fa fa-file-text text-blue"></i>&nbsp;规划详情</a>&nbsp;&nbsp;</td>
+				                    </tr>
+				                    <tr>
+				                        <td>上海荣泰健康科技股份有限公司</td>
+				                        <td>刘兵</td>
+				                        <td>15862003325</td>
+				                        <td><a href=""><i class="fa fa-file-text text-blue"></i>&nbsp;规划详情</a>&nbsp;&nbsp;</td>
+				                    </tr>
+				                </tbody>
+				            </table>
+				        </div>
+                    </div>
+                </div>
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+				            <table class="table table-bordered table-hover">
+				                <thead>
+				                    <tr>
+				                        <th>企业名称1</th>
+				                        <th>联系人</th>
+				                        <th>联系电话</th>
+				                        <th>操作</th>
+				                    </tr>
+				                </thead>
+				                <tbody>
+				                    <tr>
+				                        <td>上海荣泰健康科技股份有限公司</td>
+				                        <td>刘兵</td>
+				                        <td>15862003325</td>
+				                        <td><a href=""><i class="fa fa-file-text text-blue"></i>&nbsp;规划详情</a>&nbsp;&nbsp;</td>
+				                    </tr>
+				                    <tr>
+				                        <td>上海荣泰健康科技股份有限公司</td>
+				                        <td>刘兵</td>
+				                        <td>15862003325</td>
+				                        <td><a href=""><i class="fa fa-file-text text-blue"></i>&nbsp;规划详情</a>&nbsp;&nbsp;</td>
+				                    </tr>
+				                </tbody>
+				            </table>
+				        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 全局js -->
+<script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/bootstrap.min.js?v=3.4.0"></script>
+<!-- 自定义js -->
+<script src="js/content.min.js?v=1.0.0"></script>
+<!-- Chosen -->
+<script src="js/plugins/chosen/chosen.jquery.js"></script>
+<!-- JSKnob -->
+<script src="js/plugins/jsKnob/jquery.knob.js"></script>
+<!-- Input Mask-->
+<script src="js/plugins/jasny/jasny-bootstrap.min.js"></script>
+<!-- Data picker -->
+<script src="js/plugins/datapicker/bootstrap-datepicker.js"></script>
+<!-- Prettyfile -->
+<script src="js/plugins/prettyfile/bootstrap-prettyfile.js"></script>
+<!-- NouSlider -->
+<script src="js/plugins/nouslider/jquery.nouislider.min.js"></script>
+<!-- Switchery -->
+<script src="js/plugins/switchery/switchery.js"></script>
+<!-- IonRangeSlider -->
+<script src="js/plugins/ionRangeSlider/ion.rangeSlider.min.js"></script>
+<!-- iCheck -->
+<script src="js/plugins/iCheck/icheck.min.js"></script>
+<!-- MENU -->
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<!-- Color picker -->
+<script src="js/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+<!-- Clock picker -->
+<script src="js/plugins/clockpicker/clockpicker.js"></script>
+<!-- Image cropper -->
+<script src="js/plugins/cropper/cropper.min.js"></script>
+<script>
+    $(document).ready(function(){var d=$(".image-crop > img");$(d).cropper({aspectRatio:1.618,preview:".img-preview",done:function(k){}});var e=$("#inputImage");if(window.FileReader){e.change(function(){var k=new FileReader(),m=this.files,l;if(!m.length){return}l=m[0];if(/^image\/\w+$/.test(l.type)){k.readAsDataURL(l);k.onload=function(){e.val("");d.cropper("reset",true).cropper("replace",this.result)}}else{showMessage("请选择图片文件")}})}else{e.addClass("hide")}$("#download").click(function(){window.open(d.cropper("getDataURL"))});$("#zoomIn").click(function(){d.cropper("zoom",0.1)});$("#zoomOut").click(function(){d.cropper("zoom",-0.1)});$("#rotateLeft").click(function(){d.cropper("rotate",45)});$("#rotateRight").click(function(){d.cropper("rotate",-45)});$("#setDrag").click(function(){d.cropper("setDragMode","crop")});$("#data_1 .input-group.date").datepicker({todayBtn:"linked",keyboardNavigation:false,forceParse:false,calendarWeeks:true,autoclose:true});$("#data_2 .input-group.date").datepicker({startView:1,todayBtn:"linked",keyboardNavigation:false,forceParse:false,autoclose:true,format:"yyyy-mm-dd"});$("#data_3 .input-group.date").datepicker({startView:2,todayBtn:"linked",keyboardNavigation:false,forceParse:false,autoclose:true});$("#data_4 .input-group.date").datepicker({minViewMode:1,keyboardNavigation:false,forceParse:false,autoclose:true,todayHighlight:true});$("#data_5 .input-daterange").datepicker({keyboardNavigation:false,forceParse:false,autoclose:true});var c=document.querySelector(".js-switch");var b=new Switchery(c,{color:"#1AB394"});var j=document.querySelector(".js-switch_2");var g=new Switchery(j,{color:"#ED5565"});var i=document.querySelector(".js-switch_3");var f=new Switchery(i,{color:"#1AB394"});$(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green"});$(".colorpicker-demo1").colorpicker();$(".colorpicker-demo2").colorpicker();$(".colorpicker-demo3").colorpicker();function h(){var k=$("body")[0].style;$("#demo_apidemo").colorpicker({color:k.backgroundColor}).on("changeColor",function(l){k.backgroundColor=l.color.toHex()});$("#demo_forceformat").colorpicker({format:"rgba",horizontal:true});$(".demo-auto").colorpicker();$(".disable-button").click(function(l){l.preventDefault();$("#demo_endis").colorpicker("disable")});$(".enable-button").click(function(l){l.preventDefault();$("#demo_endis").colorpicker("enable")})}h();$(".demo-destroy").click(function(k){k.preventDefault();$(".demo").colorpicker("destroy");$(".disable-button, .enable-button").off("click")});$(".demo-create").click(function(k){k.preventDefault();h()});var a=$(".back-change")[0].style;$("#demo_apidemo").colorpicker({color:a.backgroundColor}).on("changeColor",function(k){a.backgroundColor=k.color.toHex()});$(".clockpicker").clockpicker();$('#file-pretty input[type="file"]').prettyFile()});var config={".chosen-select":{},".chosen-select-deselect":{allow_single_deselect:true},".chosen-select-no-single":{disable_search_threshold:10},".chosen-select-no-results":{no_results_text:"Oops, nothing found!"},".chosen-select-width":{width:"95%"}};for(var selector in config){$(selector).chosen(config[selector])}$("#ionrange_1").ionRangeSlider({min:0,max:5000,type:"double",prefix:"&yen;",maxPostfix:"+",prettify:false,hasGrid:true});$("#ionrange_2").ionRangeSlider({min:0,max:10,type:"single",step:0.1,postfix:" 克",prettify:false,hasGrid:true});$("#ionrange_3").ionRangeSlider({min:-50,max:50,from:0,postfix:"°",prettify:false,hasGrid:true});$("#ionrange_4").ionRangeSlider({values:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],type:"single",hasGrid:true});$("#ionrange_5").ionRangeSlider({min:10000,max:100000,step:100,postfix:" km",from:55000,hideMinMax:true,hideFromTo:false});$(".dial").knob();$("#basic_slider").noUiSlider({start:40,behaviour:"tap",connect:"upper",range:{"min":20,"max":80}});$("#range_slider").noUiSlider({start:[40,60],behaviour:"drag",connect:true,range:{"min":20,"max":80}});$("#drag-fixed").noUiSlider({start:[40,60],behaviour:"drag-fixed",connect:true,range:{"min":20,"max":80}});
+</script>
+</body>
+</html>

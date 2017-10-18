@@ -1,0 +1,290 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<title>慧云孵化器园区管理系统</title>
+<meta name="Keywords" content="" />
+<meta name="Description" content="" />
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css" media="all">
+<link rel="stylesheet" type="text/css" href="css/public.css"/>
+<link href="css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+<link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="css/plugins/chosen/chosen.css" rel="stylesheet">
+<link href="css/plugins/colorpicker/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+<link href="css/plugins/cropper/cropper.min.css" rel="stylesheet">
+<link href="css/plugins/switchery/switchery.css" rel="stylesheet">
+<link href="css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+<link href="css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
+<link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+<link href="css/plugins/ionRangeSlider/ion.rangeSlider.css" rel="stylesheet">
+<link href="css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
+<link href="css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<link href="css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+<link href="css/animate.min.css" rel="stylesheet">
+<link href="css/style.min.css?v=3.2.0" rel="stylesheet">
+<script src="js/jquery_1_11_2_min.js"></script>
+<script src="js/bootstrap.min.js?v=3.4.0"></script>
+<style>
+   .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}	
+   .user_com .row{width:92%;margin:20px auto;padding:0;}
+   /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<body>	
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+       <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">评分</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">评分指标</a></li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">申请信息</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+        	            <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#version" href="#v3">
+                                        <p style="line-height:20px;"><strong>评审项目一、创新性 （40分）</strong></p>
+                                        <p style="line-height:20px;">评审要点：突出原始创意的价值，不鼓励模仿。强调利用互联网技术、方法和思维在销售、研发、生产、物流、信息、人力、管理等方面寻求突破和创新。鼓励项目与高校科技成果转移转化相结合</p>
+                                    </a>
+                                </div>
+                            </div>
+                            <div id="v3" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                	<div class="table-responsive">
+							            <table class="table table-bordered">
+							                <thead>
+							                    <tr>
+							                        <th>1.生产创新</th>
+							                    </tr>
+							                </thead>
+							                <tbody>
+							                    <tr>
+							                        <td>生产创新说明</td>
+							                    </tr>
+							                    <tr>
+							                        <td><div id="ionrange_1"></div></td>
+							                    </tr>
+							                </tbody>
+							            </table>
+							            <table class="table table-bordered">
+							                <thead>
+							                    <tr>
+							                        <th>2.研发创新</th>
+							                    </tr>
+							                </thead>
+							                <tbody>
+							                    <tr>
+							                        <td>研发创新说明</td>
+							                    </tr>
+							                    <tr>
+							                        <td><div id="ionrange_2"></div></td>
+							                    </tr>
+							                </tbody>
+							            </table>
+							            <table class="table table-bordered">
+							                <thead>
+							                    <tr>
+							                        <th>3.模式创新</th>
+							                    </tr>
+							                </thead>
+							                <tbody>
+							                    <tr>
+							                        <td>模式创新说明</td>
+							                    </tr>
+							                    <tr>
+							                        <td><div id="ionrange_3"></div></td>
+							                    </tr>
+							                </tbody>
+							            </table>
+							        </div>
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#version" href="#v4">
+                                        <p style="line-height:20px;"><strong>评审项目二、创新性 （40分）</strong></p>
+                                        <p style="line-height:20px;">评审要点：突出原始创意的价值，不鼓励模仿。强调利用互联网技术、方法和思维在销售、研发、生产、物流、信息、人力、管理等方面寻求突破和创新。鼓励项目与高校科技成果转移转化相结合</p>
+                                    </a>
+                                </div>
+                            </div>
+                            <div id="v4" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                	<div class="table-responsive" >
+							            <table class="table table-bordered">
+							                <thead>
+							                    <tr>
+							                        <th>1.生产创新</th>
+							                    </tr>
+							                </thead>
+							                <tbody>
+							                    <tr>
+							                        <td>生产创新说明</td>
+							                    </tr>
+							                    <tr>
+							                        <td><div id="ionrange_4"></div></td>
+							                    </tr>
+							                </tbody>
+							            </table>
+							            <table class="table table-bordered">
+							                <thead>
+							                    <tr>
+							                        <th>2.研发创新</th>
+							                    </tr>
+							                </thead>
+							                <tbody>
+							                    <tr>
+							                        <td>研发创新说明</td>
+							                    </tr>
+							                    <tr>
+							                        <td><div id="ionrange_5"></div></td>
+							                    </tr>
+							                </tbody>
+							            </table>
+							            <table class="table table-bordered">
+							                <thead>
+							                    <tr>
+							                        <th>3.模式创新</th>
+							                    </tr>
+							                </thead>
+							                <tbody>
+							                    <tr>
+							                        <td>模式创新说明</td>
+							                    </tr>
+							                    <tr>
+							                        <td><div id="ionrange_6"></div></td>
+							                    </tr>
+							                </tbody>
+							            </table>
+							        </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                    <h4 style="margin:15px 0;">复审意见</h4>
+                    <textarea id="content" name="content" class="form-control" required aria-required="true" placeholder="意见" style="margin-bottom:20px;"></textarea>
+                    <input type="hidden" name="aplId" id="aplId" value="55">
+                    <input type="hidden" name="id" id="id" value="52">  
+                    <button type="button" class="btn btn-primary btn-sm pull-right">&nbsp;&nbsp;<i class="fa fa-check"></i>&nbsp;&nbsp;确定&nbsp;&nbsp;</button>
+                </div>
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="table-responsive" >
+				            <table class="table table-bordered table-hover">
+				                <tbody>
+				                    <tr>
+				                        <td>申请企业名称</td>
+				                        <td>深圳智能一族科技有限公司</td>
+				                    </tr>
+				                    <tr>
+				                        <td>希望入驻时间</td>
+				                        <td>2017-07-27</td>
+				                    </tr>
+				                    <tr>
+				                        <td>入驻期限(年)</td>
+				                        <td>3</td>
+				                    </tr>
+				                    <tr>
+				                        <td>需求办公方式：</td>
+				                        <td>租赁</td>
+				                    </tr>
+				                    <tr>
+				                        <td>计划何时注册企业：</td>
+				                        <td>2017-07-20</td>
+				                    </tr>
+				                    <tr>
+				                        <td>行业类型</td>
+				                        <td>新能源</td>
+				                    </tr>
+				                    <tr>
+				                        <td>技术领域</td>
+				                        <td>航空航天</td>
+				                    </tr>
+				                    <tr>
+				                        <td>负责人</td>
+				                        <td>刘丽</td>
+				                    </tr>
+				                    <tr>
+				                        <td>性别</td>
+				                        <td>女</td>
+				                    </tr>
+				                    <tr>
+				                        <td>联系方式</td>
+				                        <td>15236985236</td>
+				                    </tr>
+				                    <tr>
+				                        <td>邮箱</td>
+				                        <td>2824563783@qq.com</td>
+				                    </tr>
+				                    <tr>
+				                        <td>身份证号</td>
+				                        <td>3695874236987452</td>
+				                    </tr>
+				                    <tr>
+				                        <td>最高学历</td>
+				                        <td>专科</td>
+				                    </tr>
+				                    <tr>
+				                    	<td>上传身份证</td>
+				                    	<td>下载</td>
+				                    </tr>
+				                    <tr>
+				                    	<td>上传学历证</td>
+				                    	<td>下载</td>
+				                    </tr>
+				                    <tr>
+				                    	<td>主要负责人创业特征</td>
+				                    	<td>机关事业单位人员</td>
+				                    </tr>
+				                    <tr>
+				                    	<td>项目介绍</td>
+				                    	<td>下载</td>
+				                    </tr>
+				                    <tr>
+				                    	<td>知识产权情况</td>
+				                    	<td>下载</td>
+				                    </tr>
+				                    <tr>
+				                    	<td>其它未尽事项说明</td>
+				                    	<td>说明</td>
+				                    </tr>
+				                </tbody>
+				            </table>
+				        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/jquery.min.js?v=2.1.4"></script>
+<script src="js/bootstrap.min.js?v=3.3.6"></script>
+<script src="js/content.min.js?v=1.0.0"></script>
+<script src="js/plugins/chosen/chosen.jquery.js"></script>
+<script src="js/plugins/jsKnob/jquery.knob.js"></script>
+<script src="js/plugins/jasny/jasny-bootstrap.min.js"></script>
+<script src="js/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="js/plugins/prettyfile/bootstrap-prettyfile.js"></script>
+<script src="js/plugins/nouslider/jquery.nouislider.min.js"></script>
+<script src="js/plugins/switchery/switchery.js"></script>
+<script src="js/plugins/ionRangeSlider/ion.rangeSlider.min.js"></script>
+<script src="js/plugins/iCheck/icheck.min.js"></script>
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="js/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+<script src="js/plugins/clockpicker/clockpicker.js"></script>
+<script src="js/plugins/cropper/cropper.min.js"></script>
+<script src="js/demo/form-advanced-demo.min.js"></script>
+</body>
+</html>

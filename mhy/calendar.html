@@ -1,0 +1,52 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<title>慧云孵化器园区管理系统</title>
+<meta name="Keywords" content="" />
+<meta name="Description" content="" />
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<link rel="stylesheet" type="text/css" href="css/public.css"/>
+<link href="css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+<link href="css/font-awesome.min.css?v=4.3.0" rel="stylesheet">
+<link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="css/plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
+<link href="css/plugins/fullcalendar/fullcalendar.print.css" rel="stylesheet">
+<link href="css/animate.min.css" rel="stylesheet">
+<link href="css/style.min.css?v=3.0.0" rel="stylesheet">
+<style>
+   .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}	
+   .user_com .row{width:92%;margin:20px auto;padding:0;}
+   /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<body>	
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+       <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">日程安排</div>
+    <div class="h-right">保存</div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div id="calendar"></div>
+    </div>
+</div>
+
+<!-- 全局js -->
+<script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/bootstrap.min.js?v=3.4.0"></script>
+<!-- 自定义js -->
+<script src="js/content.min.js?v=1.0.0"></script>
+<script src="js/jquery-ui.custom.min.js"></script>
+<!-- iCheck -->
+<script src="js/plugins/iCheck/icheck.min.js"></script>
+<!-- Full Calendar -->
+<script src="js/plugins/fullcalendar/fullcalendar.min.js"></script>
+<script>
+    $(document).ready(function(){$(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",});$("#external-events div.external-event").each(function(){var d={title:$.trim($(this).text())};$(this).data("eventObject",d);$(this).draggable({zIndex:999,revert:true,revertDuration:0})});var b=new Date();var c=b.getDate();var a=b.getMonth();var e=b.getFullYear();$("#calendar").fullCalendar({header:{left:"prev,next",center:"title",right:"month,agendaWeek,agendaDay"},editable:true,droppable:true,drop:function(g,h){var f=$(this).data("eventObject");var d=$.extend({},f);d.start=g;d.allDay=h;$("#calendar").fullCalendar("renderEvent",d,true);if($("#drop-remove").is(":checked")){$(this).remove()}},events:[{title:"日事件",start:new Date(e,a,1)},{title:"长事件",start:new Date(e,a,c-5),end:new Date(e,a,c-2),},{id:999,title:"重复事件",start:new Date(e,a,c-3,16,0),allDay:false,},{id:999,title:"重复事件",start:new Date(e,a,c+4,16,0),allDay:false},{title:"会议",start:new Date(e,a,c,10,30),allDay:false},{title:"午餐",start:new Date(e,a,c,12,0),end:new Date(e,a,c,14,0),allDay:false},{title:"生日",start:new Date(e,a,c+1,19,0),end:new Date(e,a,c+1,22,30),allDay:false},{title:"打开百度",start:new Date(e,a,28),end:new Date(e,a,29),url:"http://baidu.com/"}],})});
+</script>
+</body>
+</html>

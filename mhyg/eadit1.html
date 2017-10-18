@@ -1,0 +1,149 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<title>慧云孵化器园区管理系统</title>
+<meta name="Keywords" content="" />
+<meta name="Description" content="" />
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css" media="all">
+<link rel="stylesheet" type="text/css" href="css/public.css"/>
+<link href="css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+<link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="css/plugins/summernote/summernote.css" rel="stylesheet">
+<link href="css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+<link href="css/animate.min.css" rel="stylesheet">
+<link href="css/style.min.css?v=3.0.0" rel="stylesheet">
+<!-- 全局js -->
+<script src="js/jquery_1_11_2_min.js"></script>
+<script src="js/bootstrap.min.js?v=3.4.0"></script>
+<!-- 自定义js -->
+<script src="js/content.min.js?v=1.0.0"></script>
+<!-- iCheck -->
+<script src="js/plugins/iCheck/icheck.min.js"></script>
+<!-- SUMMERNOTE -->
+<script src="js/plugins/summernote/summernote.min.js"></script>
+<script src="js/plugins/summernote/summernote-zh-CN.js"></script>
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="js/plugins/layer/layer.min.js"></script>
+<!-- 自定义js -->
+<script src="js/hplus.min.js?v=3.0.0"></script>
+<script src="js/contabs.min.js"></script>
+<!-- 第三方插件 -->
+<script src="js/plugins/pace/pace.min.js"></script>
+<style>
+   .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}	
+   .user_com .row{width:92%;margin:20px auto;padding:0;}
+   /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<body>	
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+       <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">表单信息类页面</div>
+    <div class="h-right">保存</div>
+</div>
+<div class="user_com">
+    <div class="row">
+            <div class="ibox-content mailbox-content">
+                <div class="file-manager">
+                    <a class="btn btn-block btn-primary compose-mail" href="eadit.html">写信</a>
+                    <div class="space-25"></div>
+                    <h5>文件夹</h5>
+                    <ul class="folder-list m-b-md" style="padding: 0">
+                        <li><a href=""><i class="fa fa-inbox "></i> 全部 <span class="label label-warning pull-right">16</span></a></li>
+                        <li><a href=""><i class="fa fa-envelope-o"></i> 未读</a></li>
+                        <li><a href=""><i class="fa fa-certificate"></i> 重要</a></li>
+                        <li><a href=""><i class="fa fa-file-text-o"></i> 草稿 <span class="label label-danger pull-right">2</span></a></li>
+                        <li><a href=""><i class="fa fa-trash-o"></i> 回收站</a></li>
+                    </ul>
+                    <h5>分类</h5>
+                    <ul class="category-list" style="padding: 0">
+                        <li><a href=""><i class="fa fa-circle text-navy"></i> 自定义日程</a></li>
+                        <li><a href=""><i class="fa fa-circle text-danger"></i> 系统消息</a></li>
+                        <li><a href=""><i class="fa fa-circle text-primary"></i> 会议室申请</a></li>
+                        <li><a href=""><i class="fa fa-circle text-info"></i> 内部资源通知</a></li>
+                        <li><a href=""><i class="fa fa-circle text-warning"></i> 公告服务活动</a></li>
+                        <li><a href=""><i class="fa fa-circle text-danger"></i> 站内新消息</a></li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <div class="mail-box-header">
+            	<h4>收件箱 (5)</h4>
+	            <form class="mail-search">
+	                <div class="input-group">
+	                    <input type="text" class="form-control input-sm" id="search" placeholder="搜索标题，正文">
+	                    <div class="input-group-btn">
+	                        <button class="btn btn-sm btn-primary" type="button" id="btnSearch">搜索</button>
+	                    </div>
+	                </div>
+	            </form>
+	            <div class="mail-tools tooltip-demo m-t-md">
+	                <div class="btn-group pull-right">
+	                    <button class="btn btn-white btn-sm" id="pagepre" data-page="1"><i class="fa fa-arrow-left"></i></button>
+	                    <button class="btn btn-white btn-sm" id="pagenext" data-page="2"><i class="fa fa-arrow-right"></i></button>
+	                </div>
+	                <button class="btn btn-white btn-sm" title="刷新邮件列表" id="btnRefresh"><i lass="fa fa-refresh"></i> 刷新</button>
+	                <button class="btn btn-white btn-sm" title="标为已读" id="btnread"><i class="fa fa-eye"></i></button>
+	                <button class="btn btn-white btn-sm" title="标为重要" id="btnimpt"><i class="fa fa-exclamation"></i></button>
+	                <button class="btn btn-white btn-sm" title="标为垃圾邮件" id="btnrecycle"><i class="fa fa-trash-o"></i></button>
+	            </div>
+	        </div>
+	        <div class="mail-box">
+	        	<div class="mail-box-header" style="border:none;padding-top:0;padding-bottom:0;">
+		        	<div class="table-responsive">
+			            <table class="table table-hover table-mail" id="tab-mail">
+		                    <tbody>
+		                    	<tr class="">
+		                    		<th>&nbsp;&nbsp;</th>
+		                    		<th>分类名称</th>
+		                    		<th>标题</th>
+		                    		<th>&nbsp;</th>
+		                    		<th class="text-right">添加时间&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+		                    	</tr>
+		                    	<tr class="read">
+		                    		<td class="check-mail">
+		                    			<div class="icheckbox_square-green" style="position: relative;">
+		                    				<input type="checkbox">
+		                    			</div>
+		                    		</td>
+		                    		<td class="mail-ontact"><a href="#">系统消息</a></td>
+		                    		<td class="mail-subject"><a href="">正式入驻消息</a></td>
+		                    		<td class=""></td>
+		                    		<td class="text-right mail-date">2017-06-13 15:47</td>
+		                    	</tr>
+		                    	<tr class="read">
+		                    		<td class="check-mail">
+		                    			<div class="icheckbox_square-green" style="position: relative;">
+		                    				<input type="checkbox">
+		                    			</div>
+		                    		</td>
+		                    		<td class="mail-ontact"><a href="#">系统消息</a></td>
+		                    		<td class="mail-subject"><a href="">正式入驻消息</a></td>
+		                    		<td class=""></td>
+		                    		<td class="text-right mail-date">2017-06-13 15:47</td>
+		                    	</tr>
+		                    	<tr class="read">
+		                    		<td class="check-mail">
+		                    			<div class="icheckbox_square-green" style="position: relative;">
+		                    				<input type="checkbox">
+		                    			</div>
+		                    		</td>
+		                    		<td class="mail-ontact"><a href="#">系统消息</a></td>
+		                    		<td class="mail-subject"><a href="">正式入驻消息</a></td>
+		                    		<td class=""></td>
+		                    		<td class="text-right mail-date">2017-06-13 15:47</td>
+		                    	</tr>
+			            </table>
+			        </div>   
+			    </div>    
+	        </div>
+    </div>
+</div>
+</body>
+</html>

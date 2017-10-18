@@ -1,0 +1,158 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<title>慧云孵化器园区管理系统</title>
+<meta name="Keywords" content="" />
+<meta name="Description" content="" />
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css" media="all">
+<link rel="stylesheet" type="text/css" href="css/public.css"/>
+<link href="css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+<link href="css/animate.min.css" rel="stylesheet">
+<link href="css/style.min.css?v=3.2.0" rel="stylesheet">
+<script src="js/jquery_1_11_2_min.js"></script>
+<script src="js/bootstrap.min.js?v=3.4.0"></script>
+<!--[if lt IE 8]>
+<script>
+    alert('H+已不支持IE6-8，请使用谷歌、火狐等浏览器\n或360、QQ等国产浏览器的极速模式浏览本页面！');
+</script>
+<![endif]-->
+<!-- 全局js -->
+<script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/bootstrap.min.js?v=3.4.0"></script>
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="js/plugins/layer/layer.min.js"></script>
+<!-- 自定义js -->
+<script src="js/hplus.min.js?v=3.0.0"></script>
+<script src="js/contabs.min.js"></script>
+<!-- 第三方插件 -->
+<script src="js/plugins/pace/pace.min.js"></script>
+<style>
+   .user_com{margin:15px 0 0 0;background:#FFF;overflow:hidden;}	
+   .user_com .row{width:96%;margin:20px auto;padding:0;}
+   .user_com .row .col-xs-6{padding-left:10px;padding-right:10px;}
+   /*.btn-white {color: #FFF;background: #1ab394;border: 1px solid #1ab394;}上传文件颜色控制*/
+</style>
+<body>	
+<!--顶部-->
+<div class="header">
+    <div class="h-left">
+       <a class="sb-back" href="javascript:history.back(-1)">返回</a>
+    </div>
+    <div class="h-mid">会议室申请</div>
+    <div class="h-right"></div>
+</div>
+<div class="user_com">
+    <div class="row">
+        <div class="col-xs-6 col-sm-3">
+            <a href="javascript:void(0)">
+                <div class="widget navy-bg p-lg text-center">
+                    <div class="m-b-xs">
+                        <h3 class="m-xs">A107</h3>
+                        <br>
+                        <h4 class="no-margins">容纳人数：40</h4>
+                    </div>
+                </div>
+                <span class="label label-warning" style="position:absolute;top:0;right:0;padding:5px 12px;">16</span>
+            </a>
+        </div>
+        <div class="col-xs-6 col-sm-3">
+            <a href="javascript:void(0)">
+                <div class="widget yellow-bg p-lg text-center">
+                    <div class="m-b-xs">
+                        <h3 class="m-xs">A108</h3>
+                        <br>
+                        <h4 class="no-margins">容纳人数：80</h4>
+                    </div>
+                </div>
+                <span class="label label-primary" style="position:absolute;top:0;right:0;padding:5px 12px;">8</span>
+            </a>
+        </div>
+        <div class="col-xs-6 col-sm-3">
+            <a href="javascript:void(0)">
+                <div class="widget navy-bg p-lg text-center">
+                    <div class="m-b-xs">
+                        <h3 class="m-xs">A107</h3>
+                        <br>
+                        <h4 class="no-margins">容纳人数：40</h4>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-xs-6 col-sm-3">
+            <a href="javascript:void(0)">
+                <div class="widget yellow-bg p-lg text-center">
+                    <div class="m-b-xs">
+                        <h3 class="m-xs">A108</h3>
+                        <br>
+                        <h4 class="no-margins">容纳人数：80</h4>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div style="width:100%;overflow:hidden;text-align:center;margin:2em auto;">
+       		<button type="button" class="btn btn-primary btn-md" style="display:inline-block;margin:auto;">&nbsp;&nbsp;<i class="fa fa-plus"></i>&nbsp;&nbsp;</button>
+       	</div>	
+       	<div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">申请记录</a></li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">已同意申请</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+				            <table class="table table-bordered table-hover">
+				                <thead>
+				                    <tr>
+				                        <th>会议室名称</th>
+				                        <th>操作</th>
+				                    </tr>
+				                </thead>
+				                <tbody>
+				                    <tr>
+				                        <td>A107</td>
+				                        <td><a href=""><i class="fa fa-file-text text-blue"></i>&nbsp;查看详情</a>&nbsp;&nbsp;</td>
+				                    </tr>
+				                    <tr>
+				                        <td>A108</td>
+				                        <td><a href=""><i class="fa fa-file-text text-blue"></i>&nbsp;查看详情</a>&nbsp;&nbsp;</td>
+				                    </tr>
+				                </tbody>
+				            </table>
+				        </div>
+                    </div>
+                </div>
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+				            <table class="table table-bordered table-hover">
+				                <thead>
+				                    <tr>
+				                        <th>会议室名称</th>
+				                        <th>操作</th>
+				                    </tr>
+				                </thead>
+				                <tbody>
+				                    <tr>
+				                        <td>A1071</td>
+				                        <td><a href=""><i class="fa fa-file-text text-blue"></i>&nbsp;查看详情</a>&nbsp;&nbsp;</td>
+				                    </tr>
+				                    <tr>
+				                        <td>A1081</td>
+				                        <td><a href=""><i class="fa fa-file-text text-blue"></i>&nbsp;查看详情</a>&nbsp;&nbsp;</td>
+				                    </tr>
+				                </tbody>
+				            </table>
+				        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
