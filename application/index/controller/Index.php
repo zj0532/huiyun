@@ -38,11 +38,14 @@ class Index extends Common{
     function index()
     {
         $roleId=session("user.roleIds");
+        //查询角色信息
         $roleMsg = findByid('UserRole',array('id'=>$roleId),'*');
+        //如果查询成功，获取菜单
         if($roleMsg['code']==1 && !(empty($roleMsg['data']))){
             $homepageIds = $roleMsg['data']['homepageIds'];
         }
         if(!empty($homepageIds)){
+            //explode 把字符串打散为数组
             $roleArr = explode(",",$homepageIds);
         }else{
             $roleArr = array();
@@ -60,6 +63,7 @@ class Index extends Common{
             'notice_other'=>'6'
         );
         foreach($moduleArr as $key=>$value){
+            //in_array 搜索数组中指定的值
             if(in_array($value,$roleArr)){
                 $data[$key]['status'] = 1;
             }else{

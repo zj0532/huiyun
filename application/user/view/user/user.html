@@ -21,6 +21,8 @@
         });
         $("#btnoadd").click(function(){
             var url=$(this).attr("data-url");
+
+
             baseadd(url,"添加用户","modal-lg");
         });
         $("#btnaadd").click(function(){
@@ -192,11 +194,12 @@
             <div class="ibox-content">
                 <div class="tabs-container">
                     <ul class="nav nav-tabs">
+                        <!--1011001 管理人员-->
                         {if condition="$usercate=='1011001'"}
                         <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">管理员</a></li>
                         <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">企业用户</a></li>
                         <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">导师用户</a></li>
-
+                        <!--1011003 系统维护员-->
                         {elseif condition="$usercate=='1011003'"/}
                         <li class="active"><a data-toggle="tab" href="#tab-5" aria-expanded="true">系统维护员</a></li>
                         <li class=""><a data-toggle="tab" href="#tab-6" aria-expanded="false">超级管理员</a></li>

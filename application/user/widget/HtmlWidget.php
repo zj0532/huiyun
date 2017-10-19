@@ -25,12 +25,19 @@ class HtmlWidget extends Controller {
         }
         return $optHtml;
     }
-
+    /*
+     * $iptname 性别
+     * $con     查询条件
+     * $default 默认
+     * $order   排序
+     * $con
+     */
     function initDictRedio($iptname,$con,$default="",$order="code",$con=array())
     {
         $optHtml="";
         $table="SysDict";
         $field="code,name";
+        //将多个查询条件分开
         $con=self::parseCon($con);
         if(!empty(session("iqbtId"))){
             $con["concat(',',exceptIqbt,',')"]=array("notlike",'%,'.session("iqbtId").',%');
@@ -105,10 +112,12 @@ class HtmlWidget extends Controller {
         }
         return $optHtml;
     }
+    //遍历查询条件是否是数组，如果是分开条件
     function parseCon($con)
     {
         $where =array();
         foreach($con as $k=>$v){
+            //is_array 检测变量是否是数组
             if(is_array($v)){
                 $v[0]=trim($v[0]);
                 $where[$k]=$v;

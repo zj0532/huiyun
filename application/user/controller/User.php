@@ -80,7 +80,7 @@ class User extends Common{
         }
         return $msg["data"];
     }
-
+    //用户管理-》用户管理-》冻结
     function freezeUser($id=0)
     {
         if(!empty($id)){
@@ -100,6 +100,8 @@ class User extends Common{
             return array("code"=>'0','msg'=>'参数错误');
         }
     }
+    //用户管理-》用户管理-》编辑操作
+    //用户管理-》用户管理-》新增按钮
     function addUser($cate="",$tab=''){
         if(empty($cate)){
             $cate=session("user.userCate");
@@ -122,14 +124,17 @@ class User extends Common{
         $userCate=session("user.userCate");
         //系统维护员和管理员，管理员角色中没有企业用户
         //普通管理员，不能添加系统维护员
+        //1011003 系统维护员
         if($userCate=="1011003"){
             //系统维护员，只能添加系统维护员和超级管理员,地区用户
             //$con="id in (1,3,4,6) or parentId =6";
 
             if($cate=="1011003"){
                 $con="a.id =3";
+                //1011001管理人员
             }else if($cate=="1011001"){
                 $con="a.id in (1,4)";
+                //1011004 区域用户
             }else if($cate=="1011004"){
                 $con="a.id =6 or a.parentId =6";
             }
@@ -139,6 +144,7 @@ class User extends Common{
                 //超级管理员--只能添加管理员
                 //需要获取所辖孵化器的id
                 $etprsiqbtArr = getFieldArrry('incubator',array('etprsIqbtId'=>session('etprsIqbtId')),'id');
+                //implode 把数组元素组合为字符串
                 $etprsIqbtStr = implode(",",$etprsiqbtArr);
                 $con['a.iqbtId'] = array('in','0,'.$etprsIqbtStr);
                 $con["a.parentId|a.id"]=4;
@@ -186,6 +192,7 @@ class User extends Common{
             $ucate=$cmsg["data"];
         }
         if(!empty($c["districtId"])){
+            //region 区域表
             $dmsg=findById("region",array("id"=>$c["districtId"]),"id,level,provinceid,cityid");
             if(!empty($dmsg["data"])){
                 if($dmsg["data"]["level"]==1){
@@ -272,7 +279,6 @@ class User extends Common{
     function saveUser(){
         $py=new Pinyin();
         $postData=input("request.");
-//        halt($postData);
         if(!isset($postData['iqbtId'])||empty($postData['iqbtId'])){
             $postData["iqbtId"]=session("iqbtId");
         }
@@ -280,7 +286,10 @@ class User extends Common{
         if(empty($postData["roleIds"])){
             return array('code'=>"0",'msg'=>'保存失败！请选择用户角色');
         }
+        //explode 把字符串打散为数组
         $roles=explode(",",$postData["roleIds"]);
+        //implode 把数组元素组合为字符串
+        //array_unique 移除数组中重复的值
         $postData['roleIds'] = implode(",",array_unique($roles));
         if(in_array(3,$roles)&&count($roles)>1){
             return array('code'=>"0",'msg'=>'保存失败！系统维护员和管理员不能同时选择');

@@ -97,11 +97,12 @@
                     return;
                 }
                 var cardno = $('#idcard').val();
-                var idresult = checkCard(cardno);
+                //因身份证验证有问题，故注销身份证验证
+                /*var idresult = checkCard(cardno);
                 if(idresult['code']==0){
                     toastr.error(idresult['msg']);
                     return ;
-                }
+                }*/
                 var form = $("#aplForm");
                 var err=custom_validate("aplForm");
                 var url="{:url('/index/Apply/saveetprsapl')}";

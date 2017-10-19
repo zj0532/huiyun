@@ -219,7 +219,7 @@
                 {:widget("user/HtmlWidget/initDictRedio",['iptname'=>'sex','con'=>['code'=>array('like','2001%'),'level'=>'2'],'default'=>isset($data['sex'])?$data['sex']:'2001001'])}
             </div>
 
-            <span style="display: {if condition='isset($data.userCate)'}{if condition='$data.userCate eq 1011002'}block{else /}none{/if}{else /}none{/if};" id="spanEtprs"><label class="col-sm-2 control-label">企业</label>
+            <span style="display:{if condition='isset($data.userCate)'}{if condition='$data.userCate eq 1011002'}block{else /}none{/if}{else /}none{/if};" id="spanEtprs"><label class="col-sm-2 control-label">企业</label>
             <div class="col-sm-4">
                 <select data-placeholder="企业..." class="chosen-select col-sm-12" tabindex="2" name="etprsId" id="etprsId">
                     <option value="">请选择企业</option>
