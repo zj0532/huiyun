@@ -125,6 +125,7 @@
         'click .cremove': function (e, value, row, index) {
             basefreeze("cusertable", row.id);
         },
+        //重置密码
         'click .resetpwd': function (e, value, row, index) {
             var url="{:url('/user/User/resetpwd')}";
             var id=row.id;
@@ -169,6 +170,7 @@
             }
         });
     }
+    //重置密码
     function resetpwd(url,id,name){
         $.post(url,{name:name,id:id}, function(data) {
             if(data.code==1){

@@ -549,6 +549,7 @@ class User extends Common{
         $msg["data"]=self::setListIdText($msg["data"],array(array(array('fieldkey'=>'parentId','fieldname'=>'parentText'),"UserRole","id,rolename",array("level"=>1))));
         return $msg["data"];
     }
+    //添加/编辑角色
     function addRole($iqbtId=0){
         $id=input("id");
         $c=array();
@@ -595,14 +596,17 @@ class User extends Common{
                 return array('code'=>"0",'msg'=>'保存失败！存在下级角色',array());
             }
         }
-        $con=array("rolename"=>$postData['rolename'],'iqbtId'=>$postData["iqbtId"]);
-        if(!empty($id)){
-            $con['id']=array("!=",$id);
+        if(!empty($postData["iqbtId"])){
+            $con=array("rolename"=>$postData['rolename'],'iqbtId'=>$postData["iqbtId"]);
+            if(!empty($id)){
+                $con['id']=array("!=",$id);
+            }
+            $cmsg=findById($table,$con,"id");
+            if(!empty($cmsg['data'])){
+                return array('code'=>"0",'msg'=>'当前孵化器已经存在该角色名',array());
+            }
         }
-        $cmsg=findById($table,$con,"id");
-        if(!empty($cmsg['data'])){
-            return array('code'=>"0",'msg'=>'当前孵化器已经存在该角色名',array());
-        }
+
         if(empty($postData["isRole"])){
             $postData["isRole"]=0;
         }else{
@@ -611,6 +615,7 @@ class User extends Common{
         $msg= saveData($table,$postData,"添加/修改");
         return $msg;
     }
+    //删除
     function deleteRole(){
         $id=input("id");
         $msg=getDataList("UserRole",array('parentId'=>array('in',$id)),"id");
@@ -622,7 +627,7 @@ class User extends Common{
         }
         return deleteData("UserRole",$id,"删除角色");
     }
-
+    //设置权限
     function setRoleMenu() {
         $id=input("id");//角色ID
         $parentId=input("parentId");
@@ -765,11 +770,11 @@ class User extends Common{
         $msg["data"]=self::setListIdText($msg["data"],array(array(array('fieldkey'=>'parentId','fieldname'=>'parentText'),"UserMenu","id,name",array('iqbtId'=>session("user.iqbtId")))));
         return $msg["data"];
     }
+    //新增/编辑菜单按钮
     function addMenu(){
         $id=input("id");
         $c=array("level"=>1);
         if(!empty($id)){
-
             $msg=findByid("UserMenu",array("id"=>$id),"*");
             if($msg["code"]==='1'){
                 $c=$msg["data"];
@@ -793,6 +798,7 @@ class User extends Common{
         $msg= saveData($table,$postData,"添加/修改");
         return $msg;
     }
+    //删除菜单
     function deleteMenu(){
         $id=input("id");
         $msg=getDataList("UserMenu",array('parentId'=>array('in',$id)),"id");
@@ -1175,6 +1181,7 @@ class User extends Common{
         $msg=getDataList($table,array(),"*");
         return $msg["data"];
     }
+    //新增/编辑套餐
     function addpackage(){
         $id=input("id");
         $c=array();
@@ -1192,10 +1199,12 @@ class User extends Common{
         $msg= saveData("UserPackages",$postData,"添加/修改套餐");
         return $msg;
     }
+    //删除套餐
     function deletepackage(){
         $id=input("id");
         return deleteData("UserPackages",$id,"删除套餐");
     }
+    //设置套餐权限
     function setPackageMenuIds()
     {
         $id=input("id");

@@ -161,7 +161,7 @@ class Apply extends Common{
         return $result;
 
     }
-
+    //查看申请详情
     function roomaplDetail($id=0)
     {
         if(!empty($id)){
@@ -234,7 +234,7 @@ class Apply extends Common{
         }
         return view("",array("id"=>$etprsId,"status"=>$status,"etprsName"=>$etprsName));
     }
-
+    //点击材料初审退回保存按钮
     function passFirstBack(){
         $postData=input("request.");
         if(empty($postData['desc'])){
@@ -419,7 +419,12 @@ class Apply extends Common{
         $filename = "孵化入驻表";
         $this->export($ids,$filename,"","1");
     }
-
+    /*
+     * $ids         id号
+     * $filename    入孵申请表
+     * $types       类型
+     * $isRoom
+     */
     function export($ids,$filename,$types='',$isRoom="0"){
         if(empty($ids)){
             return array('code'=>0,'msg'=>'请选择要导出的数据');

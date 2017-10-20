@@ -51,9 +51,11 @@
         });
     });
 
+
     function userFmt(value, row, index) {
         var html="";
         html=html+'<a class="edit ml10" href="javascript:void(0)" title="编辑"><i class="fa fa-edit text-navy"></i>&nbsp;编辑</a>';
+        //如果用户状态为冻结（1012005），将显示解除冻结
         if(row.status=='1012005'){
             html = html + '&nbsp;<a class="noremove ml10" href="javascript:void(0)" title="冻结"><i class="fa fa-times text-danger"></i>&nbsp;解除冻结</a>';
         }else{

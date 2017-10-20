@@ -4,7 +4,7 @@ $(function(){
     }
 
 });
-
+//添加角色
 function baseadd(url,msg,modelsize){
     $.post(url, function(data) {
         show_modal(msg,data,modelsize);
